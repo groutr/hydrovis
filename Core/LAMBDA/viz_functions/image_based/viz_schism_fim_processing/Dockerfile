@@ -32,17 +32,29 @@ RUN wget --no-hsts --quiet https://github.com/conda-forge/miniforge/releases/dow
 
 # Install the function's dependencies using file requirements.txt
 # from your project folder.
-WORKDIR /code
-#COPY conda-linux-64.lock  .
 # Create conda environment for hydrovis
-RUN --mount=type=bind,source=conda-linux-64.lock,target=/tmp/conda-linux-64.lock \
-    conda create -y -p /HV --file /tmp/conda-linux-64.lock && \
+RUN --mount=type=bind,source=conda-linux-aarch64.lock,target=/tmp/conda.lock \
+    conda create -y -p /HV --file /tmp/conda.lock && \
     ln -s /opt/conda/etc/profile.d/conda.sh /etc/profile.d/conda.sh && \
     echo ". /opt/conda/etc/profile.d/conda.sh" >> ~/.bashrc && \
     echo "conda activate /HV" >> ~/.bashrc && \
     conda clean -afy && \
     find /HV -regex '^.*\(__pycache__\|\.py[co]\)$' -delete && \
     find /HV -follow -type f -name '*.a' -delete
+
+
+FROM public.ecr.aws/amazonlinux/amazonlinux:2023-minimal AS target
+WORKDIR /code
+
+# Prevent Python from writing bytecode files
+ENV PYTHONDONTWRITEBYTECODE=1
+# Prevent python from buffering stdout
+ENV PYTHONUNBUFFERED=1
+ENV PATH=/opt/conda/bin:${PATH}
+
+COPY --from=alinux /HV /HV
+COPY --from=alinux /opt/conda /opt/conda
+
 
 # Copy function code
 COPY viz_classes.py \
