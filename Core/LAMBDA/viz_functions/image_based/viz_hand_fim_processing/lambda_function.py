@@ -1,4 +1,3 @@
-import boto3
 import rasterio
 from rasterio import windows as riowindows
 from rasterio.features import shapes
@@ -8,7 +7,6 @@ import geopandas as gpd
 import os
 import time
 import datetime
-import re
 from math import floor, ceil
 from shapely.geometry import shape
 
