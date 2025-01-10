@@ -1,11 +1,9 @@
 import boto3
-from botocore.exceptions import ResponseStreamingError
 import rasterio
 from rasterio import windows as riowindows
 from rasterio.features import shapes
 import numpy as np
 import pandas as pd
-import awswrangler as wr
 import geopandas as gpd
 import os
 import time
@@ -567,9 +565,9 @@ def s3_csv_to_df(bucket, key, columns=None):
         try:
             # Read S3 csv file into Pandas DataFrame
             print(f"Reading {key} from {bucket} into DataFrame")
-            df = wr.s3.read_csv(path=f"s3://{bucket}/{key}", **extra_pd_args)
+            df = pd.read_csv(path=f"s3://{bucket}/{key}", **extra_pd_args)
             print("DataFrame creation Successful")
-        except ResponseStreamingError:
+        except:
             if i == 4: print("Failed to read from S3")
             continue
         break
