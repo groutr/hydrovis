@@ -1,12 +1,45 @@
-FROM ghcr.io/lambgeo/lambda-gdal:3.6-python3.9
+FROM mambaorg/micromamba AS micromamba
 
-RUN python -m pip install gdal==$(gdal-config --version)
+# Create conda environment for hydrovis
+RUN --mount=type=bind,source=conda-linux-64.lock,target=/tmp/conda.lock \
+    micromamba install -y --file /tmp/conda.lock && \
+    micromamba clean -afy
 
-# Copy any local files to the package
-COPY lambda_function.py /var/task/lambda_function.py
-COPY logger.py /var/task/logger.py
-COPY OptimizeRasters.py /var/task/OptimizeRasters.py
-COPY TIF_to_MRF.xml /var/task/TIF_to_MRF.xml
+# Clean out unnecessary files to reduce image size
+RUN find /opt/conda -regex '^.*\(__pycache__\|\.py[co]\)$' -delete && \
+    find /opt/conda -follow -type f -name '*.a' -delete
+RUN rm -rf /opt/conda/man /opt/conda/share/man /opt/conda/share/doc && \
+    rm -rf /opt/conda/include && \
+    rm -rf /opt/conda/share/bash-completion && \
+    rm -rf /opt/conda/share/info && \
+    rm -rf /opt/conda/share/examples && \
+    rm -rf /opt/conda/conda-meta
 
-ENTRYPOINT [ "/lambda-entrypoint.sh" ]
-CMD [ "lambda_function.lambda_handler" ]
+
+FROM public.ecr.aws/amazonlinux/amazonlinux:2023-minimal AS alinux
+
+ENV MAMBA_ROOT_PREFIX="/opt/conda"
+ENV MAMBA_EXE="/bin/micromamba"
+# Prevent Python from writing bytecode files
+ENV PYTHONDONTWRITEBYTECODE=1
+# Prevent python from buffering stdout
+ENV PYTHONUNBUFFERED=1
+COPY --from=micromamba --chown=root "$MAMBA_EXE" "$MAMBA_EXE"
+COPY --from=micromamba --chown=root /opt/conda /opt/conda
+COPY --from=micromamba --chown=root /usr/local/bin/_*.sh /usr/local/bin/
+
+WORKDIR /home/code
+
+# Copy function code
+COPY lambda_function.py \
+    logger.py \
+    OptimizeRasters.py \
+    TIF_to_MRF.xml \
+    ./
+
+SHELL ["/usr/local/bin/_dockerfile_shell.sh"]
+
+ENTRYPOINT [ "/usr/local/bin/_entrypoint.sh" ]
+CMD [ \
+    "python", "-m", "awslambdaric", "lambda_function.lambda_handler" \
+]
