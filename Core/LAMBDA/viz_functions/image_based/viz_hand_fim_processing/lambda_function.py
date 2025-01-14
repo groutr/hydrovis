@@ -604,10 +604,11 @@ def calculate_stage_values(hydrotable_key, subsetted_streams_bucket, subsetted_s
     df_zero_stage['note'] = "NaN Stage After Hydrotable Lookup"
     df_forecast = df_forecast[~df_forecast['stage_m'].isna()]
 
-    print(f"Removing {len(df_forecast[df_forecast['stage_m']==0])} reaches with a 0 interpolated stage")
-    df_zero_stage = pd.concat([df_zero_stage, df_forecast[df_forecast['stage_m']==0].copy()], axis=0)
-    df_zero_stage['note'] = np.where(df_zero_stage.note.isnull(), "0 Stage After Hydrotable Lookup", np.NaN)
-    df_forecast = df_forecast[df_forecast['stage_m']!=0]
+    stage0 = df_forecast['stage_m'] == 0
+    print(f"Removing {len(df_forecast[stage0])} reaches with a 0 interpolated stage")
+    df_zero_stage = pd.concat([df_zero_stage, df_forecast[stage0]], axis=0)
+    df_zero_stage['note'] = np.where(df_zero_stage.note.isnull(), "0 Stage After Hydrotable Lookup", "NaN")
+    df_forecast = df_forecast[~stage0]
 
     df_zero_stage.drop(columns=['discharge_cms', 'stage_m', 'rc_stage_m', 'rc_previous_stage_m', 'rc_previous_discharge_cms'], inplace=True)
     
