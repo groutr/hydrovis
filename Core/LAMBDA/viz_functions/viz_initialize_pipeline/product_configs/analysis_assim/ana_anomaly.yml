@@ -7,7 +7,7 @@ run_times:
         
 python_preprocessing:
   - file_format: common/data/model/com/nwm/{{variable:NWM_DATAFLOW_VERSION}}/nwm.{{datetime:%Y%m%d}}/analysis_assim/nwm.t{{datetime:%H}}z.analysis_assim.channel_rt.tm00.conus.nc
-    file_step: 1H
+    file_step: PT1H
     file_window: P7D
     product: anomaly
     lambda_ram: 10gb
@@ -16,7 +16,7 @@ python_preprocessing:
     target_table: ingest.ana_7day_anomaly
     target_keys: (feature_id)
   - file_format: common/data/model/com/nwm/{{variable:NWM_DATAFLOW_VERSION}}/nwm.{{datetime:%Y%m%d}}/analysis_assim/nwm.t{{datetime:%H}}z.analysis_assim.channel_rt.tm00.conus.nc
-    file_step: 1H
+    file_step: PT1H
     file_window: P14D
     product: anomaly
     lambda_ram: 10gb
