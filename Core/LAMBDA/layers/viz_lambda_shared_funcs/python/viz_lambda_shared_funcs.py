@@ -726,17 +726,17 @@ def get_formatted_files(file_pattern, token_dict, reference_date):
     return reference_date_files
 
 def generate_file_list(file_pattern, file_step, file_window, reference_time):
-    import pandas as pd
     import isodate
-    
-    file_list = [] 
+
+    file_list = []
     if 'common/data/model/com/nwm/prod' in file_pattern and (datetime.today() - timedelta(29)) > reference_time:
         file_pattern = file_pattern.replace('common/data/model/com/nwm/prod', 'https://storage.googleapis.com/national-water-model')
 
     if file_window:
         if not file_step:
-            file_step = None
-        reference_dates = pd.date_range(reference_time-isodate.parse_duration(file_window), reference_time, freq=file_step)
+            raise ValueError("file_window and file_step must be specified together")
+        start = reference_time - isodate.parse_duration(file_window)
+        reference_dates = date_range(start, reference_time, isodate.parse_duration(file_step))
     else:
         reference_dates = [reference_time]
 
@@ -767,3 +767,10 @@ def organize_input_files(fileset_bucket, fileset, download_subfolder):
         download_path = check_if_file_exists(fileset_bucket, file, download=True, download_subfolder=download_subfolder)
         local_files.append(download_path)
     return local_files
+
+
+def date_range(start, stop, step):
+    assert start < stop and start + step > start
+    while start + step <= stop:
+        yield start
+        start += step
