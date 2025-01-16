@@ -731,7 +731,7 @@ def generate_file_list(file_pattern, file_step, file_window, reference_time):
         if not file_step:
             raise ValueError("file_window and file_step must be specified together")
         start = reference_time - isodate.parse_duration(file_window)
-        reference_dates = date_range(start, reference_time, isodate.parse_duration(file_step))
+        reference_dates = list(date_range(start, reference_time, isodate.parse_duration(file_step)))
     else:
         reference_dates = [reference_time]
 
