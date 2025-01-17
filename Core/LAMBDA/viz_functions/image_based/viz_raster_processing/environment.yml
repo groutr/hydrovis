@@ -12,3 +12,4 @@ dependencies:
   - requests
   - boto3
   - xarray
+  - netCDF4
