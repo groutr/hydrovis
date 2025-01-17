@@ -51,32 +51,10 @@ def open_raster(bucket, file, variable):
         data = ds[variable]
     except:
         data = ds
-        
-        
-    
-    if "alaska" in file:
-        proj4 = "+proj=stere +lat_0=90 +lat_ts=60 +lon_0=-135 +x_0=0 +y_0=0 +R=6370000 +units=m +no_defs"
-    else:
-        try:
-            proj4 = data.proj4
-        except:
 
-    
-    if "alaska" in file:
-        proj4 = "+proj=stere +lat_0=90 +lat_ts=60 +lon_0=-135 +x_0=0 +y_0=0 +R=6370000 +units=m +no_defs"
-    else:
-        try:
-            proj4 = data.proj4
-        except:
-            proj4 = ds.proj4
-            proj4 = ds.proj4
-            
     proj4 = ds.proj4
-            
     crs = CRS.from_proj4(proj4)
-
     os.remove(download_path)
-    
     return data, crs
 
 def create_raster(data, crs, raster_name):
