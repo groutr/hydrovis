@@ -1,0 +1,14 @@
+name: raster_processing
+channels:
+  - conda-forge
+  - nodefaults
+dependencies:
+  - python=3.12
+  - awslambdaric
+  - fsspec
+  - rioxarray
+  - rasterio>=1.3,<1.4
+  - isodate
+  - requests
+  - boto3
+  - xarray
