@@ -35,7 +35,6 @@ COPY products/ ./products/
 COPY lambda_function.py \
     viz_classes.py \
     viz_lambda_shared_funcs.py \
-    serverless.yml \
     ./
 
 SHELL ["/usr/local/bin/_dockerfile_shell.sh"]
