@@ -1,4 +1,4 @@
-import boto3
+import fsspec
 import os
 import rioxarray as rxr
 from rasterio.crs import CRS
@@ -87,15 +87,12 @@ def create_raster(data, crs, raster_name):
 
 def upload_raster(local_raster, output_bucket, output_workspace):
     raster_name = os.path.basename(local_raster)
+    s3_raster_key = f"s3://{output_bucket}/{output_workspace}/tif/{raster_name}"
     
-    s3_raster_key = f"{output_workspace}/tif/{raster_name}"
-    
-    print(f"--> Uploading raster to s3://{output_bucket}/{s3_raster_key}")
-    s3 = boto3.client('s3')
-    
-    s3.upload_file(local_raster, output_bucket, s3_raster_key)
+    print(f"--> Uploading raster to {s3_raster_key}")
+    s3 = fsspec.filesystem('s3')
+    s3.put_file(local_raster, s3_raster_key)
     os.remove(local_raster)
-
     return s3_raster_key
 
 def sum_rasters(bucket, input_files, variable):
