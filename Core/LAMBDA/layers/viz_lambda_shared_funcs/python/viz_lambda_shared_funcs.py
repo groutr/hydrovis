@@ -661,7 +661,7 @@ def parse_range_token_value(reference_date_file, range_token, existing_list = []
 
 
 def get_file_tokens(file_pattern):
-    tokens = re.findall("{{(?P<key>[a-z])+:(?P<value>[^{])+}}", file_pattern)
+    tokens = re.findall("{{(?P<key>[a-z]+):(?P<value>[^{]+)}}", file_pattern)
     token_dict = {'datetime': [], 'range': [], 'variable': []}
     for (key, value) in tokens:
         token_dict[key].append(value)
