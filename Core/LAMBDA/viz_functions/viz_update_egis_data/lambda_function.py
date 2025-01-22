@@ -1,8 +1,23 @@
 import boto3
 import os
 from viz_classes import database
-from viz_lambda_shared_funcs import gen_dict_extract
 from datetime import datetime
+from itertools import chain
+
+
+def find_publish_tables(mapping):
+    if isinstance(mapping, dict):
+        for k, v in mapping.items():
+            if k == 'target_table':
+                if isinstance(v, str):
+                    yield [v]
+                else:
+                    yield v
+            else:
+                yield from find_publish_tables(v)
+    elif isinstance(mapping, list):
+        for item in mapping:
+            yield from find_publish_tables(item)
 
 ###################################
 def lambda_handler(event, context):
@@ -24,13 +39,8 @@ def lambda_handler(event, context):
     if "unstage" in step:
         if step == "unstage_db_tables":
             print(f"Unstaging tables for {event['args']['product']['product']}")
-            target_tables = list(gen_dict_extract("target_table", event['args']))
-            all_single_tables = [table for table in target_tables if type(table) is not list]
-            all_list_tables = [table for table in target_tables if type(table) is list]
-            all_list_tables = [table for table_list in all_list_tables for table in table_list]
-            
-            all_tables = all_single_tables + all_list_tables
-            publish_tables = [table for table in all_tables if table.startswith("publish")]
+            target_tables = chain.from_iterable(find_publish_tables(event['args']))
+            publish_tables = (x.startswith("publish") for x in target_tables)
             dest_tables = [f"services.{table.split('.')[1]}" for table in publish_tables]
 
             egis_db = database(db_type="egis")
