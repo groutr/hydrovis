@@ -1,4 +1,4 @@
-import boto3
+import fsspec
 import os
 from viz_classes import database
 from datetime import datetime
@@ -48,7 +48,7 @@ def lambda_handler(event, context):
         elif step == "unstage_rasters":
             ################### Move Rasters ###################
             print(f"Moving and caching rasters for {event['args']['product']['product']}")
-            s3 = boto3.resource('s3')
+            s3 = fsspec.filesystem('s3')
             s3_bucket = event['args']['raster_output_bucket']
             output_raster_workspace = list(event['args']['raster_output_workspace'].values())[0]
             
@@ -71,18 +71,18 @@ def lambda_handler(event, context):
 
             workspace_rasters = list_s3_files(s3_bucket, output_raster_workspace)
             for s3_key in workspace_rasters:
-                s3_object = {"Bucket": s3_bucket, "Key": s3_key}
+                s3_object = f"{s3_bucket}/{s3_key}"
                 s3_filename = os.path.basename(s3_key)
                 s3_extension = os.path.splitext(s3_filename)[1]
                 cache_key = f"{cache_path}/{s3_filename}"
-    
+
                 print(f"Caching {s3_key} at {cache_key}")
-                s3.meta.client.copy(s3_object, s3_bucket, cache_key)
+                s3.copy(s3_object, f"{s3_bucket}/{cache_key}")
 
                 if published_format == 'tif' and job_type == 'auto':
                     tif_published_key = f"{processing_prefix}/published/{s3_filename}"
                     print(f"Moving {s3_object} to published location at {tif_published_key}")
-                    s3.meta.client.copy(s3_object, s3_bucket, tif_published_key)
+                    s3.copy(s3_object, f"{s3_bucket}/{tif_published_key}")
                 elif published_format == 'mrf':
                     raster_name = s3_filename.replace(s3_extension, "")
                     mrf_workspace_prefix = s3_key.replace("/tif/", "/mrf/").replace(s3_extension, "")
@@ -94,15 +94,15 @@ def lambda_handler(event, context):
                         process_extensions = [s3_extension[1:]]
 
                     for extension in process_extensions:
-                        mrf_workspace_raster = {"Bucket": s3_bucket, "Key": f"{mrf_workspace_prefix}.{extension}"}
+                        mrf_workspace_raster = f"{s3_bucket}/{mrf_workspace_prefix}.{extension}"
                         mrf_published_raster = f"{published_prefix}.{extension}"
 
                         if job_type == 'auto':
                             print(f"Moving {mrf_workspace_prefix}.{extension} to published location at {mrf_published_raster}")
-                            s3.meta.client.copy(mrf_workspace_raster, s3_bucket, mrf_published_raster)
+                            s3.copy(mrf_workspace_raster, f"{s3_bucket}/{mrf_published_raster}")
                     
                         print("Deleting a mrf workspace raster")
-                        s3.Object(s3_bucket, f"{mrf_workspace_prefix}.{extension}").delete()
+                        s3.rm_file(mrf_workspace_raster)
         
         return True
     
@@ -228,18 +228,6 @@ def refresh_fdw_schema(db, local_schema, remote_server, remote_schema):
     
 ##################################
 def list_s3_files(bucket, prefix):
-    s3 = boto3.client('s3')
-    files = []
-    paginator = s3.get_paginator('list_objects_v2')
-    for result in paginator.paginate(Bucket=bucket, Prefix=prefix):
-        if not result['KeyCount']:
-            continue
-        
-        for key in result['Contents']:
-            # Skip folders
-            if not key['Key'].endswith('/'):
-                files.append(key['Key'])
-
-    if not files:
-        print(f"No files found at {bucket}/{prefix}")
-    return files
+    fs = fsspec.filesystem('s3')
+    files = fs.ls(f"{bucket}/{prefix}", detail=True)
+    return [f for f in files if f['type'] == 'file']
