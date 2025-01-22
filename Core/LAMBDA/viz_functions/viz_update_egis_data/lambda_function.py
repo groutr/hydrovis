@@ -5,7 +5,7 @@ from datetime import datetime
 from itertools import chain
 
 
-def find_publish_tables(mapping):
+def find_target_tables(mapping):
     if isinstance(mapping, dict):
         for k, v in mapping.items():
             if k == 'target_table':
@@ -14,10 +14,10 @@ def find_publish_tables(mapping):
                 else:
                     yield v
             else:
-                yield from find_publish_tables(v)
+                yield from find_target_tables(v)
     elif isinstance(mapping, list):
         for item in mapping:
-            yield from find_publish_tables(item)
+            yield from find_target_tables(item)
 
 ###################################
 def lambda_handler(event, context):
@@ -39,7 +39,7 @@ def lambda_handler(event, context):
     if "unstage" in step:
         if step == "unstage_db_tables":
             print(f"Unstaging tables for {event['args']['product']['product']}")
-            target_tables = chain.from_iterable(find_publish_tables(event['args']))
+            target_tables = chain.from_iterable(find_target_tables(event['args']))
             publish_tables = (x.startswith("publish") for x in target_tables)
             dest_tables = [f"services.{table.split('.')[1]}" for table in publish_tables]
 
