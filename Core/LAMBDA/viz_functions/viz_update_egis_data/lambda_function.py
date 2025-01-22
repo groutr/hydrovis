@@ -108,7 +108,7 @@ def lambda_handler(event, context):
     
     ################### Stage EGIS Tables ###################
     elif "summary_data" in step:
-        tables =  event['args']['postprocess_summary']['target_table']
+        tables = event['args']['postprocess_summary']['target_table']
     elif "fim_config_data" in step:
         if not event['args']['fim_config'].get('postprocess'):
             return
@@ -124,7 +124,7 @@ def lambda_handler(event, context):
         viz_schema = 'archive'
         
     # Get the table names without the schemas
-    tables = [table.split(".")[1] for table in tables if table.split(".")[0]==viz_schema]
+    tables = [tn[1] for table in tables if (tn := table.split("."))[0]==viz_schema]
     
     ## For Staging and Caching - Loop through all the tables relevant to the current step
     for table in tables:
