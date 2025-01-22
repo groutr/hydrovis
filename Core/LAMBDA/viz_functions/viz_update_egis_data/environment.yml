@@ -1,0 +1,10 @@
+name: update_egis_data
+channels:
+  - conda-forge
+  - nodefaults
+dependencies:
+  - python=3.12
+  - awslambdaric
+  - fsspec
+  - s3fs
+  - psycopg2
