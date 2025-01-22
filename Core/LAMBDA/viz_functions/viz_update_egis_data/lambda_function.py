@@ -41,7 +41,7 @@ def lambda_handler(event, context):
             print(f"Unstaging tables for {event['args']['product']['product']}")
             target_tables = chain.from_iterable(find_target_tables(event['args']))
             publish_tables = (x.startswith("publish") for x in target_tables)
-            dest_tables = [f"services.{table.split('.')[1]}" for table in publish_tables]
+            dest_tables = [table.replace("publish", "services", 1) for table in publish_tables]
 
             egis_db = database(db_type="egis")
             unstage_db_tables(egis_db, dest_tables)
