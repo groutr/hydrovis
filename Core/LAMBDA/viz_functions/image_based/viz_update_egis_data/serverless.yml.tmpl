@@ -14,3 +14,13 @@ functions:
     memorySize: 1024
     timeout: 900
     ephemeralStorageSize: 1024
+    environment:
+      EGIS_DB_DATABASE = var.egis_db_name
+      EGIS_DB_HOST     = var.egis_db_host
+      EGIS_DB_USERNAME = jsondecode(var.egis_db_user_secret_string)["username"]
+      EGIS_DB_PASSWORD = jsondecode(var.egis_db_user_secret_string)["password"]
+      VIZ_DB_DATABASE  = var.viz_db_name
+      VIZ_DB_HOST      = var.viz_db_host
+      VIZ_DB_USERNAME  = jsondecode(var.viz_db_user_secret_string)["username"]
+      VIZ_DB_PASSWORD  = jsondecode(var.viz_db_user_secret_string)["password"]
+      CACHE_BUCKET     = var.viz_cache_bucket
