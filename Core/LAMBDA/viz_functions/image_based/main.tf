@@ -527,12 +527,46 @@ module "schism-fim" {
   viz_db_user_secret_string   = var.viz_db_user_secret_string
 }
 
+
+############
+# upload_egis_data
+#############
+module "update-egis-data" {
+  source = "./viz_update_egis_data"
+  providers = {
+    aws = aws
+    aws.sns = aws.sns
+    aws.no_tags = aws.no_tags
+  }
+  environment = var.environment
+  account_id = var.account_id
+  region = var.region
+  ecr_repository_image_tag = var.ecr_repository_image_tag
+  codebuild_role = var.lambda_role
+  #security_groups = var.hand_fim_processing_sgs
+  #subnets = var.hand_fim_processing_subnets
+  deployment_bucket = var.deployment_bucket
+  profile_name = var.environment
+  viz_db_name = var.viz_db_name
+  viz_db_host = var.viz_db_host
+  viz_db_user_secret_string = var.viz_db_user_secret_string
+  egis_db_host = var.egis_db_host
+  egis_db_name = var.egis_db_name
+  egis_db_user_secret_string = var.egis_db_user_secret_string
+}
+
+####################### OUTPUTS ###################
+
 output "hand_fim_processing" {
   value = data.aws_lambda_function.viz_hand_fim_processing
 }
 
 output "schism_fim" {
   value = module.schism-fim
+}
+
+output "update_egis_data" {
+  value = module.update-egis-data
 }
 
 output "optimize_rasters" {
