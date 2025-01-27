@@ -96,7 +96,7 @@ data "archive_file" "viz_service_zip" {
 
   source {
     content  = file("${path.module}/../../../layers/viz_lambda_shared_funcs/python/viz_classes.py")
-    filename = "viz_classes.py"
+    filename = "./deploy/viz_classes.py"
   }
 
   source {
