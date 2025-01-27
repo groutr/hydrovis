@@ -24,10 +24,6 @@ variable "ecr_repository_image_tag" {
   default = "latest"
 }
 
-variable "codebuild_role" {
-  type = string
-}
-
 variable "security_groups" {
   type = list(string)
 }

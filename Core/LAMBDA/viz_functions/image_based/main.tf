@@ -87,6 +87,14 @@ variable "nwm_dataflow_version" {
   type = string
 }
 
+variable "viz_cache_bucket" {
+  type = string
+}
+
+variable "lambda_role" {
+  type = string
+}
+
 locals {
   viz_optimize_rasters_lambda_name = "hv-vpp-${var.environment}-viz-optimize-rasters"
   viz_hand_fim_processing_lambda_name = "hv-vpp-${var.environment}-viz-hand-fim-processing"
@@ -542,17 +550,18 @@ module "update-egis-data" {
   account_id = var.account_id
   region = var.region
   ecr_repository_image_tag = var.ecr_repository_image_tag
-  codebuild_role = var.lambda_role
-  #security_groups = var.hand_fim_processing_sgs
-  #subnets = var.hand_fim_processing_subnets
+  lambda_role = var.lambda_role
+  security_groups = var.hand_fim_processing_sgs
+  subnets = var.hand_fim_processing_subnets
   deployment_bucket = var.deployment_bucket
-  profile_name = var.environment
   viz_db_name = var.viz_db_name
   viz_db_host = var.viz_db_host
   viz_db_user_secret_string = var.viz_db_user_secret_string
   egis_db_host = var.egis_db_host
   egis_db_name = var.egis_db_name
   egis_db_user_secret_string = var.egis_db_user_secret_string
+  viz_cache_bucket = var.viz_cache_bucket
+  default_tags = var.default_tags
 }
 
 ####################### OUTPUTS ###################
