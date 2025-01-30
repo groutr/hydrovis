@@ -40,7 +40,7 @@ def lambda_handler(event, context):
         if step == "unstage_db_tables":
             print(f"Unstaging tables for {event['args']['product']['product']}")
             target_tables = chain.from_iterable(find_target_tables(event['args']))
-            publish_tables = (x.startswith("publish") for x in target_tables)
+            publish_tables = (x for x in target_tables if x.startswith("publish"))
             dest_tables = [table.replace("publish", "services", 1) for table in publish_tables]
 
             egis_db = database(db_type="egis")
