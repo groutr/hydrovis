@@ -232,7 +232,7 @@ class database: #TODO: Should we be creating a connection/engine upon initializa
         
         output_tables = set(re.findall(r'(?<=INTO\s)\w+\.\w+', sql, flags=re.IGNORECASE)) 
         input_tables = set(re.findall(r'(?<=FROM\s|JOIN\s)\w+\.\w+', sql, flags=re.IGNORECASE))
-        check_tables = [t for t in input_tables if t not in output_tables]
+        check_tables = input_tables - output_tables
 
         if not check_tables:
             return True
