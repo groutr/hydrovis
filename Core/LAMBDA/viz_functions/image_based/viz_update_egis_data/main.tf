@@ -2,83 +2,25 @@ terraform {
   required_providers {
     aws = {
       source  = "hashicorp/aws"
-      configuration_aliases = [ aws.sns, aws.no_tags]
+      version = "5.84.0"
     }
   }
 }
 
-variable "environment" {
-  type = string
-}
-
-variable "account_id" {
-  type = string
-}
-
-variable "region" {
-  type = string
-}
-
-variable "ecr_repository_image_tag" {
-  type = string
-  default = "latest"
-}
-
-variable "security_groups" {
-  type = list(string)
-}
-
-variable "subnets" {
-  type = list(string)
-}
-
-variable "deployment_bucket" {
-  type = string
-}
-
-variable "egis_db_name" {
-  type = string
-}
-
-variable "egis_db_host" {
-  type = string
-}
-
-variable "viz_db_name" {
-  type = string
-}
-
-variable "viz_db_host" {
-  type = string
-}
-
-variable "egis_db_user_secret_string" {
-  type = string
-}
-
-variable "viz_db_user_secret_string" {
-  type = string
-}
-
-variable "viz_cache_bucket" {
-  type = string
-}
-
-variable "lambda_role" {
-  type = string
-}
-
-variable "ecr_repository_image_tag" {
-  type = string
-}
-
-variable "default_tags" {
-  type = map(string)
+provider "aws" {
+  region                   = var.region
+  profile                  = var.environment
+  default_tags {
+    tags = merge(var.default_tags, {
+      CreatedBy = "Terraform"
+    })
+  }
 }
 
 locals {
   viz_service_name = "viz-update-egis-data"
   viz_lambda_name = "hv-vpp-${var.environment}-${local.viz_service_name}"
+  viz_service_path = "${split("Core/", abspath(path.module))[1]}"
 }
 
 
@@ -96,7 +38,7 @@ data "archive_file" "viz_service_zip" {
 
   source {
     content  = file("${path.module}/../../../layers/viz_lambda_shared_funcs/python/viz_classes.py")
-    filename = "./deploy/viz_classes.py"
+    filename = "viz_classes.py"
   }
 
   source {
@@ -106,33 +48,36 @@ data "archive_file" "viz_service_zip" {
 
   source {
     content = templatefile("${path.module}/serverless.yml.tmpl", {
-      SERVICE_NAME       = replace(local.viz_lambda_name, "_", "-")
-      LAMBDA_TAGS        = jsonencode(merge(var.default_tags, { Name = local.viz_lambda_name }))
-      DEPLOYMENT_BUCKET  = var.deployment_bucket
+      SERVICE_NAME = replace(local.viz_lambda_name, "_", "-")
+      LAMBDA_TAGS = jsonencode(merge(var.default_tags, { Name = local.viz_lambda_name }))
+      DEPLOYMENT_BUCKET = var.deployment_bucket
       AWS_DEFAULT_REGION = var.region
-      LAMBDA_NAME        = local.viz_lambda_name
-      AWS_ACCOUNT_ID     = var.account_id
-      IMAGE_REPO_NAME    = aws_ecr_repository.viz_image.name
-      IMAGE_TAG          = var.ecr_repository_image_tag
-      LAMBDA_ROLE_ARN    = var.lambda_role
+      LAMBDA_NAME = local.viz_lambda_name
+      AWS_ACCOUNT_ID = var.account_id
+      IMAGE_REPO_NAME = aws_ecr_repository.viz_image.name
+      IMAGE_TAG = var.ecr_repository_image_tag
+      LAMBDA_ROLE_ARN = var.lambda_role
       EGIS_DB_DATABASE = var.egis_db_name
-      EGIS_DB_HOST     = var.egis_db_host
+      EGIS_DB_HOST = var.egis_db_host
       EGIS_DB_USERNAME = jsondecode(var.egis_db_user_secret_string)["username"]
       EGIS_DB_PASSWORD = jsondecode(var.egis_db_user_secret_string)["password"]
-      VIZ_DB_DATABASE  = var.viz_db_name
-      VIZ_DB_HOST      = var.viz_db_host
-      VIZ_DB_USERNAME  = jsondecode(var.viz_db_user_secret_string)["username"]
-      VIZ_DB_PASSWORD  = jsondecode(var.viz_db_user_secret_string)["password"]
-      CACHE_BUCKET     = var.viz_cache_bucket
+      VIZ_DB_DATABASE = var.viz_db_name
+      VIZ_DB_HOST = var.viz_db_host
+      VIZ_DB_USERNAME = jsondecode(var.viz_db_user_secret_string)["username"]
+      VIZ_DB_PASSWORD = jsondecode(var.viz_db_user_secret_string)["password"]
+      CACHE_BUCKET = var.viz_cache_bucket
+      SECURITY_GROUP_1   = var.security_groups[0]
+      SUBNET_1           = var.subnets[0]
+      SUBNET_2           = var.subnets[1]
     })
     filename = "serverless.yml"
   }
 }
 
 resource "aws_s3_object" "viz_service_zip_upload" {
-  provider = aws.no_tags  
+  #provider = aws.no_tags  
   bucket      = var.deployment_bucket
-  key         = "terraform_artifacts/${path.module}/deploy.zip"
+  key         = "terraform_artifacts/${local.viz_service_path}/${var.environment}/deploy.zip"
   source      = data.archive_file.viz_service_zip.output_path
   source_hash = data.archive_file.viz_service_zip.output_md5
 }
@@ -195,9 +140,13 @@ resource "aws_codebuild_project" "viz_codebuild" {
 resource "null_resource" "viz_start_build" {
   triggers = {
     source_hash = data.archive_file.viz_service_zip.output_md5
+    source_location = aws_s3_object.viz_service_zip_upload.key
   }
 
-  depends_on = [ aws_s3_object.viz_zip_upload ]
+  #depends_on = [ 
+  #  aws_s3_object.viz_service_zip_upload,
+  #  aws_codebuild_project.viz_codebuild
+  # ]
 
   provisioner "local-exec" {
     command = "aws codebuild start-build --project-name ${aws_codebuild_project.viz_codebuild.name} --profile ${var.environment} --region ${var.region}"

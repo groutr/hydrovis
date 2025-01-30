@@ -1012,7 +1012,7 @@ output "fim_data_prep" {
 }
 
 output "update_egis_data" {
-  value = aws_lambda_function.viz_update_egis_data
+  value = module.image-based-lambdas.viz_update_egis_data
 }
 
 output "publish_service" {

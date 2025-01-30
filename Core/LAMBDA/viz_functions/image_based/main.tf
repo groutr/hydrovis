@@ -575,7 +575,7 @@ output "schism_fim" {
 }
 
 output "update_egis_data" {
-  value = module.update-egis-data
+  value = module.update-egis-data.update_egis_data
 }
 
 output "optimize_rasters" {
