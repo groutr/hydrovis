@@ -230,8 +230,8 @@ class database: #TODO: Should we be creating a connection/engine upon initializa
         for word, replacement in sql_replace.items():
             sql = re.sub(word, replacement, sql, flags=re.IGNORECASE).replace('utc', 'UTC')
         
-        output_tables = set(re.findall('(?<=INTO )\w+\.\w+', sql, flags=re.IGNORECASE)) 
-        input_tables = set(re.findall('(?<=FROM |JOIN )\w+\.\w+', sql, flags=re.IGNORECASE))
+        output_tables = set(re.findall(r'(?<=INTO\s)\w+\.\w+', sql, flags=re.IGNORECASE)) 
+        input_tables = set(re.findall(r'(?<=FROM\s|JOIN\s)\w+\.\w+', sql, flags=re.IGNORECASE))
         check_tables = [t for t in input_tables if t not in output_tables]
 
         if not check_tables:
