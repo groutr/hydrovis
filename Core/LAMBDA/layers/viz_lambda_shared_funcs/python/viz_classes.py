@@ -4,6 +4,7 @@ import json
 import re
 import urllib.parse
 import inspect
+import pathlib
 try:
     import fsspec
 except:
@@ -98,7 +99,7 @@ class database: #TODO: Should we be creating a connection/engine upon initializa
     ###################################
     def execute_sql(self, sql):
         if sql.endswith('.sql') and os.path.exists(sql):
-            sql = open(sql, 'r').read()
+            sql = pathlib.Path(sql).read_text()
         with self.connection:
             try:
                 with self.connection.cursor() as cur:
@@ -111,7 +112,7 @@ class database: #TODO: Should we be creating a connection/engine upon initializa
     ###################################                
     def sql_to_dataframe(self, sql, return_geodataframe=False):
         if sql.endswith(".sql"):
-            sql = open(sql, 'r').read()
+            sql = pathlib.Path(sql).read_text()
             
         db_engine = self.engine
         if not return_geodataframe:
@@ -223,7 +224,7 @@ class database: #TODO: Should we be creating a connection/engine upon initializa
         issues_encountered = []
         # Determine if arg is file or raw SQL string
         if os.path.exists(sql_path_or_str):
-            sql = open(sql_path_or_str, 'r').read()
+            sql = pathlib.Path(sql_path_or_str).read_text()
         else:
             sql = sql_path_or_str
         
