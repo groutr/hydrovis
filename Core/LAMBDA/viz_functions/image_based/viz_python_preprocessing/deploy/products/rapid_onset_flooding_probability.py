@@ -5,9 +5,6 @@ import pandas as pd
 import numpy as np
 import xarray as xr
 import re
-import os
-import boto3
-import tempfile
 from datetime import datetime, timedelta
 from itertools import cycle, islice
 
@@ -38,12 +35,8 @@ def run_rapid_onset_flooding_probability(reference_time, fileset_bucket, fileset
         df_rofp = mrf_rapid_onset_probability(reference_time, input_files, percent_change_threshold, high_water_hour_threshold, stream_reaches_at_or_below)
 
     df_rofp['nwm_vers'] = nwm_vers
-    s3 = boto3.client('s3')
-    tempdir = tempfile.mkdtemp()
-    tmp_ouput_path = os.path.join(tempdir, f"temp_output.csv")
-    df_rofp.to_csv(tmp_ouput_path, index=False)
-    s3.upload_file(tmp_ouput_path, output_file_bucket, output_file)
-    os.remove(tmp_ouput_path)
+    s3_file = f"s3://{output_file_bucket}/{output_file}"
+    df_rofp.to_csv(s3_file, index=False)
 
 def srf_rapid_onset_probability(reference_time, a_input_files, percent_change_threshold=100, high_water_hour_threshold=6,
                                 stream_reaches_at_or_below=4):

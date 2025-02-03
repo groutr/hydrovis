@@ -5,8 +5,6 @@ import xarray
 import numpy as np
 import pandas as pd
 import re
-import boto3
-import tempfile
 from viz_lambda_shared_funcs import get_db_values, organize_input_files
 
 def run_high_water_probability(reference_time, fileset_bucket, fileset, output_file_bucket, output_file):
@@ -64,13 +62,10 @@ def run_high_water_probability(reference_time, fileset_bucket, fileset, output_f
     df_probabilities = df_probabilities.reset_index()
 
     print("Uploading output CSV file to S3")
-    s3 = boto3.client('s3')
-    tempdir = tempfile.mkdtemp()
-    tmp_ouput_path = os.path.join(tempdir, f"temp_output.csv")
-    df_probabilities.to_csv(tmp_ouput_path, index=False)
-    s3.upload_file(tmp_ouput_path, output_file_bucket, output_file)
-    print(f"--- Uploaded to {output_file_bucket}:{output_file}")
-    os.remove(tmp_ouput_path)
+    s3_file = f"s3://{output_file_bucket}/{output_file}"
+    df_probabilities.to_csv(s3_file, index=False)
+    print("--- Uploaded to", s3_file)
+
 
 def srf_high_water_probability(reference_time, lead_times, discard_threshold, nwm_fpaths, df_high_water_threshold):
     """

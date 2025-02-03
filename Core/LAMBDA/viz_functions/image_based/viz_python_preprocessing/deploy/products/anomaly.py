@@ -1,8 +1,6 @@
 import numpy as np
 import pandas as pd
 import xarray as xr
-import tempfile
-import boto3
 import os
 from viz_lambda_shared_funcs import check_if_file_exists
 
@@ -132,11 +130,7 @@ def run_anomaly(reference_time, fileset_bucket, fileset, output_file_bucket, out
     df['nwm_vers'] = nwm_vers
 
     print("Uploading output CSV file to S3")
-    s3 = boto3.client('s3')
-    tempdir = tempfile.mkdtemp()
-    tmp_ouput_path = os.path.join(tempdir, f"temp_output.csv")
+    s3_file = f"s3://{output_file_bucket}/{output_file}"
     df = df.reset_index()
-    df.to_csv(tmp_ouput_path, index=False)
-    s3.upload_file(tmp_ouput_path, output_file_bucket, output_file)
-    print(f"--- Uploaded to {output_file_bucket}:{output_file}")
-    os.remove(tmp_ouput_path)
+    df.to_csv(s3_file, index=False)
+    print("--- Uploaded to", s3_file)

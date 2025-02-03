@@ -2,7 +2,7 @@ import os
 import xarray
 import pandas as pd
 import numpy as np
-import boto3
+import fsspec
 import tempfile
 
 from viz_lambda_shared_funcs import check_if_file_exists
@@ -108,7 +108,7 @@ def write_netcdf(max_result, output_file_bucket, output_file):
             peak_flows (numpy array): Numpy array that contains all the max flows for each feature for the forecast
             output_netcdf (str or list): Key (path) of the max flows netcdf that will be store in S3
     """
-    s3 = boto3.client('s3')
+    s3 = fsspec.filesystem('s3')
     tempdir = tempfile.mkdtemp()
     tmp_netcdf = os.path.join(tempdir, 'max_vals.nc')
 
@@ -130,5 +130,5 @@ def write_netcdf(max_result, output_file_bucket, output_file):
     df.to_xarray().to_netcdf(tmp_netcdf)
 
     # Upload the local max vals file to the S3 bucket
-    s3.upload_file(tmp_netcdf, output_file_bucket, output_file)
+    s3.put_file(tmp_netcdf, f"{output_file_bucket}/{output_file}")
     os.remove(tmp_netcdf)

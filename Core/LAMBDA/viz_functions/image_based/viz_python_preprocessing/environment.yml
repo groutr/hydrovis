@@ -1,0 +1,13 @@
+name: python_preprocessing
+channels:
+  - conda-forge
+  - nodefaults
+dependencies:
+  - python=3.12
+  - awslambdaric
+  - fsspec
+  - s3fs
+  - psycopg2
+  - numpy
+  - pandas
+  - xarray
