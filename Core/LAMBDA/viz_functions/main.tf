@@ -981,6 +981,7 @@ module "image-based-lambdas" {
   egis_db_user_secret_string  = var.egis_db_user_secret_string
   default_tags                = var.default_tags
   nwm_dataflow_version        = var.nwm_dataflow_version
+  viz_authoritative_bucket = var.viz_authoritative_bucket
 }
 
 ########################################################################################################################################
@@ -992,6 +993,10 @@ output "python_preprocessing_3GB" {
 
 output "python_preprocessing_10GB" {
   value = aws_lambda_function.viz_python_preprocessing_10GB
+}
+
+output "python_preprocessing" {
+  value = module.image-based-lambdas.python_preprocessing
 }
 
 output "initialize_pipeline" {

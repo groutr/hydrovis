@@ -38,9 +38,13 @@ data "archive_file" "viz_service_zip" {
 
   source {
     content  = file("${path.module}/../../../layers/viz_lambda_shared_funcs/python/viz_lambda_shared_funcs.py")
-    filename = "viz_lambda_shared_funcs.py"
+    filename = "code/viz_lambda_shared_funcs.py"
   }
 
+  source {
+    content  = file("${path.module}/../../../layers/viz_lambda_shared_funcs/python/viz_classes.py")
+    filename = "code/viz_classes.py"
+  }
   source {
     content = file("${path.module}/buildspec.yml")
     filename = "buildspec.yml"
@@ -61,7 +65,7 @@ data "archive_file" "viz_service_zip" {
       VIZ_DB_HOST = var.viz_db_host
       VIZ_DB_USERNAME = jsondecode(var.viz_db_user_secret_string)["username"]
       VIZ_DB_PASSWORD = jsondecode(var.viz_db_user_secret_string)["password"]
-      CACHE_BUCKET = var.viz_cache_bucket
+      AUTH_DATA_BUCKET = var.viz_authoritative_bucket
       SECURITY_GROUP_1   = var.security_groups[0]
       SUBNET_1           = var.subnets[0]
       SUBNET_2           = var.subnets[1]
@@ -155,7 +159,7 @@ resource "time_sleep" "wait_for_viz_build_finish" {
   }
   depends_on = [null_resource.viz_start_build]
 
-  create_duration = "120s"
+  create_duration = "180s"
 }
 
 data "aws_lambda_function" "viz_lambda_function" {

@@ -39,7 +39,7 @@ variable "viz_db_user_secret_string" {
   type = string
 }
 
-variable "viz_cache_bucket" {
+variable "viz_authoritative_bucket" {
   type = string
 }
 
