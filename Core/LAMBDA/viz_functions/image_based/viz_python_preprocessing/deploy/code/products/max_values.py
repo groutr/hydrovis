@@ -1,5 +1,5 @@
 import os
-import xarray
+import xarray as xr
 import pandas as pd
 import numpy as np
 import fsspec
@@ -7,7 +7,6 @@ import tempfile
 
 from viz_lambda_shared_funcs import check_if_file_exists
 
-CACHE_DAYS = os.environ['CACHE_DAYS']
 MAX_PROPS = {
     'channel_rt': {
         'max_variable': 'streamflow',
@@ -59,18 +58,17 @@ def aggregate_max(fileset_bucket, fileset, max_props):
     """
     max_var = max_props['max_variable']
     id_var = max_props['id']
-    identifiers = None
-    max_vals = None
     extras = None
+    max_vals = None
+    identifiers = None
 
-    for file in fileset:
-        print(f"--> Downloading {file}")
-        download_path = check_if_file_exists(fileset_bucket, file, download=True)
-        
-        with xarray.open_dataset(download_path) as ds:
-            temp_vals = ds[max_var].values.flatten()  # imports the values from each file
-            if max_vals is None:
-                max_vals = temp_vals
+    for u in fileset:
+        uri = check_if_file_exists(fileset_bucket, u, download=False)
+        if not uri.startswith('http'):
+            uri = f"s3://{fileset_bucket}/{u}"   
+        with xr.open_dataset(uri, engine='h5netcdf', decode_coords=False) as ds:
+            temp_vals = ds[max_var].values  # imports the values from each file
+
             if identifiers is None:
                 identifiers = ds[id_var].values
             if extras is None and max_props['extras']:
@@ -86,15 +84,17 @@ def aggregate_max(fileset_bucket, fileset, max_props):
                             'varname': extra,
                             'array': ds.attrs[extra]
                         })
-        os.remove(download_path)
-
-        # compares the values in each file with those stored in the max_vals array, and keeps the
-        # maximum value for each entity
-        max_vals = np.maximum(max_vals, temp_vals)
+            if max_vals is None:
+                max_vals = np.zeros((2, temp_vals.size))
+                max_vals[0] = temp_vals
+                continue
+            else:
+                max_vals[1] = temp_vals
+                np.nanmax(max_vals, axis=0, out=max_vals[0])
 
     return {
         "identifiers": {"varname": id_var, "array": identifiers},
-        "max_values": {"varname": max_var, "array": max_vals},
+        "max_values": {"varname": max_var, "array": max_vals[0]},
         "extras": extras
     }
 
