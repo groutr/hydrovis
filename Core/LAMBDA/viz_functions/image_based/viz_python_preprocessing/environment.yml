@@ -11,3 +11,11 @@ dependencies:
   - numpy
   - pandas
   - xarray
+  - netcdf4
+  - h5netcdf
+  - dask-core
+  - requests
+  - boto3
+  - botocore
+  - sqlalchemy
+  - isodate
