@@ -138,15 +138,24 @@ def run_anomaly(reference_time, fileset_bucket, fileset, output_file_bucket, out
     df = df.join(df_perc)
 
     print("---->Creating percentile dictionary...")
+    labels = {
+        0: "Low (<= 5th)",
+        1: "Much Below Normal (6th - 10th)",
+        2: "Below Normal (11th - 25th))",
+        3: "Normal (26th - 75th)",
+        4: "Above Normal (76th - 90th)",
+        5: "Much Above Normal (91st - 95th)",
+        6: "High (> 95th)"
+    }
     df[anom_col] = np.nan
-    df.loc[(df[average_flow_col] >= df['prcntle_95']) & df[anom_col].isna(), anom_col] = "High (> 95th)"
-    df.loc[(df[average_flow_col] >= df['prcntle_90']) & df[anom_col].isna(), anom_col] = "Much Above Normal (91st - 95th)"  # noqa: E501
-    df.loc[(df[average_flow_col] >= df['prcntle_75']) & df[anom_col].isna(), anom_col] = "Above Normal (76th - 90th)"
-    df.loc[(df[average_flow_col] >= df['prcntle_25']) & df[anom_col].isna(), anom_col] = "Normal (26th - 75th)"
-    df.loc[(df[average_flow_col] >= df['prcntle_10']) & df[anom_col].isna(), anom_col] = "Below Normal (11th - 25th))"
-    df.loc[(df[average_flow_col] >= df['prcntle_5']) & df[anom_col].isna(), anom_col] = "Much Below Normal (6th - 10th)"
-    df.loc[(df[average_flow_col] < df['prcntle_5']) & df[anom_col].isna(), anom_col] = "Low (<= 5th)"
-    df.loc[df[anom_col].isna(), anom_col] = "Insufficient Data Available"
+    df.loc[(df[average_flow_col] >= df['prcntle_95']) & df[anom_col].isna(), anom_col] = 6
+    df.loc[(df[average_flow_col] >= df['prcntle_90']) & df[anom_col].isna(), anom_col] = 5 # noqa: E501
+    df.loc[(df[average_flow_col] >= df['prcntle_75']) & df[anom_col].isna(), anom_col] = 4
+    df.loc[(df[average_flow_col] >= df['prcntle_25']) & df[anom_col].isna(), anom_col] = 3
+    df.loc[(df[average_flow_col] >= df['prcntle_10']) & df[anom_col].isna(), anom_col] = 2
+    df.loc[(df[average_flow_col] >= df['prcntle_5']) & df[anom_col].isna(), anom_col] = 1
+    df.loc[(df[average_flow_col] < df['prcntle_5']) & df[anom_col].isna(), anom_col] = 0
+    df[anom_col] = df[anom_col].map(labels)
     df = df.replace(round(INSUFFICIENT_DATA_ERROR_CODE * 35.3147, 2), None)
     df['nwm_vers'] = nwm_vers
 
