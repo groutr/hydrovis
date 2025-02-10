@@ -1,6 +1,7 @@
 import numpy as np
 import pandas as pd
 import xarray as xr
+import fsspec
 import os
 from viz_lambda_shared_funcs import check_if_file_exists
 
@@ -18,30 +19,50 @@ PERCENTILE_14_TABLE_75TH = "viz_authoritative_data/derived_data/nwm_v21_14_day_a
 PERCENTILE_14_TABLE_90TH = "viz_authoritative_data/derived_data/nwm_v21_14_day_average_percentiles/final_14day_all_90th_perc.nc"
 PERCENTILE_14_TABLE_95TH = "viz_authoritative_data/derived_data/nwm_v21_14_day_average_percentiles/final_14day_all_95th_perc.nc"
 
+PVALS = (5, 10, 25, 75, 90, 95)
+SEVEN_DAY_P = (PERCENTILE_TABLE_5TH,
+               PERCENTILE_TABLE_10TH,
+               PERCENTILE_TABLE_25TH,
+               PERCENTILE_TABLE_75TH,
+               PERCENTILE_TABLE_90TH,
+               PERCENTILE_TABLE_95TH)
+
+FOURTEEN_DAY_P = (PERCENTILE_14_TABLE_5TH,
+               PERCENTILE_14_TABLE_10TH,
+               PERCENTILE_14_TABLE_25TH,
+               PERCENTILE_14_TABLE_75TH,
+               PERCENTILE_14_TABLE_90TH,
+               PERCENTILE_14_TABLE_95TH)
+
+def s3ify(uri, bucket=None):
+    if uri.startswith('http'):
+        return uri
+    if bucket is None:
+        raise ValueError("Bucket required for non http")
+    return f"s3://{bucket}/{uri}"
+
 def run_anomaly(reference_time, fileset_bucket, fileset, output_file_bucket, output_file, auth_data_bucket, anomaly_config=7):
     average_flow_col = f'average_flow_{anomaly_config}day'
     anom_col = f'anom_cat_{anomaly_config}day'
-    
-    ##### Data Prep #####
+    date = int(reference_time.strftime("%j")) - 1  # retrieves the date in integer form from reference_time
+
+    s3 = fsspec.filesystem('s3')
+    ##### Data Prep ####
     if anomaly_config == 7:
-        download_subfolder = "7_day"
-        percentile_5 = check_if_file_exists(auth_data_bucket, PERCENTILE_TABLE_5TH, download=True, download_subfolder=download_subfolder)
-        percentile_10 = check_if_file_exists(auth_data_bucket, PERCENTILE_TABLE_10TH, download=True, download_subfolder=download_subfolder)
-        percentile_25 = check_if_file_exists(auth_data_bucket, PERCENTILE_TABLE_25TH, download=True, download_subfolder=download_subfolder)
-        percentile_75 = check_if_file_exists(auth_data_bucket, PERCENTILE_TABLE_75TH, download=True, download_subfolder=download_subfolder)
-        percentile_90 = check_if_file_exists(auth_data_bucket, PERCENTILE_TABLE_90TH, download=True, download_subfolder=download_subfolder)
-        percentile_95 = check_if_file_exists(auth_data_bucket, PERCENTILE_TABLE_95TH, download=True, download_subfolder=download_subfolder)
+        percentile_files = SEVEN_DAY_P
     elif anomaly_config == 14:
-        download_subfolder = "14_day"
-        percentile_5 = check_if_file_exists(auth_data_bucket, PERCENTILE_14_TABLE_5TH, download=True, download_subfolder=download_subfolder)
-        percentile_10 = check_if_file_exists(auth_data_bucket, PERCENTILE_14_TABLE_10TH, download=True, download_subfolder=download_subfolder)
-        percentile_25 = check_if_file_exists(auth_data_bucket, PERCENTILE_14_TABLE_25TH, download=True, download_subfolder=download_subfolder)
-        percentile_75 = check_if_file_exists(auth_data_bucket, PERCENTILE_14_TABLE_75TH, download=True, download_subfolder=download_subfolder)
-        percentile_90 = check_if_file_exists(auth_data_bucket, PERCENTILE_14_TABLE_90TH, download=True, download_subfolder=download_subfolder)
-        percentile_95 = check_if_file_exists(auth_data_bucket, PERCENTILE_14_TABLE_95TH, download=True, download_subfolder=download_subfolder)
+        percentile_files = FOURTEEN_DAY_P
     else:
         raise Exception("Anomaly config must be 7 or 14 for the appropriate percentile files")
     
+    percentiles = {}
+    for v, p in zip(PVALS, percentile_files):
+        path = f"s3://{auth_data_bucket}/{p}"
+        with xr.open_dataset(s3.open(path), engine='h5netcdf', chunks={}) as ds:
+            p_col = ds.streamflow.sel(time=date)
+            p_col = (p_col* 35.3147).round(2)  # convert streamflow from cms to cfs
+            percentiles[f"prcntle_{v}"] = p_col.to_pandas()
+
     #Get NWM version from first file
     first_file_path = check_if_file_exists(fileset_bucket, fileset[0], download=True, download_subfolder=reference_time.strftime('%Y%m%d'))
     with xr.open_dataset(first_file_path) as first_file:
