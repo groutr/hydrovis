@@ -63,7 +63,7 @@ def srf_rapid_onset_probability(reference_time, a_input_files, percent_change_th
     df_high_water_threshold = df_high_water_threshold.sort_index()
 
     df_streamorder = get_db_values("derived.channels_conus", ["feature_id", "strm_order"])
-    df_streamorder = df_streamorder.set_index("feature_id")
+    df_streamorder = df_streamorder.set_index("feature_id").sort_index()
 
     df_main = df_streamorder.join(df_high_water_threshold)
 
@@ -253,7 +253,7 @@ def mrf_rapid_onset_probability(reference_time, a_input_files, percent_change_th
     df_high_water_threshold = df_high_water_threshold.sort_index()
 
     df_streamorder = get_db_values("derived.channels_conus", ["feature_id", "strm_order"])
-    df_streamorder = df_streamorder.set_index("feature_id")
+    df_streamorder = df_streamorder.set_index("feature_id").sort_index()
 
     df_main = df_streamorder.join(df_high_water_threshold)
 
