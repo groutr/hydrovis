@@ -419,9 +419,9 @@ def mrf_rapid_onset_probability(reference_time, a_input_files, percent_change_th
     day4_ensembles = [f"day4_rof_{ensemble}" for ensemble in ensembles_used]
     day5_ensembles = [f"day5_rof_{ensemble}" for ensemble in ensembles_used]
     days45_ensembles = day4_ensembles + day5_ensembles
-    all_enembles_used = day1_ensembles + day2_ensembles + day3_ensembles + day4_ensembles + day5_ensembles
+    all_ensembles_used = day1_ensembles + day2_ensembles + day3_ensembles + day4_ensembles + day5_ensembles
 
-    df_all['rapid_onset_prob_all'] = ((df_all[all_enembles_used].count(axis=1) / len(all_enembles_used)) * 100).astype(int)
+    df_all['rapid_onset_prob_all'] = ((df_all[all_ensembles_used].count(axis=1) / len(all_ensembles_used)) * 100).astype(int)
     df_all['rapid_onset_prob_day1'] = ((df_all[day1_ensembles].count(axis=1) / len(ensembles_used)) * 100).astype(int)  # noqa: E501
     df_all['rapid_onset_prob_day2'] = ((df_all[day2_ensembles].count(axis=1) / len(ensembles_used)) * 100).astype(int)  # noqa: E501
     df_all['rapid_onset_prob_day3'] = ((df_all[day3_ensembles].count(axis=1) / len(ensembles_used)) * 100).astype(int)  # noqa: E501
