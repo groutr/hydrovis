@@ -71,24 +71,22 @@ def run_anomaly(reference_time, fileset_bucket, fileset, output_file_bucket, out
     
     # Loop through filepaths, download file, and import data into pandas - we have to delete files as we go on anomaly, or else the lambda storage will fill up.
     print("-->Looping through files to get streamflow sum")
-    df = pd.DataFrame()
+    streamflow_sum = None
     for file in fileset:
-        download_path = check_if_file_exists(fileset_bucket, file, download=True, download_subfolder=reference_time.strftime('%Y%m%d'))
-        
-        with xr.open_dataset(download_path) as ds_file:
-            df_file = ds_file['streamflow'].to_dataframe()
-            df_file['streamflow']  = df_file['streamflow'] * 35.3147  # convert streamflow from cms to cfs
+        download_path = check_file_source(fileset_bucket, file)
+        if download_path is None:
+            raise FileNotFoundError(file)
     
-            if df.empty:
-                df = df_file
-                df = df.rename(columns={"streamflow": "streamflow_sum"})
+        with xr.open_dataset(download_path, engine='h5netcdf', chunks={}) as ds_file:
+            streamflow = ds_file['streamflow'] * 35.3147  # convert streamflow from cms to cfs
+              
+            if streamflow_sum is None:
+                streamflow_sum = streamflow
             else:
-                df['streamflow_sum'] += df_file['streamflow']
-        os.remove(download_path)
+                streamflow_sum += streamflow
 
-    df[average_flow_col] = df['streamflow_sum'] / len(fileset)
-    df = df.drop(columns=['streamflow_sum'])
-    df[average_flow_col] = df[average_flow_col].round(2)
+    avg_flow = streamflow_sum / len(fileset)
+    df = avg_flow.round(2).to_dataframe(average_flow_col)
 
     print("---->Creating percentile dictionary...")
     labels = {
