@@ -3,7 +3,7 @@ import pandas as pd
 import xarray as xr
 import fsspec
 import os
-from viz_lambda_shared_funcs import check_if_file_exists
+from viz_lambda_shared_funcs import check_file_source
 
 INSUFFICIENT_DATA_ERROR_CODE = -9998
 PERCENTILE_TABLE_5TH = "viz_authoritative_data/derived_data/nwm_v21_7_day_average_percentiles/final_7day_all_5th_perc.nc"
@@ -34,12 +34,6 @@ FOURTEEN_DAY_P = (PERCENTILE_14_TABLE_5TH,
                PERCENTILE_14_TABLE_90TH,
                PERCENTILE_14_TABLE_95TH)
 
-def s3ify(uri, bucket=None):
-    if uri.startswith('http'):
-        return uri
-    if bucket is None:
-        raise ValueError("Bucket required for non http")
-    return f"s3://{bucket}/{uri}"
 
 def run_anomaly(reference_time, fileset_bucket, fileset, output_file_bucket, output_file, auth_data_bucket, anomaly_config=7):
     average_flow_col = f'average_flow_{anomaly_config}day'
