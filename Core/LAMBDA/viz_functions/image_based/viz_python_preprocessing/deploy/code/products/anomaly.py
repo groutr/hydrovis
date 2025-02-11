@@ -2,7 +2,6 @@ import numpy as np
 import pandas as pd
 import xarray as xr
 import fsspec
-import os
 from viz_lambda_shared_funcs import check_file_source
 
 INSUFFICIENT_DATA_ERROR_CODE = -9998
@@ -56,6 +55,7 @@ def run_anomaly(reference_time, fileset_bucket, fileset, output_file_bucket, out
             p_col = ds.streamflow.sel(time=date)
             p_col = (p_col* 35.3147).round(2)  # convert streamflow from cms to cfs
             percentiles[f"prcntle_{v}"] = p_col.to_pandas()
+    percentiles = pd.DataFrame(percentiles).sort_index()
     
     # Loop through filepaths, download file, and import data into pandas - we have to delete files as we go on anomaly, or else the lambda storage will fill up.
     print("-->Looping through files to get streamflow sum")
@@ -77,6 +77,9 @@ def run_anomaly(reference_time, fileset_bucket, fileset, output_file_bucket, out
 
     avg_flow = streamflow_sum / len(fileset)
     df = avg_flow.round(2).to_dataframe(average_flow_col)
+    df = df.sort_index()
+    df = df.join(percentiles, how='left')
+    del percentiles
 
     print("---->Creating percentile dictionary...")
     labels = {
