@@ -54,8 +54,6 @@ def srf_rapid_onset_probability(reference_time, a_input_files, percent_change_th
             conditions to be considered rapid onset.
         stream_reaches_at_or_below (int): The stream order threshold by which to consider reaches.
     """
-    reference_time = reference_time  # datetime.strptime(reference_time, '%Y-%m-%dT%H:%M:%SZ')
-    hours_in_day = list(range(0, 24))
     files = {}
 
     df_high_water_threshold = get_db_values("derived.recurrence_flows_conus", ["feature_id", "high_water_threshold"])
@@ -69,11 +67,6 @@ def srf_rapid_onset_probability(reference_time, a_input_files, percent_change_th
 
     # Setup a dictionary of empty dataframes for each of the 7 ensemble members
     print("Organizing input files / ensemble members.")
-    # We're including the full 18 hour set for the ensemble members that have it, see vlab ticket for explantion.
-    ensemble_hours = list(islice(cycle(hours_in_day), reference_time.hour+1, reference_time.hour+1+18))
-    # This is a little complicated, but essentially slices a rolling list of hours in the day to get the
-    # correct ensemble members.
-    ensemble_members = list(islice(cycle(hours_in_day), (reference_time.hour+24)-6, (reference_time.hour+24)-6+7))
 
     # Loop through the input files and parse out the important dates in order to organize our data processing.
     for file in a_input_files:
@@ -245,7 +238,6 @@ def mrf_rapid_onset_probability(reference_time, a_input_files, percent_change_th
             conditions to be considered rapid onset.
         stream_reaches_at_or_below (int): The stream order threshold by which to consider reaches.
     """
-    reference_time = reference_time  # datetime.strptime(reference_time, '%Y-%m-%dT%H:%M:%SZ')
     files = {}
 
     df_high_water_threshold = get_db_values("derived.recurrence_flows_conus", ["feature_id", "high_water_threshold"])
