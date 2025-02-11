@@ -55,7 +55,6 @@ def srf_rapid_onset_probability(reference_time, a_input_files, percent_change_th
     reference_time = reference_time  # datetime.strptime(reference_time, '%Y-%m-%dT%H:%M:%SZ')
     hours_in_day = list(range(0, 24))
     files = {}
-    dataframes = {}
 
     df_high_water_threshold = get_db_values("derived.recurrence_flows_conus", ["feature_id", "high_water_threshold"])
     df_high_water_threshold = df_high_water_threshold.set_index("feature_id")
@@ -73,8 +72,6 @@ def srf_rapid_onset_probability(reference_time, a_input_files, percent_change_th
     # This is a little complicated, but essentially slices a rolling list of hours in the day to get the
     # correct ensemble members.
     ensemble_members = list(islice(cycle(hours_in_day), (reference_time.hour+24)-6, (reference_time.hour+24)-6+7))
-    for mem in ensemble_members:
-        dataframes[mem] = pd.DataFrame()
 
     # Loop through the input files and parse out the important dates in order to organize our data processing.
     for file in a_input_files:
@@ -248,7 +245,6 @@ def mrf_rapid_onset_probability(reference_time, a_input_files, percent_change_th
     """
     reference_time = reference_time  # datetime.strptime(reference_time, '%Y-%m-%dT%H:%M:%SZ')
     files = {}
-    dataframes = {}
 
     df_high_water_threshold = get_db_values("derived.recurrence_flows_conus", ["feature_id", "high_water_threshold"])
     df_high_water_threshold = df_high_water_threshold.set_index("feature_id")
@@ -271,8 +267,6 @@ def mrf_rapid_onset_probability(reference_time, a_input_files, percent_change_th
                 ensemble_members.append(member)
             
     forecast_times = [reference_time + timedelta(hours=x) for x in range(3, 120, 3)]  # "Double check this!!!!
-    for mem in ensemble_members:
-        dataframes[mem] = pd.DataFrame()
 
     # Loop through the input files and parse out the important dates in order to organize our data processing.
     for file in a_input_files:
