@@ -76,7 +76,7 @@ def srf_rapid_onset_probability(reference_time, a_input_files, percent_change_th
         model_initialization_day = matches['day']
         model_initialization_date = f"{model_initialization_year}{model_initialization_month}{model_initialization_day}"
         model_initialization_hour = int(matches['refhour'])
-        model_initialization_time = datetime.datetime(int(model_initialization_year), int(model_initialization_month), int(model_initialization_day), int(model_initialization_hour))
+        model_initialization_time = datetime(int(model_initialization_year), int(model_initialization_month), int(model_initialization_day), int(model_initialization_hour))
         model_output_delta_hour = int(matches['fcst'])
 
         # Analysis metrics refer the UTC hour we are aligning between ensemble members
@@ -270,7 +270,7 @@ def mrf_rapid_onset_probability(reference_time, a_input_files, percent_change_th
         ref_hour = int(matches['refhour'])
         ensemble_member = int(matches['ensemble'])
         forecast_file = int(matches['fcst'])
-        file_ref_time = datetime.datetime(year, month, day, ref_hour)
+        file_ref_time = datetime(year, month, day, ref_hour)
 
         # Analysis metrics refer the UTC hour we are aligning between ensemble members
         # This isn't all really necessary, but I'm leaving it in here because it can be a really helpful
