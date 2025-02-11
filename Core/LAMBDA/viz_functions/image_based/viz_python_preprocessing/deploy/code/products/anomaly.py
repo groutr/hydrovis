@@ -62,16 +62,11 @@ def run_anomaly(reference_time, fileset_bucket, fileset, output_file_bucket, out
             p_col = ds.streamflow.sel(time=date)
             p_col = (p_col* 35.3147).round(2)  # convert streamflow from cms to cfs
             percentiles[f"prcntle_{v}"] = p_col.to_pandas()
-
-    #Get NWM version from first file
-    first_file_path = check_if_file_exists(fileset_bucket, fileset[0], download=True, download_subfolder=reference_time.strftime('%Y%m%d'))
-    with xr.open_dataset(first_file_path) as first_file:
-        nwm_vers = first_file.NWM_version_number.replace("v","")
-    os.remove(first_file_path)
     
     # Loop through filepaths, download file, and import data into pandas - we have to delete files as we go on anomaly, or else the lambda storage will fill up.
     print("-->Looping through files to get streamflow sum")
     streamflow_sum = None
+    nwm_vers = None
     for file in fileset:
         download_path = check_file_source(fileset_bucket, file)
         if download_path is None:
@@ -82,6 +77,7 @@ def run_anomaly(reference_time, fileset_bucket, fileset, output_file_bucket, out
               
             if streamflow_sum is None:
                 streamflow_sum = streamflow
+                nwm_vers = ds_file.NWM_version_number.replace("v", "")
             else:
                 streamflow_sum += streamflow
 
