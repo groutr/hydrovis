@@ -252,13 +252,12 @@ def mrf_rapid_onset_probability(reference_time, a_input_files, percent_change_th
     # Setup a dictionary of empty dataframes for each of the 7 ensemble members
     print("Organizing input files / ensemble members.")
     # ensemble_hours = list(islice(cycle(hours_in_day), reference_time.hour+1, reference_time.hour+1+270, 3))
-    ensemble_members = []
+    ensemble_members = set()
     for file in a_input_files:  # finds the number of ensemble members on-the-fly
-        ensemble_pattern = re.search(r'channel_rt_(\d+)', file).group(1)
-        if(ensemble_pattern):
-            member = int(ensemble_pattern)
-            if member not in ensemble_members:
-                ensemble_members.append(member)
+        ensemble_pattern = re.search(r'channel_rt_(\d+)', file)
+        if ensemble_pattern:
+            member = int(ensemble_pattern.group(1))
+            ensemble_members.add(member)
             
     forecast_times = [reference_time + timedelta(hours=x) for x in range(3, 120, 3)]  # "Double check this!!!!
 
