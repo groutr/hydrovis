@@ -24,7 +24,7 @@ def run_rapid_onset_flooding_probability(reference_time, fileset_bucket, fileset
     input_files = [check_file_source(fileset_bucket, f) for f in fileset]
     
     #Get NWM version from first file
-    with xr.open_dataset(input_files[0]) as first_file:
+    with xr.open_dataset(input_files[0], engine='h5netcdf') as first_file:
         nwm_vers = first_file.NWM_version_number.replace("v","")
     
     print("Processing Files")
@@ -128,7 +128,7 @@ def srf_rapid_onset_probability(reference_time, a_input_files, percent_change_th
         print(f"Processing model_initialization_hour {model_initialization_hour}")
         model_output_valid_hours = df_model_initialization_hour['model_output_valid_hour'].values
 
-        df_ensemble = xr.open_mfdataset(df_model_initialization_hour['index'].values.tolist(), drop_variables=drop_vars, preprocess=preprocess, combine='by_coords').to_dataframe()  # Use dask to open up all ensemble files at once and change streamflow col to datetime
+        df_ensemble = xr.open_mfdataset(df_model_initialization_hour['index'].values.tolist(), engine='h5netcdf', drop_variables=drop_vars, preprocess=preprocess, combine='by_coords').to_dataframe()  # Use dask to open up all ensemble files at once and change streamflow col to datetime
         df_ensemble = df_ensemble[model_output_valid_hours]
         df_ensemble = df_ensemble.loc[(df_ensemble!=0).any(axis=1)]  # Remove all rows with a 0 value for every timestep
         df = df_ensemble.join(df_main)  # Join main data to ref_hour data
