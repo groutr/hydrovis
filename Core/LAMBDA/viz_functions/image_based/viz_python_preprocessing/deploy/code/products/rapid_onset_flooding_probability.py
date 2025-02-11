@@ -10,7 +10,7 @@ from itertools import cycle, islice
 
 from viz_lambda_shared_funcs import get_db_values, organize_input_files, check_file_source
 
-CFS_FROM_CMS = 35.315
+CFS_FROM_CMS = 35.3147
 pd.options.mode.chained_assignment = None
 
 PATTERN = re.compile(r"nwm.(?P<year>\d{4})(?P<month>\d{2})(?P<day>\d{2})\/.+\/nwm.t(?P<refhour>\d{2})z.medium_range.channel_rt_(?P<ensemble>\d{1}).[f,tm](?P<fcst>\d{2,})")
