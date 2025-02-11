@@ -8,10 +8,12 @@ import re
 from datetime import datetime, timedelta
 from itertools import cycle, islice
 
-from viz_lambda_shared_funcs import get_db_values, organize_input_files
+from viz_lambda_shared_funcs import get_db_values, organize_input_files, check_file_source
 
 CFS_FROM_CMS = 35.315
 pd.options.mode.chained_assignment = None
+
+PATTERN = re.compile(r"nwm.(?P<year>\d{4})(?P<month>\d{2})(?P<day>\d{2})\/.+\/nwm.t(?P<refhour>\d{2})z.medium_range.channel_rt_(?P<ensemble>\d{1}).[f,tm](?P<fcst>\d{2,})")
 
 def run_rapid_onset_flooding_probability(reference_time, fileset_bucket, fileset, output_file_bucket, output_file):
     percent_change_threshold = 100
@@ -19,7 +21,7 @@ def run_rapid_onset_flooding_probability(reference_time, fileset_bucket, fileset
     stream_reaches_at_or_below = 4
     
     print("Downloading NWM Data")
-    input_files = organize_input_files(fileset_bucket, fileset, download_subfolder=reference_time.strftime('%Y%m%d'))
+    input_files = [check_file_source(fileset_bucket, f) for f in fileset]
     
     #Get NWM version from first file
     with xr.open_dataset(input_files[0]) as first_file:
@@ -75,14 +77,14 @@ def srf_rapid_onset_probability(reference_time, a_input_files, percent_change_th
 
     # Loop through the input files and parse out the important dates in order to organize our data processing.
     for file in a_input_files:
-        matches = re.findall(r"(\d{4})(\d{2})(\d{2})/nwm.t(\d{2})z.*.[f,tm](\d{2,})", file)[0]
-        model_initialization_year = matches[0]
-        model_initialization_month = matches[1]
-        model_initialization_day = matches[2]
+        matches = PATTERN.search(file)
+        model_initialization_year = matches['year']
+        model_initialization_month = matches['month']
+        model_initialization_day = matches['day']
         model_initialization_date = f"{model_initialization_year}{model_initialization_month}{model_initialization_day}"
-        model_initialization_hour = int(matches[3])
-        model_initialization_time = datetime.strptime(f"{model_initialization_year}-{model_initialization_month}-{model_initialization_day} {model_initialization_hour}:00:00", '%Y-%m-%d %H:%M:%S')
-        model_output_delta_hour = int(matches[4])
+        model_initialization_hour = int(matches['refhour'])
+        model_initialization_time = datetime.datetime(int(model_initialization_year), int(model_initialization_month), int(model_initialization_day), int(model_initialization_hour))
+        model_output_delta_hour = int(matches['fcst'])
 
         # Analysis metrics refer the UTC hour we are aligning between ensemble members
         # This isn't all really necessary, but I'm leaving it in here because it can be a really helpful
@@ -270,15 +272,14 @@ def mrf_rapid_onset_probability(reference_time, a_input_files, percent_change_th
 
     # Loop through the input files and parse out the important dates in order to organize our data processing.
     for file in a_input_files:
-        matches = re.findall(r"(\d{8})/nwm.t(\d{2})z.medium_range.channel_rt_(\d{1}).[f,tm](\d{2,})", file)[0]
-        date = matches[0]
-        year = date[:4]
-        month = date[:6][-2:]
-        day = date[-2:]
-        ref_hour = int(matches[1])
-        ensemble_member = int(matches[2])
-        forecast_file = int(matches[3])
-        file_ref_time = datetime.strptime(f"{year}-{month}-{day} {ref_hour}:00:00", '%Y-%m-%d %H:%M:%S')
+        matches = PATTERN.search(file)
+        year = int(matches['year'])
+        month = int(matches['month'])
+        day = int(matches['day'])
+        ref_hour = int(matches['refhour'])
+        ensemble_member = int(matches['ensemble'])
+        forecast_file = int(matches['fcst'])
+        file_ref_time = datetime.datetime(year, month, day, ref_hour)
 
         # Analysis metrics refer the UTC hour we are aligning between ensemble members
         # This isn't all really necessary, but I'm leaving it in here because it can be a really helpful
