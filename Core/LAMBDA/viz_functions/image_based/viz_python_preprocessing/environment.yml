@@ -7,9 +7,12 @@ dependencies:
   - awslambdaric
   - fsspec
   - s3fs
+  - aiohttp
   - psycopg2
   - numpy
   - pandas
+  - bottleneck
+  - numexpr
   - xarray
   - netcdf4
   - h5netcdf
