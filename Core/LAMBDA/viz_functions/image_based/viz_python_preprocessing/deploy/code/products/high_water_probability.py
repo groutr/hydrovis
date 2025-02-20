@@ -262,7 +262,7 @@ def find_nwm_file_paths(nwm_fpaths, valid_times, reference_time, discard_date):
 
         # Validate that file exists
         if not os.path.exists(nwm_fpath):
-            print(('WARNING - File given but not found: {0}'.format(nwm_fpath)))
+            print('WARNING - File not found:', nwm_fpath)
             continue
 
         # check if NWM file falls in range of valid times
@@ -270,7 +270,7 @@ def find_nwm_file_paths(nwm_fpaths, valid_times, reference_time, discard_date):
             with Dataset(nwm_fpath, 'r') as f:
                 if f.model_output_valid_time in valid_times:
                     working_fpaths.append(nwm_fpath)
-        except IOError:
-            print(('WARNING - File given could not be opened: {0}'.format(nwm_fpath)))
+        except IOError as e:
+            print('WARNING - File could not be opened:', nwm_fpath, str(e))
 
     return working_fpaths
