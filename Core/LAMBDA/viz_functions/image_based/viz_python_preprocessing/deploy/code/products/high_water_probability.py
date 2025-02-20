@@ -249,8 +249,8 @@ def find_nwm_file_paths(nwm_fpaths, valid_times, reference_time, discard_date):
     working_fpaths = []
     for nwm_fpath in nwm_fpaths:
        # Extract file's date from filepath
-        file_date = dt.datetime.strptime(re.search('[0-9]{8}', nwm_fpath).group(), '%Y%m%d') \
-                  + dt.timedelta(hours=int(re.search('t[0-9]{2}z', nwm_fpath).group()[1:3]))
+        file_date = dt.datetime.strptime(re.search('\d{8}', nwm_fpath).group(), '%Y%m%d') \
+                  + dt.timedelta(hours=int(re.search('t(\d{2})z', nwm_fpath).group(1)))
 
         # Exclude file if older than discard date
         if discard_date:
