@@ -39,7 +39,7 @@ def run_high_water_probability(reference_time, fileset_bucket, fileset, output_f
             end_hour = day_windows['end_hour'][i]
             print(f"Calculating probabilities for {begin_hour}_to_{end_hour}")
             for file in input_files:
-                hour_pattern = re.search(r'f(\d\d\d)', file).group(1)
+                hour_pattern = re.search(r'f(\d{3})', file).group(1)
                 if(hour_pattern):
                     hour = int(hour_pattern)
                     if(hour >= begin_hour and hour <= end_hour):
