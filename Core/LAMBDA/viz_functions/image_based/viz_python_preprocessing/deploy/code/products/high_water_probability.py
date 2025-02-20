@@ -96,7 +96,7 @@ def srf_high_water_probability(reference_time, lead_times, discard_threshold, nw
     print("Collecting files for valid times...")
     working_fpaths = find_nwm_file_paths(nwm_fpaths, valid_times, reference_time, discard_date)
     nwm_file_count = len(working_fpaths)
-    print("Found {} files with matching valid times.".format(nwm_file_count))
+    print("Found", nwm_file_count, "files with matching valid times.")
 
     # Import Feature IDs
     print("-->Importing feature IDs...")
@@ -125,7 +125,7 @@ def srf_high_water_probability(reference_time, lead_times, discard_threshold, nw
     # count up the number of streamflow files that predicted a reach would be above its high water threshold flow
     final_above_array = np.zeros(len(recurrence_flows_array), dtype=np.int16)
     for member in ensemble_members:
-        ensemble_files_list = [x for x in working_fpaths if 'nwm.t{}z.short_range.channel_rt'.format(member) in x]
+        ensemble_files_list = [x for x in working_fpaths if f'nwm.t{member}z.short_range.channel_rt' in x]
         # creates a NumPy array of zeros with the same length of recurrence_flows_array;
         # this array will be used to count up the number of streamflow files that predicted a reach would be above
         # its high water threshold flow
@@ -195,7 +195,7 @@ def mrf_high_water_probability(streamflow_files_list, high_water_values):
     # above its high water threshold flow
     final_above_array = np.zeros(len(high_water_flows_array), dtype=np.int16)
     for member in ensemble_members:
-        ensemble_files_list = [x for x in streamflow_files_list if 'channel_rt_{}'.format(member) in x]
+        ensemble_files_list = [x for x in streamflow_files_list if f'channel_rt_{member}' in x]
         above_array = np.zeros(len(high_water_flows_array), dtype=np.int16)  # creates a NumPy array of zeros
         for file in ensemble_files_list:
             n = Dataset(file)
