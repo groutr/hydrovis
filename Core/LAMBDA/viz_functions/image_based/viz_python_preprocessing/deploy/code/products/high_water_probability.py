@@ -253,9 +253,8 @@ def find_nwm_file_paths(nwm_fpaths, valid_times, reference_time, discard_date):
                   + dt.timedelta(hours=int(re.search('t(\d{2})z', nwm_fpath).group(1)))
 
         # Exclude file if older than discard date
-        if discard_date:
-            if file_date <= discard_date:
-                continue
+        if discard_date and file_date <= discard_date:
+            continue
 
         # Exclude file if it is a forecast generated later than reference_time
         if file_date > reference_time:
