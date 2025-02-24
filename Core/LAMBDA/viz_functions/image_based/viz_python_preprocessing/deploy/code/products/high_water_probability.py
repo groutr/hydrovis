@@ -267,9 +267,10 @@ def find_nwm_file_paths(nwm_fpaths, valid_times, reference_time, discard_date):
 
         # check if NWM file falls in range of valid times
         try:
-            with Dataset(nwm_fpath, 'r') as f:
-                if f.model_output_valid_time in valid_times:
-                    working_fpaths.append(nwm_fpath)
+            with cached_fs.open(nwm_fpath) as fo:
+                with h5netcdf.File(fo) as ds:
+                    if ds.attrs['model_output_valid_time'] in valid_times:
+                        working_fpaths.append(nwm_fpath)
         except IOError as e:
             print('WARNING - File could not be opened:', nwm_fpath, str(e))
 
