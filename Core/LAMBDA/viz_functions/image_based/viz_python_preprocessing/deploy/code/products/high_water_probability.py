@@ -106,7 +106,7 @@ def srf_high_water_probability(reference_time, lead_times, discard_threshold, nw
 
     joined = streamflow_features.join(df_high_water_threshold)   # attaches recurrence flows to streamflow features
     recurrence_flows_array = joined["high_water_threshold"].values  # Extract recurrence flows as array
-    featureID_list = joined.index.values  # Extract feature_ids as array
+    featureID = joined.index  # Extract feature_ids as array
 
     # Calculate High Flow Probabilities
     print("-->Calculating high flow probabilities...")
@@ -149,9 +149,8 @@ def srf_high_water_probability(reference_time, lead_times, discard_threshold, nw
     # then multiplies the results by 100 to covert them into percentages
     probabilities = (final_above_array / ensemble_number) * 100.0
 
-    df_probabilities = pd.DataFrame(list(zip(featureID_list, probabilities)), columns=['feature_id', 'Prob'])
+    df_probabilities = pd.DataFrame({'Prob': probabilities}, index=featureID, dtype='int')
     df_probabilities = df_probabilities.set_index('feature_id')
-    df_probabilities['Prob'] = df_probabilities['Prob'].astype(int)
 
     return df_probabilities
 
