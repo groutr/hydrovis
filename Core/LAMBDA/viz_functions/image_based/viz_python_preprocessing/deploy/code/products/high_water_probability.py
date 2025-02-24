@@ -1,16 +1,22 @@
 import datetime as dt
 import os
 from netCDF4 import Dataset
-import xarray
+import xarray as xr
+import fsspec
+import h5netcdf
 import numpy as np
 import pandas as pd
 import re
-from viz_lambda_shared_funcs import get_db_values, organize_input_files
+from viz_lambda_shared_funcs import get_db_values, check_file_source
+
+cached_fs = fsspec.filesystem('blockcache', fs='generic')
+
+CMS_TO_CFS = 35.147
 
 def run_high_water_probability(reference_time, fileset_bucket, fileset, output_file_bucket, output_file):
     ##### Data Prep #####
     print("Downloading NWM Data")
-    input_files = organize_input_files(fileset_bucket, fileset, download_subfolder=reference_time.strftime('%Y%m%d'))
+    input_files = check_file_source(fileset_bucket, fileset)
 
     #Get NWM version from first file
     with xarray.open_dataset(input_files[0]) as first_file:
