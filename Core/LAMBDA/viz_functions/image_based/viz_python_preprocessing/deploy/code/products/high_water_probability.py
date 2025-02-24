@@ -180,7 +180,7 @@ def mrf_high_water_probability(streamflow_files_list, high_water_values):
     # Import Feature IDs
     print("--> Importing feature IDs...")
 
-    with xarray.open_dataset(streamflow_files_list[0]) as ds_features:
+    with xr.open_dataset(streamflow_files_list[0]) as ds_features:
         df_features = ds_features['streamflow'].to_dataframe()  # gets a dataframe of feature ids and streamflows
     joined = df_features.join(high_water_values)  # attaches the high water threshold flows to the streamflow features
     high_water_flows_array = joined["high_water_threshold"].values  # extracts the high water threshold flows as an array
