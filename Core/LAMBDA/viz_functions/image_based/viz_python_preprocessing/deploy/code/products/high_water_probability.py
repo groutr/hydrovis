@@ -55,9 +55,9 @@ def run_high_water_probability(reference_time, fileset_bucket, fileset, output_f
 
     ##### Format and Upload Output #####
     print("Adding high water threshold, reference time, and update time to dataframe")
-    df_probabilities = df_probabilities.loc[~(df_probabilities == 0).all(axis=1)]
+    df_probabilities = df_probabilities.loc[(df_probabilities != 0).all(axis=1)]
     df_probabilities = df_probabilities.join(df_high_water_threshold)
-    df_probabilities = df_probabilities.loc[~(df_probabilities['high_water_threshold'] == 0)]
+    df_probabilities = df_probabilities.loc[df_probabilities['high_water_threshold'] != 0]
     df_probabilities['nwm_vers'] = nwm_vers
     df_probabilities = df_probabilities.reset_index()
 
