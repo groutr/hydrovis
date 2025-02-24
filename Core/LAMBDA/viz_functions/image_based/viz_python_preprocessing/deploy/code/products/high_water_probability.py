@@ -19,8 +19,9 @@ def run_high_water_probability(reference_time, fileset_bucket, fileset, output_f
     input_files = check_file_source(fileset_bucket, fileset)
 
     #Get NWM version from first file
-    with xarray.open_dataset(input_files[0]) as first_file:
-        nwm_vers = first_file.NWM_version_number.replace("v","")
+    with cached_fs.open(input_files[0]) as fo:
+        with h5netcdf.File(fo) as first_file:
+            nwm_vers = first_file.attrs['NWM_version_number'].replace("v","")
 
     print("Retrieving High Water Values From Viz DB")
     df_high_water_threshold = get_db_values("derived.recurrence_flows_conus", ["feature_id", "high_water_threshold"])
