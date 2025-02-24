@@ -100,9 +100,10 @@ def srf_high_water_probability(reference_time, lead_times, discard_threshold, nw
 
     # Import Feature IDs
     print("-->Importing feature IDs...")
-    with xarray.open_dataset(working_fpaths[0]) as ds_features:
+    with cached_fs.open(working_fpaths[0]) as fo:
+        with xr.open_dataset(fo, engine='h5netcdf') as ds_features:
         # Gets a dataframe of feature ids and streamflow for forecast
-        streamflow_features = ds_features['streamflow'].to_dataframe()
+            streamflow_features = ds_features['streamflow'].to_dataframe()
 
     joined = streamflow_features.join(df_high_water_threshold)   # attaches recurrence flows to streamflow features
     recurrence_flows_array = joined["high_water_threshold"].values  # Extract recurrence flows as array
