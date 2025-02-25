@@ -188,7 +188,7 @@ def mrf_high_water_probability(streamflow_files_list, high_water_values):
         df_features = ds_features['streamflow'].to_dataframe()  # gets a dataframe of feature ids and streamflows
     joined = df_features.join(high_water_values)  # attaches the high water threshold flows to the streamflow features
     high_water_flows_array = joined["high_water_threshold"].values  # extracts the high water threshold flows as an array
-    featureID_array = joined.index.values  # extracts the feature IDs as an array
+    featureID = joined.index  # extracts the feature IDs as an array
 
     # Calculate High Water Probabilities
     print("--> Calculating high water probabilities...")
@@ -222,9 +222,7 @@ def mrf_high_water_probability(streamflow_files_list, high_water_values):
     # then multiplies the results by 100 to covert them into percentages
     probabilities = (final_above_array / len(ensemble_members)) * 100.0
 
-    df_probabilities = pd.DataFrame(list(zip(featureID_array, probabilities)), columns=['feature_id', 'Prob'])
-    df_probabilities = df_probabilities.set_index('feature_id')
-    df_probabilities['Prob'] = df_probabilities['Prob'].astype(int)
+    df_probabilities = pd.DataFrame({'Prob': probabilities}, index=featureID, dtype=int)
 
     return df_probabilities
 
