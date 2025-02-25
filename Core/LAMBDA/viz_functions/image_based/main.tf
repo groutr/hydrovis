@@ -95,6 +95,10 @@ variable "lambda_role" {
   type = string
 }
 
+variable "viz_authoritative_bucket" {
+  type = string  
+}
+
 locals {
   viz_optimize_rasters_lambda_name = "hv-vpp-${var.environment}-viz-optimize-rasters"
   viz_hand_fim_processing_lambda_name = "hv-vpp-${var.environment}-viz-hand-fim-processing"
@@ -564,6 +568,32 @@ module "update-egis-data" {
   default_tags = var.default_tags
 }
 
+
+#############################
+# python preprocessing
+#############################
+module "python-preprocessing" {
+  source = "./viz_python_preprocessing"
+  providers = {
+    aws = aws
+    aws.sns = aws.sns
+    aws.no_tags = aws.no_tags
+  }
+  environment = var.environment
+  account_id = var.account_id
+  region = var.region
+  ecr_repository_image_tag = var.ecr_repository_image_tag
+  lambda_role = var.lambda_role
+  security_groups = var.hand_fim_processing_sgs
+  subnets = var.hand_fim_processing_subnets
+  deployment_bucket = var.deployment_bucket
+  viz_db_name = var.viz_db_name
+  viz_db_host = var.viz_db_host
+  viz_db_user_secret_string = var.viz_db_user_secret_string
+  viz_authoritative_bucket = var.viz_authoritative_bucket
+  default_tags = var.default_tags
+}
+
 ####################### OUTPUTS ###################
 
 output "hand_fim_processing" {
@@ -584,4 +614,8 @@ output "optimize_rasters" {
 
 output "raster_processing" {
   value = data.aws_lambda_function.viz_raster_processing
+}
+
+output "python_preprocessing" {
+  value = module.python-preprocessing
 }
