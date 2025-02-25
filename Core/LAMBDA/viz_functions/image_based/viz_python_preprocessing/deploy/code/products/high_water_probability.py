@@ -162,7 +162,6 @@ def srf_high_water_probability(reference_time, lead_times, discard_threshold, nw
     probabilities = (final_above_array / ensemble_number) * 100.0
 
     df_probabilities = pd.DataFrame({'Prob': probabilities}, index=featureID, dtype='int')
-    df_probabilities = df_probabilities.set_index('feature_id')
 
     return df_probabilities
 
