@@ -7,7 +7,7 @@ import tempfile
 
 from viz_lambda_shared_funcs import check_if_file_exists
 
-CACHE_DAYS = os.environ['CACHE_DAYS']
+
 MAX_PROPS = {
     'channel_rt': {
         'max_variable': 'streamflow',
