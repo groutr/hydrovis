@@ -74,6 +74,14 @@ def run_high_water_probability(reference_time, fileset_bucket, fileset, output_f
     print("--- Uploaded to", s3_file)
 
 
+def get_streamflow(file):
+    with cached_fs.open(file) as fo:
+        with h5netcdf.File(fo) as ds:
+            streamflows = ds.variables['streamflow'][:]
+    streamflows = streamflows * CMS_TO_CFS  # convert streamflow from cms to cfs
+    return streamflows
+
+
 def srf_high_water_probability(reference_time, lead_times, discard_threshold, nwm_fpaths, df_high_water_threshold):
     """
     Creates the srf (12-Hour) high water threshold probability product for the reference time using the specified files.
@@ -133,24 +141,20 @@ def srf_high_water_probability(reference_time, lead_times, discard_threshold, nw
     # count up the number of streamflow files that predicted a reach would be above its high water threshold flow
     final_above_array = np.zeros(len(recurrence_flows_array), dtype=np.int16)
     for member in ensemble_members:
-        ensemble_files_list = [x for x in working_fpaths if f'nwm.t{member}z.short_range.channel_rt' in x]
         # creates a NumPy array of zeros with the same length of recurrence_flows_array;
         # this array will be used to count up the number of streamflow files that predicted a reach would be above
         # its high water threshold flow
         above_array = np.zeros(len(recurrence_flows_array), dtype=np.int16)
-        for file in ensemble_files_list:
-            n = Dataset(file)
-            streamflows = n['streamflow'][:]
-            n.close()
-            streamflows = streamflows * 35.3147  # convert streamflow from cms to cfs
+        for file in working_fpaths:
+            if f'nwm.t{member}z.short_range.channel_rt' not in file:
+                continue
+            streamflows = get_streamflow(file)
             # checks to see if any streamflow values are at or above their high water threshold flow, and
-            # returns a boolean array of the results
-            true_false_array = np.greater_equal(streamflows, recurrence_flows_array)
             # increases the above count in above_array for reaches that had streamflow values above their high water threshold
-            above_array = above_array + true_false_array
+            np.add(above_array, 1, out=above_array, where=streamflows>=recurrence_flows_array)
+        # Increment by 1 any feature_id where streamflows exceeded the recurrence flow
         # set anything in final_above_array >0 to 1, so -any- instance of high water threshold gives a stream reach a 1
-        above_array = np.where(above_array >= 1, 1, 0)
-        final_above_array += above_array  # add ensemble member's 0 or 1 predictions for each stream
+        np.add(final_above_array, 1, out=final_above_array, where=above_array>0)
 
     print("Processing NWM probabilities...")
     # divides above_array by the total number of streamflow files to compute probabilities, and
@@ -202,21 +206,17 @@ def mrf_high_water_probability(streamflow_files_list, high_water_values):
     # above its high water threshold flow
     final_above_array = np.zeros(len(high_water_flows_array), dtype=np.int16)
     for member in ensemble_members:
-        ensemble_files_list = [x for x in streamflow_files_list if f'channel_rt_{member}' in x]
         above_array = np.zeros(len(high_water_flows_array), dtype=np.int16)  # creates a NumPy array of zeros
-        for file in ensemble_files_list:
-            n = Dataset(file)
-            streamflows = n['streamflow'][:]
-            n.close()
-            streamflows = streamflows * 35.3147  # converts streamflows from cms to cfs
+        for file in streamflow_files_list:
+            if f'channel_rt_{member}' not in file:
+                continue
+
+            streamflows = get_streamflow(file)
             # checks to see if any streamflow values are at or above their high water threshold flow
-            # returns a boolean array of the results
-            true_false_array = np.greater_equal(streamflows, high_water_flows_array)
             # increases the above count in above_array for reaches that had streamflow values above their high water threshold flows
-            above_array = above_array + true_false_array
+            np.sum(above_array, 1, out=above_array, where=streamflows>=high_water_flows_array)
         # sets anything in final_above_array >0 to 1, so -any- instance of high water threshold gives a stream reach a 1
-        above_array = np.where(above_array >= 1, 1, 0)
-        final_above_array += above_array  # adds the ensemble member's predictions for each stream to final_above_array
+        np.sum(final_above_array, 1, out=final_above_array, where=above_array>0)
 
     # divides final_above_array by the total number of streamflow files to compute probabilities
     # then multiplies the results by 100 to covert them into percentages
