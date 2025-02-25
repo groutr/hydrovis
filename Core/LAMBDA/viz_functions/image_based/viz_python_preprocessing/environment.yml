@@ -1,0 +1,24 @@
+name: python_preprocessing
+channels:
+  - conda-forge
+  - nodefaults
+dependencies:
+  - python=3.12
+  - awslambdaric
+  - fsspec
+  - s3fs
+  - aiohttp
+  - psycopg2
+  - numpy
+  - pandas
+  - bottleneck
+  - numexpr
+  - xarray
+  - netcdf4
+  - h5netcdf
+  - dask-core
+  - requests
+  - boto3
+  - botocore
+  - sqlalchemy
+  - isodate
