@@ -107,5 +107,10 @@ class VizDatabase:
         df = pd.read_sql(query.format(fields=fields, table=table), self.engine,
                          index_col=index_col)
         return df
-
+    
+    def query_string(self, query):
+        """ Properly escape identifiers in a query """
+        with self.engine.connect() as conn:
+            qstr = query.as_string(conn.connection.driver_connection)
+            return sqlalchemy.text(qstr)
         
