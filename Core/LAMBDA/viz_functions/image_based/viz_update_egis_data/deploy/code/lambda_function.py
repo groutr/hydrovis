@@ -163,13 +163,24 @@ def cache_data_on_s3(db, schema, table, reference_time, cache_bucket, columns, r
     ref_hour = f"{reference_time.strftime('%H%M')}"
     s3_key = f"viz_cache/{ref_day}/{ref_hour}/{table}.csv"
     aws_region = os.environ['AWS_REGION']
-    columns = columns.replace('geom', 'ST_AsText(geom) AS geom')
+    columns = list(columns)
+    columns.remove('geom')
+    columns.append('ST_AsText(geom) AS geom')
 
-    connection = db.get_db_connection()
-    with connection:
-        with connection.cursor() as cur:
-            cur.execute(f"SELECT * FROM aws_s3.query_export_to_s3('SELECT {columns} FROM {schema}.{table}', aws_commons.create_s3_uri('{cache_bucket}','{s3_key}','{aws_region}'), options :='format csv , HEADER true');")
-    connection.close()
+    p1 = psql.SQL("SELECT {columns} FROM {table}")
+    p1 = p1.format(columns=psql.SQL(',').join(map(psql.Identifier, columns)),
+                   table=psql.Identifier(schema, table))
+    
+    query = ("SELECT * FROM"
+             " aws_s3.query_export_to_s3({p1}, aws_commons.create_s3_uri({cache_bucket},{s3_key},{aws_region}),"
+             " options :='format csv , HEADER true');")
+    
+    with db.engine.connect() as conn:
+        query = query.format(p1=psql.Literal(db.query_string(p1)), cache_bucket=psql.Placeholder(cache_bucket),
+                         s3_key=psql.Placeholder(s3_key),
+                         aws_region=psql.Placeholder(aws_region))
+        params = dict(cache_bucket=cache_bucket, s3_key=s3_key, aws_region=aws_region)
+        rv = conn.execute(db.query_string(query), params)
 
     print(f"---> Wrote csv cache data from {schema}.{table} to {cache_bucket}/{s3_key}")
     return s3_key
