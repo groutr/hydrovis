@@ -177,55 +177,84 @@ def cache_data_on_s3(db, schema, table, reference_time, cache_bucket, columns, r
 ###################################
 # This function stages a publish data table within a db (or across databases using foreign data wrapper)
 def stage_db_table(db, origin_table, dest_table, columns, add_oid=True, add_geom_index=True, update_srid=None):
-    connection = db.get_db_connection()
-    with connection:
-        with connection.cursor() as cur:
-            cur.execute(f"DROP TABLE IF EXISTS {dest_table};")
-            cur.execute(f"SELECT {columns} INTO {dest_table} FROM {origin_table};")
-        
-            if add_oid:
-                print(f"---> Adding an OID to the {dest_table}")
-                cur.execute(f'ALTER TABLE {dest_table} ADD COLUMN OID SERIAL PRIMARY KEY;')
-            if add_geom_index and "geom" in columns:
+    with db.engine.connect() as connection:
+        idest = psql.Identifier(*dest_table.split('.'))
+        iorig = psql.Identifier(*origin_table.split('.'))
+        q1 = psql.SQL("DROP TABLE IF EXISTS {dest_table};").format(dest_table=idest)
+        connection.execute(db.query_string(q1))
+
+        q2 = psql.SQL("SELECT {columns} INTO {dest_table} FROM {origin_table};").format(
+            columns=psql.SQL(',').join(map(psql.Identifier, columns)),
+            dest_table=idest,
+            origin_table=iorig
+        )
+        connection.execute(db.query_string(q2))
+    
+        if add_oid:
+            print(f"---> Adding an OID to the {dest_table}")
+            q3 = psql.SQL('ALTER TABLE {dest_table} ADD COLUMN OID SERIAL PRIMARY KEY;').format(
+                dest_table=idest
+            )
+            connection.execute(db.query_string(q3))
+        if 'geom' in columns:
+            if add_geom_index:
                 print(f"---> Adding an spatial index to the {dest_table}")
-                cur.execute(f'CREATE INDEX ON {dest_table} USING GIST (geom);')  # Add a spatial index
+                q3 = psql.SQL('CREATE INDEX ON {dest_table} USING GIST (geom);').format(
+                    dest_table=idest
+                )
+                connection.execute(db.query_string(q3)) # Add a spatial index
                 if 'geom_xy' in columns:
-                    cur.execute(f'CREATE INDEX ON {dest_table} USING GIST (geom_xy);')  # Add a spatial index to geometry point layer, if present.
-            if update_srid and "geom" in columns:
+                    q4 = psql.SQL('CREATE INDEX ON {dest_table} USING GIST (geom_xy);').format(
+                        dest_table=idest
+                    )
+                    connection.execute(db.query_string(q4))  # Add a spatial index to geometry point layer, if present.
+            if update_srid:
                 print(f"---> Updating SRID to {update_srid}")
-                cur.execute(f"SELECT UpdateGeometrySRID('{dest_table.split('.')[0]}', '{dest_table.split('.')[1]}', 'geom', {update_srid});")
-    connection.close()
+                ds, dt = dest_table.split('.')
+                q5 = psql.SQL("SELECT UpdateGeometrySRID({dest_schema}, {dest_tname}, 'geom', {update_srid});").format(
+                    dest_schema=psql.Literal(ds),
+                    dest_table=psql.Literal(dt),
+                    update_srid=psql.Literal(update_srid)
+                )
+                connection.execute(db.query_string(q5))
 
 ###################################
 # This function unstages a list of publish data tables within a db (or across databases using foreign data wrapper)
 def unstage_db_tables(db, dest_tables):
-    connection = db.get_db_connection()
-    with connection:
+    with db.engine.connect() as connection:
         for dest_table in dest_tables:
-            dest_final_table = dest_table
-            dest_final_table_name = dest_final_table.split(".")[1]
-            dest_table = f"{dest_table}_stage"
+            dest_schema, dest_final_table_name = dest_table.split('.')
+            #dest_final_table_name = Identifier(dest_final_table.split(".")[1])
+            stage = psql.Identifier(dest_schema, f"{dest_final_table_name}_stage")
 
-            with connection.cursor() as cur:
-                print(f"---> Renaming {dest_table} to {dest_final_table}")
-                cur.execute(f'DROP TABLE IF EXISTS {dest_final_table};')  # Drop the published table if it exists
-                cur.execute(f'ALTER TABLE {dest_table} RENAME TO {dest_final_table_name};')  # Rename the staged table
-            connection.commit()
-    connection.close()
+            published_table = psql.Identifier(dest_schema, dest_final_table_name)
+            #q0 = psql.SQL("SET search_path TO {schema};").format(schema=psql.Identifier(dest_schema))
+            q1 = psql.SQL("DROP TABLE IF EXISTS {dest_final_table};").format(dest_final_table=published_table)
+            q2 = psql.SQL("ALTER TABLE {stage} RENAME TO {final_table};").format(
+                stage=stage,
+                final_table=psql.Identifier(dest_final_table_name)
+            )
+
+            print(f"---> Renaming {stage} to {published_table}")
+            #connection.execute(text(q0.as_string(context)))
+            connection.execute(db.query_string(q1))  # Drop the published table if it exists
+            connection.execute(db.query_string(q2))  # Rename the staged table
+        connection.commit()
         
 ###################################
 # This function drops and recreates a foreign data wrapper schema, so that table and column names are all up-to-date.     
 def refresh_fdw_schema(db, local_schema, remote_server, remote_schema):
-    connection = db.get_db_connection()
-    with connection:
-        with connection.cursor() as cur:
-            sql = f"""
-            DROP SCHEMA IF EXISTS {local_schema} CASCADE; 
-            CREATE SCHEMA {local_schema};
-            IMPORT FOREIGN SCHEMA {remote_schema} FROM SERVER {remote_server} INTO {local_schema};
-            """
-            cur.execute(sql)
-    connection.close()
+    with db.engine.connect() as connection:
+        query = psql.SQL(dedent("""
+        DROP SCHEMA IF EXISTS {local_schema} CASCADE; 
+        CREATE SCHEMA {local_schema};
+        IMPORT FOREIGN SCHEMA {remote_schema} FROM SERVER {remote_server} INTO {local_schema};
+        """))
+        query = query.format(local_schema=psql.Identifier(local_schema),
+                            remote_server=psql.Identifier(remote_server),
+                            remote_schema=psql.Identifier(remote_schema))
+        connection.execute(db.query_string(query))
+        connection.commit()
     print(f"---> Refreshed {local_schema} foreign schema.")
     
 ##################################
