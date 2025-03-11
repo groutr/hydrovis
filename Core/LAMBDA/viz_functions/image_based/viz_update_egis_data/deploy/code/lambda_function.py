@@ -1,9 +1,12 @@
 import fsspec
 import os
-from viz_classes import database
 from datetime import datetime
 from itertools import chain
+from textwrap import dedent
 
+from viz_database import VizDatabase
+from sqlalchemy import text
+from psycopg2 import sql as psql
 
 def find_target_tables(mapping):
     if isinstance(mapping, dict):
