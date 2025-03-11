@@ -176,7 +176,7 @@ def cache_data_on_s3(db, schema, table, reference_time, cache_bucket, columns, r
              " options :='format csv , HEADER true');")
     
     with db.engine.connect() as conn:
-        query = query.format(p1=psql.Literal(db.query_string(p1)), cache_bucket=psql.Placeholder(cache_bucket),
+        query = query.format(p1=psql.Literal(db.query_string(p1).text), cache_bucket=psql.Placeholder(cache_bucket),
                          s3_key=psql.Placeholder(s3_key),
                          aws_region=psql.Placeholder(aws_region))
         params = dict(cache_bucket=cache_bucket, s3_key=s3_key, aws_region=aws_region)
