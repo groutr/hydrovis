@@ -46,7 +46,7 @@ def lambda_handler(event, context):
             publish_tables = (x for x in target_tables if x.startswith("publish"))
             dest_tables = [table.replace("publish", "services", 1) for table in publish_tables]
 
-            egis_db = database(db_type="egis")
+            egis_db = VizDatabase(db_type="egis")
             unstage_db_tables(egis_db, dest_tables)
         elif step == "unstage_rasters":
             ################### Move Rasters ###################
@@ -132,28 +132,27 @@ def lambda_handler(event, context):
     ## For Staging and Caching - Loop through all the tables relevant to the current step
     for table in tables:
         staged_table = f"{table}_stage"
-        viz_db = database(db_type="viz")
-        egis_db = database(db_type="egis")
+        viz_db = VizDatabase(db_type="viz")
+        egis_db = VizDatabase(db_type="egis")
         
         # Get columns of the table
-        connection = viz_db.get_db_connection()
-        with connection:
-            with connection.cursor() as cur:
-                cur.execute(f"SELECT * FROM {viz_schema}.{table} LIMIT 1")
-                column_names = [desc[0] for desc in cur.description]
-        connection.close()
-
-        columns = ', '.join(column_names)
+        with viz_db.engine.connect() as conn:
+            query = psql.SQL("SELECT column_name FROM information_schema.columns WHERE table_schema={schema} AND table_name={table};").format(
+                schema=psql.Literal(viz_schema),
+                table=psql.Literal(table)
+            )
+            rv = conn.execute(viz_db.query_string(query))
+            column_names = list(chain.from_iterable(rv.fetchall()))
 
         if 'cache' in step:
-            cache_data_on_s3(viz_db, viz_schema, table, reference_time, cache_bucket, columns)
+            cache_data_on_s3(viz_db, viz_schema, table, reference_time, cache_bucket, column_names)
         else:
             # Copy data to EGIS
             try: # Try copying the data
-                stage_db_table(egis_db, origin_table=f"vizprc_publish.{table}", dest_table=f"services.{staged_table}", columns=columns, add_oid=True, add_geom_index=True, update_srid=3857) #Copy the publish table from the vizprc db to the egis db, using fdw
+                stage_db_table(egis_db, origin_table=f"vizprc_publish.{table}", dest_table=f"services.{staged_table}", columns=column_names, add_oid=True, add_geom_index=True, update_srid=3857) #Copy the publish table from the vizprc db to the egis db, using fdw
             except Exception as e: # If it doesn't work initially, try refreshing the foreign schema and try again.
                 refresh_fdw_schema(egis_db, local_schema="vizprc_publish", remote_server="vizprc_db", remote_schema=viz_schema) #Update the foreign data schema - we really don't need to run this all the time, but it's fast, so I'm trying it.
-                stage_db_table(egis_db, origin_table=f"vizprc_publish.{table}", dest_table=f"services.{staged_table}", columns=columns, add_oid=True, add_geom_index=True, update_srid=3857) #Copy the publish table from the vizprc db to the egis db, using fdw
+                stage_db_table(egis_db, origin_table=f"vizprc_publish.{table}", dest_table=f"services.{staged_table}", columns=column_names, add_oid=True, add_geom_index=True, update_srid=3857) #Copy the publish table from the vizprc db to the egis db, using fdw
     
     return True
 
