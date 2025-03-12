@@ -4,7 +4,6 @@ import base64
 
 import sqlalchemy
 from psycopg2 import sql
-import pandas as pd
 
 from botocore.exceptions import ClientError
 
@@ -56,7 +55,7 @@ def get_secret_password(secret_name, region_name, key):
 
 class VizDatabase:
     def __init__(self, db_type):
-        self.type = db_type.upper()
+        self.db_type = db_type.upper()
         self._engine = None
 
     @property
@@ -101,7 +100,8 @@ class VizDatabase:
         return db_engine
     
     def get_db_values(self, table, columns, index_col=None):
-        query = sql.SQL("SELECT {fields} FROM {table}")
+        import pandas as pd
+        query = sql.SQL("SELECT {fields} FROM {table};")
         fields = sql.SQL(',').join(map(sql.Identifier, columns))
         table = sql.Identifier(table)
         df = pd.read_sql(query.format(fields=fields, table=table), self.engine,
