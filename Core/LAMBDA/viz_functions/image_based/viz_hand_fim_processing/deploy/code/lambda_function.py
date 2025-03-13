@@ -10,8 +10,9 @@ import datetime
 from math import floor, ceil
 from shapely.geometry import shape
 
+import fsspec
 
-from viz_classes import s3_file, database
+from viz_database import VizDatabase
 
 FIM_VERSION = os.environ['FIM_VERSION']
 HAND_BUCKET = os.environ['HAND_BUCKET']
@@ -111,10 +112,10 @@ def lambda_handler(event, context):
     db_table = db_fim_table.split(".")[-1]
     if any(x in db_schema for x in ["aep", "fim_catchments", "catfim"]):
         fim_run_type = 'reference'
-        process_db = database(db_type="egis")
+        process_db = VizDatabase(db_type="egis")
         stage_ft_round_up = False # Don't round up to the nearest stage ft for reference services
     else:
-        process_db = database(db_type="viz")
+        process_db = VizDatabase(db_type="viz")
         stage_ft_round_up = True # Round up to the nearest stage ft for reference services
     
     if "catchments" in db_fim_table:
@@ -124,9 +125,7 @@ def lambda_handler(event, context):
         try:
             df_inundation.to_postgis(f"{db_table}", con=process_db.engine, schema=db_schema, if_exists='append')
         except Exception as e:
-            process_db.engine.dispose()
             raise Exception(f"Failed to add inundation data to DB for {huc8}-{branch} - ({e})")
-        process_db.engine.dispose()
 
     else:
         print(f"Processing HUC-branch {huc8_branch} for {fim_config_name} for {date}T{hour}:00:00Z")
@@ -138,15 +137,16 @@ def lambda_handler(event, context):
             stage_lookup = s3_csv_to_df(data_bucket, subsetted_data)
             stage_lookup = stage_lookup.set_index('hydro_id')
         else:
+            s3 = fsspec.filesystem('s3')
             # Validate main stem datasets by checking cathment, hand, and rating curves existence for the HUC
             catchment_key = f'{HAND_PREFIX}/{huc8}/branches/{branch}/gw_catchments_reaches_filtered_addedAttributes_{branch}.tif'
-            catch_exists = s3_file(HAND_BUCKET, catchment_key).check_existence()
+            catch_exists = s3.exists(f"s3://{HAND_BUCKET}/{catchment_key}")
 
             hand_key = f'{HAND_PREFIX}/{huc8}/branches/{branch}/rem_zeroed_masked_{branch}.tif'
-            hand_exists = s3_file(HAND_BUCKET, hand_key).check_existence()
+            hand_exists = s3.exists(f"s3://{HAND_BUCKET}/{hand_key}")
 
             rating_curve_key = f'{HAND_PREFIX}/{huc8}/branches/{branch}/hydroTable_{branch}.csv'
-            rating_curve_exists = s3_file(HAND_BUCKET, rating_curve_key).check_existence()
+            rating_curve_exists = s3.exists(f"s3://{HAND_BUCKET}/{rating_curve_key}")
 
             stage_lookup = pd.DataFrame()
             df_zero_stage_records = pd.DataFrame()
@@ -196,9 +196,7 @@ def lambda_handler(event, context):
                 df_inundation.to_sql(db_table, con=process_db.engine, schema=db_schema, if_exists='append', index=False)
                 df_inundation_geo.to_postgis(f"{db_table}_geo", con=process_db.engine, schema=db_schema, if_exists='append')
             except Exception as e:
-                process_db.engine.dispose()
                 raise Exception(f"Failed to add inundation data to DB for {huc8}-{branch} - ({e})")
-            process_db.engine.dispose()
         
         # If a reference configuration - do things a little diferently.
         elif fim_run_type == 'reference':
@@ -219,10 +217,8 @@ def lambda_handler(event, context):
             try:
                 df_inundation.to_postgis(f"{db_table}", con=process_db.engine, schema=db_schema, if_exists='append')
             except Exception as e:
-                process_db.engine.dispose()
                 raise Exception(f"Failed to add inundation data to DB for {huc8}-{branch} - ({e})")
-            process_db.engine.dispose()
-
+    
     print(f"Successfully processed tif for HUC {huc8} and branch {branch} for {product} for {reference_time}")
 
 def create_inundation_catchment_boundary(huc8, branch):
