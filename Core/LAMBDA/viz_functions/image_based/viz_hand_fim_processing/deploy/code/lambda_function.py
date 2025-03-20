@@ -189,12 +189,6 @@ def create_inundation_catchment_boundary(huc8, branch):
         profile['nodata'] = 0
         profile['dtype'] = "int32"
 
-        # Open the output raster using rasterio. This will allow the inner function to be parallel and write to it
-        # print("--> Setting up windows")
-
-        # Get the list of windows according to the raster metadata so they can be looped through
-        windows = riowindows.subdivide(riowindows.Window(0, 0, width=catchment_dataset.width, height=catchment_dataset.height), 1024, 1024)
-
         # This function will be run for each raster window.
         def process(window):
             """
@@ -225,6 +219,7 @@ def create_inundation_catchment_boundary(huc8, branch):
 
         # Use threading to parallelize the processing of the inundation windows
         geoms = []
+        windows = riowindows.subdivide(riowindows.Window(0, 0, width=catchment_dataset.width, height=catchment_dataset.height), 1024, 1024)
         for window in windows:
             geoms.extend(process(window))
                         
@@ -294,12 +289,6 @@ def create_inundation_output(huc8, branch, stage_lookup, reference_time, input_v
         profile['nodata'] = 0
         profile['dtype'] = "int32"
 
-        # Open the output raster using rasterio. This will allow the inner function to be parallel and write to it
-        # print("--> Setting up windows")
-
-        # Get the list of windows according to the raster metadata so they can be looped through
-        windows = riowindows.subdivide(riowindows.Window(0, 0, width=hand_dataset.width, height=hand_dataset.height), 1024, 1024)
-
         # This function will be run for each raster window.
         def process(window):
             """
@@ -366,6 +355,7 @@ def create_inundation_output(huc8, branch, stage_lookup, reference_time, input_v
 
         # Use threading to parallelize the processing of the inundation windows
         geoms = []
+        windows = riowindows.subdivide(riowindows.Window(0, 0, width=hand_dataset.width, height=hand_dataset.height), 1024, 1024)
         for window in windows:
             inundation_windows = process(window)
             if inundation_windows:
