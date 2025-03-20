@@ -91,10 +91,6 @@ variable "viz_cache_bucket" {
   type = string
 }
 
-variable "lambda_role" {
-  type = string
-}
-
 variable "viz_authoritative_bucket" {
   type = string  
 }
@@ -275,7 +271,7 @@ data "archive_file" "optimize_rasters_zip" {
 }
 
 resource "aws_s3_object" "optimize_rasters_zip_upload" {
-  provider = aws.no_tags  
+  provider    = aws.no_tags  
   bucket      = var.deployment_bucket
   key         = "terraform_artifacts/${path.module}/viz_optimize_rasters.zip"
   source      = data.archive_file.optimize_rasters_zip.output_path
@@ -407,7 +403,6 @@ module "schism-fim" {
   source = "./viz_schism_fim_processing"
   providers = {
     aws     = aws
-    aws.sns = aws.sns
     aws.no_tags = aws.no_tags
   }
   environment                 = var.environment
@@ -432,7 +427,6 @@ module "update-egis-data" {
   source = "./viz_update_egis_data"
   providers = {
     aws = aws
-    aws.sns = aws.sns
     aws.no_tags = aws.no_tags
   }
   environment = var.environment
@@ -461,7 +455,6 @@ module "python-preprocessing" {
   source = "./viz_python_preprocessing"
   providers = {
     aws = aws
-    aws.sns = aws.sns
     aws.no_tags = aws.no_tags
   }
   environment = var.environment
@@ -502,5 +495,5 @@ output "raster_processing" {
 }
 
 output "python_preprocessing" {
-  value = module.python-preprocessing
+  value = module.python-preprocessing.python_preprocessing
 }

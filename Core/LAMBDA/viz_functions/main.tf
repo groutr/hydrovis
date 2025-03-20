@@ -318,126 +318,126 @@ resource "aws_cloudwatch_metric_alarm" "egis_healthcheck_errors" {
   }
 }
 
-###################################
-## Python Preprocessing Function ##
-###################################
-data "archive_file" "python_preprocessing_zip" {
-  type = "zip"
+# ###################################
+# ## Python Preprocessing Function ##
+# ###################################
+# data "archive_file" "python_preprocessing_zip" {
+#   type = "zip"
 
-  source_dir = "${path.module}/viz_python_preprocessing"
+#   source_dir = "${path.module}/viz_python_preprocessing"
 
-  output_path = "${path.module}/temp/viz_python_preprocessing_${var.environment}_${var.region}.zip"
-}
+#   output_path = "${path.module}/temp/viz_python_preprocessing_${var.environment}_${var.region}.zip"
+# }
 
-resource "aws_s3_object" "python_preprocessing_zip_upload" {
-  provider = aws.no_tags  
-  bucket      = var.deployment_bucket
-  key         = "terraform_artifacts/${path.module}/viz_python_preprocessing.zip"
-  source      = data.archive_file.python_preprocessing_zip.output_path
-  source_hash = filemd5(data.archive_file.python_preprocessing_zip.output_path)
-}
+# resource "aws_s3_object" "python_preprocessing_zip_upload" {
+#   provider = aws.no_tags  
+#   bucket      = var.deployment_bucket
+#   key         = "terraform_artifacts/${path.module}/viz_python_preprocessing.zip"
+#   source      = data.archive_file.python_preprocessing_zip.output_path
+#   source_hash = filemd5(data.archive_file.python_preprocessing_zip.output_path)
+# }
 
-#########################
-#### 3GB RAM Version ####
-#########################
-resource "aws_lambda_function" "viz_python_preprocessing_3GB" {
-  function_name = "hv-vpp-${var.environment}-viz-python-preprocessing"
-  description   = "Lambda function to create max streamflow files for NWM data"
-  memory_size   = 3072
-  ephemeral_storage {
-    size = 10240
-  }
-  timeout = 900
+# #########################
+# #### 3GB RAM Version ####
+# #########################
+# resource "aws_lambda_function" "viz_python_preprocessing_3GB" {
+#   function_name = "hv-vpp-${var.environment}-viz-python-preprocessing"
+#   description   = "Lambda function to create max streamflow files for NWM data"
+#   memory_size   = 3072
+#   ephemeral_storage {
+#     size = 10240
+#   }
+#   timeout = 900
 
-  vpc_config {
-    security_group_ids = var.db_lambda_security_groups
-    subnet_ids         = var.db_lambda_subnets
-  }
+#   vpc_config {
+#     security_group_ids = var.db_lambda_security_groups
+#     subnet_ids         = var.db_lambda_subnets
+#   }
 
-  environment {
-    variables = {
-      CACHE_DAYS            = 1
-      AUTH_DATA_BUCKET      = var.viz_authoritative_bucket
-      DATA_BUCKET_UPLOAD    = var.fim_output_bucket
-      VIZ_DB_DATABASE       = var.viz_db_name
-      VIZ_DB_HOST           = var.viz_db_host
-      VIZ_DB_USERNAME       = jsondecode(var.viz_db_user_secret_string)["username"]
-      VIZ_DB_PASSWORD       = jsondecode(var.viz_db_user_secret_string)["password"]
-      NWM_DATAFLOW_VERSION  = var.nwm_dataflow_version
-    }
-  }
-  s3_bucket        = aws_s3_object.python_preprocessing_zip_upload.bucket
-  s3_key           = aws_s3_object.python_preprocessing_zip_upload.key
-  source_code_hash = filebase64sha256(data.archive_file.python_preprocessing_zip.output_path)
+#   environment {
+#     variables = {
+#       CACHE_DAYS            = 1
+#       AUTH_DATA_BUCKET      = var.viz_authoritative_bucket
+#       DATA_BUCKET_UPLOAD    = var.fim_output_bucket
+#       VIZ_DB_DATABASE       = var.viz_db_name
+#       VIZ_DB_HOST           = var.viz_db_host
+#       VIZ_DB_USERNAME       = jsondecode(var.viz_db_user_secret_string)["username"]
+#       VIZ_DB_PASSWORD       = jsondecode(var.viz_db_user_secret_string)["password"]
+#       NWM_DATAFLOW_VERSION  = var.nwm_dataflow_version
+#     }
+#   }
+#   s3_bucket        = aws_s3_object.python_preprocessing_zip_upload.bucket
+#   s3_key           = aws_s3_object.python_preprocessing_zip_upload.key
+#   source_code_hash = filebase64sha256(data.archive_file.python_preprocessing_zip.output_path)
 
-  runtime = "python3.9"
-  handler = "lambda_function.lambda_handler"
+#   runtime = "python3.9"
+#   handler = "lambda_function.lambda_handler"
 
-  role = var.lambda_role
+#   role = var.lambda_role
 
-  layers = [
-    var.xarray_layer,
-    var.psycopg2_sqlalchemy_layer,
-    var.viz_lambda_shared_funcs_layer,
-    var.requests_layer,
-    var.dask_layer
-  ]
+#   layers = [
+#     var.xarray_layer,
+#     var.psycopg2_sqlalchemy_layer,
+#     var.viz_lambda_shared_funcs_layer,
+#     var.requests_layer,
+#     var.dask_layer
+#   ]
 
-  tags = {
-    "Name" = "hv-vpp-${var.environment}-viz-python-preprocessing-3GB"
-  }
-}
+#   tags = {
+#     "Name" = "hv-vpp-${var.environment}-viz-python-preprocessing-3GB"
+#   }
+# }
 
-#########################
-#### 10GB RAM Version ####
-#########################
-resource "aws_lambda_function" "viz_python_preprocessing_10GB" {
-  function_name = "hv-vpp-${var.environment}-viz-python-preprocessing-10GB"
-  description   = "Lambda function to create max streamflow files for NWM data"
-  memory_size   = 10240
-  ephemeral_storage {
-    size = 10240
-  }
-  timeout = 900
+# #########################
+# #### 10GB RAM Version ####
+# #########################
+# resource "aws_lambda_function" "viz_python_preprocessing_10GB" {
+#   function_name = "hv-vpp-${var.environment}-viz-python-preprocessing-10GB"
+#   description   = "Lambda function to create max streamflow files for NWM data"
+#   memory_size   = 10240
+#   ephemeral_storage {
+#     size = 10240
+#   }
+#   timeout = 900
 
-  vpc_config {
-    security_group_ids = var.db_lambda_security_groups
-    subnet_ids         = var.db_lambda_subnets
-  }
+#   vpc_config {
+#     security_group_ids = var.db_lambda_security_groups
+#     subnet_ids         = var.db_lambda_subnets
+#   }
 
-  environment {
-    variables = {
-      CACHE_DAYS            = 1
-      AUTH_DATA_BUCKET      = var.viz_authoritative_bucket
-      DATA_BUCKET_UPLOAD    = var.fim_output_bucket
-      VIZ_DB_DATABASE       = var.viz_db_name
-      VIZ_DB_HOST           = var.viz_db_host
-      VIZ_DB_USERNAME       = jsondecode(var.viz_db_user_secret_string)["username"]
-      VIZ_DB_PASSWORD       = jsondecode(var.viz_db_user_secret_string)["password"]
-      NWM_DATAFLOW_VERSION  = var.nwm_dataflow_version
-    }
-  }
-  s3_bucket        = aws_s3_object.python_preprocessing_zip_upload.bucket
-  s3_key           = aws_s3_object.python_preprocessing_zip_upload.key
-  source_code_hash = filebase64sha256(data.archive_file.python_preprocessing_zip.output_path)
+#   environment {
+#     variables = {
+#       CACHE_DAYS            = 1
+#       AUTH_DATA_BUCKET      = var.viz_authoritative_bucket
+#       DATA_BUCKET_UPLOAD    = var.fim_output_bucket
+#       VIZ_DB_DATABASE       = var.viz_db_name
+#       VIZ_DB_HOST           = var.viz_db_host
+#       VIZ_DB_USERNAME       = jsondecode(var.viz_db_user_secret_string)["username"]
+#       VIZ_DB_PASSWORD       = jsondecode(var.viz_db_user_secret_string)["password"]
+#       NWM_DATAFLOW_VERSION  = var.nwm_dataflow_version
+#     }
+#   }
+#   s3_bucket        = aws_s3_object.python_preprocessing_zip_upload.bucket
+#   s3_key           = aws_s3_object.python_preprocessing_zip_upload.key
+#   source_code_hash = filebase64sha256(data.archive_file.python_preprocessing_zip.output_path)
 
-  runtime = "python3.9"
-  handler = "lambda_function.lambda_handler"
+#   runtime = "python3.9"
+#   handler = "lambda_function.lambda_handler"
 
-  role = var.lambda_role
+#   role = var.lambda_role
 
-  layers = [
-    var.xarray_layer,
-    var.psycopg2_sqlalchemy_layer,
-    var.viz_lambda_shared_funcs_layer,
-    var.requests_layer,
-    var.dask_layer
-  ]
+#   layers = [
+#     var.xarray_layer,
+#     var.psycopg2_sqlalchemy_layer,
+#     var.viz_lambda_shared_funcs_layer,
+#     var.requests_layer,
+#     var.dask_layer
+#   ]
 
-  tags = {
-    "Name" = "hv-vpp-${var.environment}-viz-python-preprocessing-10GB"
-  }
-}
+#   tags = {
+#     "Name" = "hv-vpp-${var.environment}-viz-python-preprocessing-10GB"
+#   }
+# }
 
 #############################
 ##   Initialize Pipeline   ##
@@ -539,6 +539,21 @@ resource "aws_lambda_function_event_invoke_config" "viz_initialize_pipeline_dest
       destination = var.email_sns_topics["viz_lambda_errors"].arn
     }
   }
+}
+
+resource "aws_cloudwatch_event_target" "viz_initialize_pipeline_every_five_minutes" {
+  rule      = var.five_minute_trigger.name
+  target_id = aws_lambda_function.viz_initialize_pipeline.function_name
+  arn       = aws_lambda_function.viz_initialize_pipeline.arn
+  input     = "{\"configuration\":\"rfc\"}"
+}
+
+resource "aws_lambda_permission" "viz_initialize_pipeline_called_by_rule" {
+  statement_id  = "AllowExecutionFromCloudWatch"
+  action        = "lambda:InvokeFunction"
+  function_name = aws_lambda_function.viz_initialize_pipeline.function_name
+  principal     = "events.amazonaws.com"
+  source_arn    = var.five_minute_trigger.arn
 }
 
 #############################
@@ -740,69 +755,69 @@ resource "aws_lambda_function_event_invoke_config" "viz_fim_data_prep_destinatio
 #############################
 ##    Update EGIS Data     ##
 #############################
-data "archive_file" "update_egis_data_zip" {
-  type = "zip"
+# data "archive_file" "update_egis_data_zip" {
+#   type = "zip"
 
-  source_file = "${path.module}/viz_update_egis_data/lambda_function.py"
+#   source_file = "${path.module}/viz_update_egis_data/lambda_function.py"
 
-  output_path = "${path.module}/temp/viz_update_egis_data_${var.environment}_${var.region}.zip"
-}
+#   output_path = "${path.module}/temp/viz_update_egis_data_${var.environment}_${var.region}.zip"
+# }
 
-resource "aws_s3_object" "update_egis_data_zip_upload" {
-  provider = aws.no_tags  
-  bucket      = var.deployment_bucket
-  key         = "terraform_artifacts/${path.module}/viz_update_egis_data.zip"
-  source      = data.archive_file.update_egis_data_zip.output_path
-  source_hash = filemd5(data.archive_file.update_egis_data_zip.output_path)
-}
+# resource "aws_s3_object" "update_egis_data_zip_upload" {
+#   provider = aws.no_tags  
+#   bucket      = var.deployment_bucket
+#   key         = "terraform_artifacts/${path.module}/viz_update_egis_data.zip"
+#   source      = data.archive_file.update_egis_data_zip.output_path
+#   source_hash = filemd5(data.archive_file.update_egis_data_zip.output_path)
+# }
 
-resource "aws_lambda_function" "viz_update_egis_data" {
-  function_name = "hv-vpp-${var.environment}-viz-update-egis-data"
-  description   = "Lambda function to copy a postprocesses service table into the egis postgreql database, as well as cache data in the viz database."
-  memory_size   = 128
-  timeout       = 900
-  vpc_config {
-    security_group_ids = var.db_lambda_security_groups
-    subnet_ids         = var.db_lambda_subnets
-  }
-  environment {
-    variables = {
-      EGIS_DB_DATABASE = var.egis_db_name
-      EGIS_DB_HOST     = var.egis_db_host
-      EGIS_DB_USERNAME = jsondecode(var.egis_db_user_secret_string)["username"]
-      EGIS_DB_PASSWORD = jsondecode(var.egis_db_user_secret_string)["password"]
-      VIZ_DB_DATABASE  = var.viz_db_name
-      VIZ_DB_HOST      = var.viz_db_host
-      VIZ_DB_USERNAME  = jsondecode(var.viz_db_user_secret_string)["username"]
-      VIZ_DB_PASSWORD  = jsondecode(var.viz_db_user_secret_string)["password"]
-      CACHE_BUCKET     = var.viz_cache_bucket
-    }
-  }
-  s3_bucket        = aws_s3_object.update_egis_data_zip_upload.bucket
-  s3_key           = aws_s3_object.update_egis_data_zip_upload.key
-  source_code_hash = filebase64sha256(data.archive_file.update_egis_data_zip.output_path)
-  runtime          = "python3.9"
-  handler          = "lambda_function.lambda_handler"
-  role             = var.lambda_role
-  layers = [
-    var.pandas_layer,
-    var.psycopg2_sqlalchemy_layer,
-    var.viz_lambda_shared_funcs_layer
-  ]
-  tags = {
-    "Name" = "hv-vpp-${var.environment}-viz-update-egis-data"
-  }
-}
+# resource "aws_lambda_function" "viz_update_egis_data" {
+#   function_name = "hv-vpp-${var.environment}-viz-update-egis-data"
+#   description   = "Lambda function to copy a postprocesses service table into the egis postgreql database, as well as cache data in the viz database."
+#   memory_size   = 128
+#   timeout       = 900
+#   vpc_config {
+#     security_group_ids = var.db_lambda_security_groups
+#     subnet_ids         = var.db_lambda_subnets
+#   }
+#   environment {
+#     variables = {
+#       EGIS_DB_DATABASE = var.egis_db_name
+#       EGIS_DB_HOST     = var.egis_db_host
+#       EGIS_DB_USERNAME = jsondecode(var.egis_db_user_secret_string)["username"]
+#       EGIS_DB_PASSWORD = jsondecode(var.egis_db_user_secret_string)["password"]
+#       VIZ_DB_DATABASE  = var.viz_db_name
+#       VIZ_DB_HOST      = var.viz_db_host
+#       VIZ_DB_USERNAME  = jsondecode(var.viz_db_user_secret_string)["username"]
+#       VIZ_DB_PASSWORD  = jsondecode(var.viz_db_user_secret_string)["password"]
+#       CACHE_BUCKET     = var.viz_cache_bucket
+#     }
+#   }
+#   s3_bucket        = aws_s3_object.update_egis_data_zip_upload.bucket
+#   s3_key           = aws_s3_object.update_egis_data_zip_upload.key
+#   source_code_hash = filebase64sha256(data.archive_file.update_egis_data_zip.output_path)
+#   runtime          = "python3.9"
+#   handler          = "lambda_function.lambda_handler"
+#   role             = var.lambda_role
+#   layers = [
+#     var.pandas_layer,
+#     var.psycopg2_sqlalchemy_layer,
+#     var.viz_lambda_shared_funcs_layer
+#   ]
+#   tags = {
+#     "Name" = "hv-vpp-${var.environment}-viz-update-egis-data"
+#   }
+# }
 
-resource "aws_lambda_function_event_invoke_config" "viz_update_egis_data_destinations" {
-  function_name          = resource.aws_lambda_function.viz_update_egis_data.function_name
-  maximum_retry_attempts = 0
-  destination_config {
-    on_failure {
-      destination = var.email_sns_topics["viz_lambda_errors"].arn
-    }
-  }
-}
+# resource "aws_lambda_function_event_invoke_config" "viz_update_egis_data_destinations" {
+#   function_name          = resource.aws_lambda_function.viz_update_egis_data.function_name
+#   maximum_retry_attempts = 0
+#   destination_config {
+#     on_failure {
+#       destination = var.email_sns_topics["viz_lambda_errors"].arn
+#     }
+#   }
+# }
 
 #############################
 ##     Publish Service     ##
@@ -989,16 +1004,16 @@ module "image-based-lambdas" {
 ########################################################################################################################################
 
 output "python_preprocessing_3GB" {
-  value = aws_lambda_function.viz_python_preprocessing_3GB
+  value = module.image-based-lambdas.python_preprocessing
 }
 
 output "python_preprocessing_10GB" {
-  value = aws_lambda_function.viz_python_preprocessing_10GB
-}
-
-output "python_preprocessing" {
   value = module.image-based-lambdas.python_preprocessing
 }
+
+# output "python_preprocessing" {
+#   value = module.image-based-lambdas.python_preprocessing
+# }
 
 output "initialize_pipeline" {
   value = aws_lambda_function.viz_initialize_pipeline
@@ -1017,7 +1032,7 @@ output "fim_data_prep" {
 }
 
 output "update_egis_data" {
-  value = module.image-based-lambdas.viz_update_egis_data
+  value = module.image-based-lambdas.update_egis_data
 }
 
 output "publish_service" {

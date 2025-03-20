@@ -8,6 +8,11 @@ resource "aws_route53_zone" "private" {
   vpc {
     vpc_id = var.vpc_main_id
   }
+
+  vpc {
+    vpc_id     = "vpc-04a30ac37e0de4b02"
+    vpc_region = "us-east-1"
+  }
 }
 
 output "zone" {

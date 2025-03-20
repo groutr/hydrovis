@@ -1,7 +1,7 @@
 {
   "QueryLanguage": "JSONata",
   "Comment": "A description of my state machine",
-  "StartAt": "S3 object keys",
+  "StartAt": "Remove Stale Run",
   "States": {
     "Remove Stale Run": {
       "Type": "Map",
@@ -31,7 +31,7 @@
         },
         "ReaderConfig": {}
       },
-      "Label": "S3objectkeys",
+      "Label": "RemoveStaleRun",
       "Output": {
         "success": true
       },
@@ -67,7 +67,7 @@
         },
         "ReaderConfig": {}
       },
-      "Label": "S3objectkeys",
+      "Label": "MoveApocalypticFiles",
       "End": true,
       "Output": {
         "success": true

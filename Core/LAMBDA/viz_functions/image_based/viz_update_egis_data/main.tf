@@ -2,20 +2,21 @@ terraform {
   required_providers {
     aws = {
       source  = "hashicorp/aws"
-      version = "5.84.0"
+      # version = "5.84.0"
+      configuration_aliases = [aws.no_tags]
     }
   }
 }
 
-provider "aws" {
-  region                   = var.region
-  profile                  = var.environment
-  default_tags {
-    tags = merge(var.default_tags, {
-      CreatedBy = "Terraform"
-    })
-  }
-}
+# provider "aws" {
+#   region                   = var.region
+#   profile                  = var.environment
+#   default_tags {
+#     tags = merge(var.default_tags, {
+#       CreatedBy = "Terraform"
+#     })
+#   }
+# }
 
 locals {
   viz_service_name = "viz-update-egis-data"
@@ -75,7 +76,7 @@ data "archive_file" "viz_service_zip" {
 }
 
 resource "aws_s3_object" "viz_service_zip_upload" {
-  #provider = aws.no_tags  
+  provider = aws.no_tags  
   bucket      = var.deployment_bucket
   key         = "terraform_artifacts/${local.viz_service_path}/${var.environment}/deploy.zip"
   source      = data.archive_file.viz_service_zip.output_path
