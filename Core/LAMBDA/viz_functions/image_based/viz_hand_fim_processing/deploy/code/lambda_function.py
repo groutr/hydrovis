@@ -22,56 +22,9 @@ CACHE_FIM_RESOLUTION_FT = 0.25
 CACHE_FIM_RESOLUTION_ROUNDING = 'up'
 
 
-# Vendor subdivide from Rasterio 1.4
-# REMOVE when rasterio is upgraded!
-def subdivide(window, height, width):
-    """Divide a window into smaller windows.
-
-    Windows have no overlap and will be at most the desired
-    height and width. Smaller windows will be generated where
-    the height and width do not evenly divide the window dimensions.
-
-    Parameters
-    ----------
-    window : Window
-        Source window to subdivide.
-    height : int
-        Subwindow height.
-    width : int
-        Subwindow width.
-
-    Returns
-    -------
-    list of Windows
-    """
-    subwindows = []
-
-    irow = window.row_off + window.height
-    icol = window.col_off + window.width
-
-    row_off = window.row_off
-    col_off = window.col_off
-    while row_off < irow:
-        if row_off + height > irow:
-            _height = irow - row_off
-        else:
-            _height = height
-
-        while col_off < icol:
-            if col_off + width > icol:
-                _width = icol - col_off
-            else:
-                _width = width
-
-            subwindows.append(riowindows.Window(col_off, row_off, _width, _height))
-            col_off += width
-
-        row_off += height
-        col_off = window.col_off
-    return subwindows
-
 class HANDDatasetReadError(Exception):
     """ my custom exception class """
+
 
 def lambda_handler(event, context):
     """
@@ -260,7 +213,7 @@ def create_inundation_catchment_boundary(huc8, branch):
         # print("--> Setting up windows")
 
         # Get the list of windows according to the raster metadata so they can be looped through
-        windows = subdivide(riowindows.Window(0, 0, width=catchment_dataset.width, height=catchment_dataset.height), 1024, 1024)
+        windows = riowindows.subdivide(riowindows.Window(0, 0, width=catchment_dataset.width, height=catchment_dataset.height), 1024, 1024)
 
         # This function will be run for each raster window.
         def process(window):
@@ -397,7 +350,7 @@ def create_inundation_output(huc8, branch, stage_lookup, reference_time, input_v
         # print("--> Setting up windows")
 
         # Get the list of windows according to the raster metadata so they can be looped through
-        windows = subdivide(riowindows.Window(0, 0, width=hand_dataset.width, height=hand_dataset.height), 1024, 1024)
+        windows = riowindows.subdivide(riowindows.Window(0, 0, width=hand_dataset.width, height=hand_dataset.height), 1024, 1024)
 
         # This function will be run for each raster window.
         def process(window):
