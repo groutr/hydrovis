@@ -230,21 +230,7 @@ def create_inundation_catchment_boundary(huc8, branch):
                 the two configurations. Because the extents of fr and ms are not the same, we do have to reshape
                 the arrays a bit to allow for the comparison
             """
-            tries = 0
-            catchment_open_success = False
-            while tries < 3:
-                try:
-                    catchment_window = catchment_dataset.read(window=window)  # Read the dataset for the specified window  # noqa
-                    tries = 3
-                    catchment_open_success = True
-                except Exception as e:
-                    tries += 1
-                    time.sleep(10)
-                    # print(f"Failed to open catchment. Trying again in 10 seconds - ({e})")
-
-            if not catchment_open_success:
-                raise HANDDatasetReadError("Failed to open Catchment dataset window")
-            
+            catchment_window = catchment_dataset.read(window=window)  # Read the dataset for the specified window  # noqa
             results = []
             for s, v in shapes(catchment_window, mask=None, transform=riowindows.transform(window, catchment_dataset.transform)):
                 if int(v):
@@ -367,20 +353,7 @@ def create_inundation_output(huc8, branch, stage_lookup, reference_time, input_v
                 the two configurations. Because the extents of fr and ms are not the same, we do have to reshape
                 the arrays a bit to allow for the comparison
             """
-            tries = 0
-            catchment_open_success = False
-            while tries < 3:
-                try:
-                    catchment_window = catchment_dataset.read(window=window)  # Read the dataset for the specified window  # noqa
-                    tries = 3
-                    catchment_open_success = True
-                except Exception as e:
-                    tries += 1
-                    time.sleep(10)
-                    print(f"Failed to open catchment. Trying again in 10 seconds - ({e})")
-
-            if not catchment_open_success:
-                raise HANDDatasetReadError("Failed to open Catchment dataset window")
+            catchment_window = catchment_dataset.read(window=window)  # Read the dataset for the specified window  # noqa
 
             unique_window_catchments = np.unique(catchment_window).tolist()  # Get a list of unique hydroids within the window  # noqa
             window_valid_catchments = [catchment for catchment in unique_window_catchments if catchment in valid_catchments]  # Check to see if any hydroids with stages >0 are inside this window  # noqa
@@ -389,20 +362,7 @@ def create_inundation_output(huc8, branch, stage_lookup, reference_time, input_v
                 return 
 
 
-            tries = 0
-            hand_open_success = False
-            while tries < 3:
-                try:
-                    hand_window = hand_dataset.read(window=window)
-                    tries = 3
-                    hand_open_success = True
-                except Exception as e:
-                    tries += 1
-                    time.sleep(10)
-                    print(f"Failed to open catchment. Trying again in 10 seconds - ({e})")
-
-            if not hand_open_success:
-                raise HANDDatasetReadError("Failed to open HAND dataset window")
+            hand_window = hand_dataset.read(window=window)
             
             # Create an empty numpy array with the nodata value that will be overwritten
             inundation_window = np.full(catchment_window.shape, hand_nodata, hand_dtype)
@@ -498,21 +458,12 @@ def create_inundation_output(huc8, branch, stage_lookup, reference_time, input_v
     return df_final
 
 def s3_csv_to_df(bucket, key, columns=None):    
-    # Allow retrying a few times before failing
     extra_pd_args = {}
     if columns is not None:
         extra_pd_args['usecols'] = columns
-    for i in range(5):
-        try:
-            # Read S3 csv file into Pandas DataFrame
-            # print(f"Reading {key} from {bucket} into DataFrame")
-            df = pd.read_csv(f"s3://{bucket}/{key}", **extra_pd_args)
-            # print("DataFrame creation Successful")
-        except Exception as e:
-            if i == 4: print(f"Failed to read from S3:\n{e}")
-            continue
-        break
-
+    
+    # Read S3 csv file into Pandas DataFrame
+    df = pd.read_csv(f"s3://{bucket}/{key}", **extra_pd_args)
     return df
 
 def calculate_stage_values(hydrotable_key, subsetted_streams_bucket, subsetted_streams, huc8_branch):
