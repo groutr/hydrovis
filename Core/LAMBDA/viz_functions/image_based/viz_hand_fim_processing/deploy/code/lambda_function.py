@@ -9,9 +9,9 @@ import time
 import datetime
 from math import floor, ceil
 from shapely.geometry import shape
+import fsspec
 
-
-from viz_classes import s3_file, database
+from viz_classes import database
 
 FIM_VERSION = os.environ['FIM_VERSION']
 HAND_BUCKET = os.environ['HAND_BUCKET']
@@ -91,15 +91,16 @@ def lambda_handler(event, context):
             stage_lookup = s3_csv_to_df(data_bucket, subsetted_data)
             stage_lookup = stage_lookup.set_index('hydro_id')
         else:
+            s3 = fsspec.filesystem('s3')
             # Validate main stem datasets by checking cathment, hand, and rating curves existence for the HUC
             catchment_key = f'{HAND_PREFIX}/{huc8}/branches/{branch}/gw_catchments_reaches_filtered_addedAttributes_{branch}.tif'
-            catch_exists = s3_file(HAND_BUCKET, catchment_key).check_existence()
+            catch_exists = s3.exists(f"s3://{HAND_BUCKET}/{catchment_key}")
 
             hand_key = f'{HAND_PREFIX}/{huc8}/branches/{branch}/rem_zeroed_masked_{branch}.tif'
-            hand_exists = s3_file(HAND_BUCKET, hand_key).check_existence()
+            hand_exists = s3.exists(f"s3://{HAND_BUCKET}/{hand_key}")
 
             rating_curve_key = f'{HAND_PREFIX}/{huc8}/branches/{branch}/hydroTable_{branch}.csv'
-            rating_curve_exists = s3_file(HAND_BUCKET, rating_curve_key).check_existence()
+            rating_curve_exists = s3.exists(f"s3://{HAND_BUCKET}/{rating_curve_key}")
 
             stage_lookup = pd.DataFrame()
             df_zero_stage_records = pd.DataFrame()
