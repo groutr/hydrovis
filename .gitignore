@@ -9,6 +9,9 @@
 *.tfstate*
 !terraform.tfstate.d
 
+# terraform lock files
+.terraform.lock.hcl
+
 # Crash log files
 crash.log
 
@@ -40,6 +43,9 @@ terraform.rc
 # Ignore visualization repo zip files
 **/LAMBDA/**/repos
 
+# Ignore profiles overrides for image modules
+**/LAMBDA/viz_functions/image_based/**/profiles.tf
+
 # Ignore image based lambda viz_classes
 **/LAMBDA/viz_functions/image_based/*/viz_classes.py
 **/LAMBDA/viz_functions/image_based/*/viz_lambda_shared_funcs.py
@@ -58,3 +64,6 @@ Dev/env.yaml
 # Ignore pycachefiles
 **/__pycache__/*
 **/__pycache__
+
+# Ignore conda-lock.yml
+conda-lock.yml
