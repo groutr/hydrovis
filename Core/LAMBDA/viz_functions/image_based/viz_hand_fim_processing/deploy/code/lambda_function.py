@@ -21,9 +21,7 @@ HAND_PREFIX = f"fim/hand_{HAND_VERSION.replace('.', '_')}/hand_datasets"
 CACHE_FIM_RESOLUTION_FT = 0.25
 CACHE_FIM_RESOLUTION_ROUNDING = 'up'
 
-
-class HANDDatasetReadError(Exception):
-    """ my custom exception class """
+CACHED_S3 = fsspec.filesystem('blockcache', target_protocol='s3')
 
 
 def lambda_handler(event, context):
@@ -178,25 +176,12 @@ def create_inundation_catchment_boundary(huc8, branch):
         Creates the catchment boundary polygons
     """
     catchment_key = f'{HAND_PREFIX}/{huc8}/branches/{branch}/gw_catchments_reaches_filtered_addedAttributes_{branch}.tif'
-    
+    catchment_url = f"s3://{HAND_BUCKET}/{catchment_key}"
+
     catchment_dataset = None
     try:
-        # print("--> Connecting to S3 datasets")
-        tries = 0
-        raster_open_success = False
-        while tries < 3:
-            try:
-                catchment_dataset = rasterio.open(f's3://{HAND_BUCKET}/{catchment_key}')  # open catchment grid from S3  # noqa
-                tries = 3
-                raster_open_success = True
-            except Exception as e:
-                tries += 1
-                time.sleep(30)
-                # print(f"Failed to open datasets. Trying again in 30 seconds - ({e})")
-
-        if not raster_open_success:
-            raise HANDDatasetReadError("Failed to open HAND and Catchment datasets")
-            
+        catchment_dataset = rasterio.open(catchment_url, opener=CACHED_S3)  # open catchment grid from S3  # noqa
+    
         # print("--> Setting up mapping array")
         profile = catchment_dataset.profile  # get the rasterio profile so the output can use the profile and match the input  # noqa
 
@@ -282,26 +267,8 @@ def create_inundation_output(huc8, branch, stage_lookup, reference_time, input_v
     try:
         print(f"Creating inundation for huc {huc8} and branch {branch}")
         
-        # Create a folder for the local tif outputs
-        if not os.path.exists('/tmp/raw_rasters/'):
-            os.mkdir('/tmp/raw_rasters/')
-        
-        # print("--> Connecting to S3 datasets")
-        tries = 0
-        raster_open_success = False
-        while tries < 3:
-            try:
-                hand_dataset = rasterio.open(f's3://{HAND_BUCKET}/{hand_key}')  # open HAND grid from S3
-                catchment_dataset = rasterio.open(f's3://{HAND_BUCKET}/{catchment_key}')  # open catchment grid from S3  # noqa
-                tries = 3
-                raster_open_success = True
-            except Exception as e:
-                tries += 1
-                time.sleep(30)
-                print(f"Failed to open datasets. Trying again in 30 seconds - ({e})")
-
-        if not raster_open_success:
-            raise HANDDatasetReadError("Failed to open HAND and Catchment datasets")
+        hand_dataset = rasterio.open(f's3://{HAND_BUCKET}/{hand_key}', opener=CACHED_S3)  # open HAND grid from S3
+        catchment_dataset = rasterio.open(f's3://{HAND_BUCKET}/{catchment_key}', opener=CACHED_S3)  # open catchment grid from S3  # noqa
             
         # print("--> Setting up mapping array")
         catchment_nodata = int(catchment_dataset.nodata)  # get no_data value for catchment raster
