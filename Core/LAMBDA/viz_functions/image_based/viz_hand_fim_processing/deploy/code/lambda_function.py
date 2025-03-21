@@ -268,17 +268,14 @@ def create_inundation_output(huc8, branch, stage_lookup, reference_time, input_v
         # print("--> Setting up mapping array")
         catchment_nodata = int(catchment_dataset.nodata)  # get no_data value for catchment raster
         valid_catchments = stage_lookup.index.values # parse lookup to get features with >0 stages  # noqa
-        hydroids = stage_lookup.index.tolist()  # parse lookup to get all features
         
         # Notable FIM Caching Change: Use the rc_stage_m (upper rating curve table step) for extents when running normal cached workflows (default)
         if stage_ft_round_up:
-            stages = stage_lookup['rc_stage_m'].tolist()  # uses the upper rating curve step for the extent
+            stages = stage_lookup['rc_stage_m'].values  # uses the upper rating curve step for the extent
         else:
-            stages = stage_lookup['stage_m'].tolist()  # uses the interpolated stage value for the extent
+            stages = stage_lookup['stage_m'].values  # uses the interpolated stage value for the extent
 
-        hydroids = np.array(hydroids)  # Create a feature numpy array from the list
-        stages = np.array(stages)  # Create a stage numpy array from the list
-
+        hydroids = valid_catchments  # Create a feature numpy array from the list
         hydro_id_max = hydroids.max()  # Get the max feature id in the array
 
         hand_nodata = hand_dataset.nodata  # get the no_data value for the HAND raster
