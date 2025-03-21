@@ -267,7 +267,7 @@ def create_inundation_output(huc8, branch, stage_lookup, reference_time, input_v
             
         # print("--> Setting up mapping array")
         catchment_nodata = int(catchment_dataset.nodata)  # get no_data value for catchment raster
-        valid_catchments = stage_lookup.index.tolist() # parse lookup to get features with >0 stages  # noqa
+        valid_catchments = stage_lookup.index.values # parse lookup to get features with >0 stages  # noqa
         hydroids = stage_lookup.index.tolist()  # parse lookup to get all features
         
         # Notable FIM Caching Change: Use the rc_stage_m (upper rating curve table step) for extents when running normal cached workflows (default)
@@ -311,12 +311,9 @@ def create_inundation_output(huc8, branch, stage_lookup, reference_time, input_v
             """
             catchment_window = catchment_dataset.read(window=window)  # Read the dataset for the specified window  # noqa
 
-            unique_window_catchments = np.unique(catchment_window).tolist()  # Get a list of unique hydroids within the window  # noqa
-            window_valid_catchments = [catchment for catchment in unique_window_catchments if catchment in valid_catchments]  # Check to see if any hydroids with stages >0 are inside this window  # noqa
             # Only process if there are hydroids with stage >0 in this window
-            if not window_valid_catchments:
+            if not np.isin(catchment_window, valid_catchments).any():
                 return 
-
 
             hand_window = hand_dataset.read(window=window)
             
