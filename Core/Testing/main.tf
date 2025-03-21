@@ -53,7 +53,7 @@ resource "aws_cloudwatch_event_rule" "detect_test_files" {
 }
 
 resource "aws_lambda_permission" "allow_cloudwatch_to_call_initialize_pipeline" {
-  statement_id  = "AllowExecutionFromCloudWatch"
+  statement_id  = "AllowExecutionFromCloudWatchForTesting"
   action        = "lambda:InvokeFunction"
   function_name = local.init_pipeline_lambda.function_name
   principal     = "events.amazonaws.com"

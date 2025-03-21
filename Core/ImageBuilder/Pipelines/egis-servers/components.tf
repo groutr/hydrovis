@@ -30,7 +30,7 @@ resource "aws_imagebuilder_component" "esri_patching" {
 
 ### Amazon Provided Components
 data "aws_imagebuilder_component" "stig_build_windows_high" {
-  arn = "arn:aws:imagebuilder:${var.region}:aws:component/stig-build-windows-high/x.x.x"
+  arn = "arn:aws:imagebuilder:${var.region}:aws:component/stig-build-windows-high/2022.x.x"
 }
 
 data "aws_imagebuilder_component" "amazon_cloudwatch_agent_windows" {

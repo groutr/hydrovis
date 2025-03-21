@@ -121,6 +121,14 @@ resource "aws_route_table" "private_a" {
     cidr_block     = "0.0.0.0/0"
     nat_gateway_id = aws_nat_gateway.a.id
   }
+  route {
+    cidr_block                 = "10.27.92.0/23"
+    vpc_peering_connection_id  = "pcx-0489d32a8343cca1c"
+  }
+  route {
+    cidr_block                 = "100.65.0.0/17"
+    vpc_peering_connection_id  = "pcx-0489d32a8343cca1c"
+  }
 
   tags = {
     Name = "hv-vpp-${var.environment}-prv-rt-a"
@@ -133,6 +141,14 @@ resource "aws_route_table" "private_b" {
   route {
     cidr_block     = "0.0.0.0/0"
     nat_gateway_id = aws_nat_gateway.b.id
+  }
+  route {
+    cidr_block                 = "10.27.92.0/23"
+    vpc_peering_connection_id  = "pcx-0489d32a8343cca1c"
+  }
+  route {
+    cidr_block                 = "100.65.0.0/17"
+    vpc_peering_connection_id  = "pcx-0489d32a8343cca1c"
   }
 
   tags = {
