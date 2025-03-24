@@ -196,9 +196,6 @@ def create_inundation_catchment_boundary(huc8, branch):
             ctransform = catchment_dataset.window_transform(window)
             for s, v in shapes(catchment_window, mask=catchment_window!=0, transform=ctransform):
                 geoms.append((int(v), shape(s)))
-                        
-    except Exception as e:
-        raise e
     finally:
         if catchment_dataset is not None:
             catchment_dataset.close()
