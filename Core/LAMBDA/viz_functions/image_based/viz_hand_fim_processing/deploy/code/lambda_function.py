@@ -247,87 +247,26 @@ def create_inundation_output(huc8, branch, stage_lookup, reference_time, input_v
             stages = stage_lookup['stage_m'].values  # uses the interpolated stage value for the extent
 
         hydroids = valid_catchments  # Create a feature numpy array from the list
-        hydro_id_max = hydroids.max()  # Get the max feature id in the array
 
-        hand_nodata = hand_dataset.nodata  # get the no_data value for the HAND raster
-        hand_dtype = hand_dataset.dtypes[0]  # get the dtype for the HAND raster
         profile = hand_dataset.profile  # get the rasterio profile so the output can use the profile and match the input  # noqa
 
         # set the output nodata to 0
         profile['nodata'] = 0
         profile['dtype'] = "int32"
 
-        # This function will be run for each raster window.
-        def process(window):
-            """
-                This function is run for each raster window in parallel. The function will read in the appropriate
-                window of the HAND and catchment datasets for main stem and/or full resolution. The stages will
-                then be mapped from a numpy array to the catchment window. This will create a windowed stage array.
-                The stage array is then compared to the HAND window array to create an inundation array where the
-                HAND values are gte to the stage values.
-
-                Each windowed inundation array is then saved to the output array for that specific window that was
-                ran.
-
-                For more information on rasterio window processing, see
-                https://rasterio.readthedocs.io/en/latest/topics/windowed-rw.html
-
-                If main stem AND full resolution are ran, then the inundation arrays for each configuration will be
-                compared and the highest value for each element in the array will be used. This is how we 'merge'
-                the two configurations. Because the extents of fr and ms are not the same, we do have to reshape
-                the arrays a bit to allow for the comparison
-            """
-            catchment_window = catchment_dataset.read(window=window)  # Read the dataset for the specified window  # noqa
-
-            # Only process if there are hydroids with stage >0 in this window
-            if not np.isin(catchment_window, valid_catchments).any():
-                return 
-
-            hand_window = hand_dataset.read(window=window)
-            
-            # Create an empty numpy array with the nodata value that will be overwritten
-            inundation_window = np.full(catchment_window.shape, hand_nodata, hand_dtype)
-
-            # If catchment window values exist, then find the max between the stage mapper and the window
-            mapping_ar_max = max(hydro_id_max, catchment_window.max())
-
-            # Create a stage mapper that will convert hydroids to their corresponding stage. -9999 is null or
-            # no value. we cant use 0 because it will mess up the mapping and use the 0 index
-            mapping_ar = np.full(mapping_ar_max+1, -9999, dtype="float32")
-            mapping_ar[hydroids] = stages
-
-            catchment_window[catchment_window == catchment_nodata] = 0  # Convert catchment values to 0 where the catchment = catchment_nodata  # noqa
-            catchment_window[hand_window == hand_nodata] = 0  # Convert catchment values to 0 where the HAND = HAND_nodata. THis will ensure we are only processing where we have HAND values!  # noqa
-
-            reclass_window = mapping_ar[catchment_window]  # Convert the catchment to stage
-
-            conditions = reclass_window > hand_window  # Select where stage is gte to HAND
-            conditions &= reclass_window != -9999  # Select where stage is gte to HAND
-
-            inundation_window = np.where(conditions, catchment_window, 0).astype('int32')
-
-            # Checking to see if there is any inundated areas in the window
-            if not (inundation_window != 0).any():
-                return 
-
-            if np.max(inundation_window) != 0:
-                results = []
-                for s, v in shapes(inundation_window, mask=None, transform=riowindows.transform(window, hand_dataset.transform)):
-                    if int(v):
-                        results.append((int(v), shape(s)))
-                    
-                return results
-
-        # Use threading to parallelize the processing of the inundation windows
         geoms = []
         windows = riowindows.subdivide(riowindows.Window(0, 0, width=hand_dataset.width, height=hand_dataset.height), 1024, 1024)
         for window in windows:
-            inundation_windows = process(window)
-            if inundation_windows:
-                geoms.extend(inundation_windows)
-                        
-    except Exception as e:
-        raise e
+            catchment_window = catchment_dataset.read(window=window)
+            # Only process if there are hydroids with stage >0 in this window
+            if not np.isin(catchment_window, valid_catchments).any():
+                continue 
+            hand_window = hand_dataset.read(window=window)
+            results = map_inundation_stages(catchment_window, catchment_nodata,
+                                            hand_window, hand_dataset.nodata, hand_dataset.window_transform(window),
+                                            hydroids, stages)
+
+            geoms.extend(results)
     finally:
         if hand_dataset is not None:
             hand_dataset.close()
@@ -378,6 +317,61 @@ def create_inundation_output(huc8, branch, stage_lookup, reference_time, input_v
     df_final = df_final.drop(columns=drop_columns)
                 
     return df_final
+
+
+def map_inundation_stages(catchment_window, catchment_nodata, hand_window, hand_nodata, hand_transform, hydroids, stages):
+    """
+        The function will read in the appropriate
+        window of the HAND and catchment datasets for main stem and/or full resolution. The stages will
+        then be mapped from a numpy array to the catchment window. This will create a windowed stage array.
+        The stage array is then compared to the HAND window array to create an inundation array where the
+        HAND values are gte to the stage values.
+
+        Each windowed inundation array is then saved to the output array for that specific window that was
+        ran.
+
+        For more information on rasterio window processing, see
+        https://rasterio.readthedocs.io/en/latest/topics/windowed-rw.html
+
+        If main stem AND full resolution are ran, then the inundation arrays for each configuration will be
+        compared and the highest value for each element in the array will be used. This is how we 'merge'
+        the two configurations. Because the extents of fr and ms are not the same, we do have to reshape
+        the arrays a bit to allow for the comparison
+    """
+    # If catchment window values exist, then find the max between the stage mapper and the window
+    mapping_ar_max = max(hydroids.max(), catchment_window.max())
+
+    # Create a stage mapper that will convert hydroids to their corresponding stage. -9999 is null or
+    # no value. we cant use 0 because it will mess up the mapping and use the 0 index
+    mapping_ar = np.full(mapping_ar_max+1, -9999, dtype="float32")
+    mapping_ar[hydroids] = stages
+
+    # Convert catchment values to 0 where the catchment = catchment_nodata  # noqa
+    catchment_window[catchment_window == catchment_nodata] = 0  
+    # Convert catchment values to 0 where the HAND = HAND_nodata. This will ensure we are only processing where we have HAND values!  # noqa
+    catchment_window[hand_window == hand_nodata] = 0  
+
+    # Convert the catchment to stage
+    reclass_window = mapping_ar[catchment_window]
+
+    # Select where stage is gte to HAND
+    conditions = reclass_window > hand_window  
+    conditions &= reclass_window != -9999
+
+    inundation_window = np.where(conditions, catchment_window, 0)
+
+    # Checking to see if there is any inundated areas in the window
+    # Because of how inundation_window is constructed, conditions are all non-zero locations.
+    results = []
+    if not conditions.any():
+        return results
+
+    if inundation_window.max() != 0:
+        for s, v in shapes(inundation_window, mask=conditions, transform=hand_transform):
+            results.append((int(v), shape(s)))
+            
+        return results
+            
 
 def s3_csv_to_df(bucket, key, columns=None):    
     extra_pd_args = {}
