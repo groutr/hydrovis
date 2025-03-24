@@ -189,39 +189,13 @@ def create_inundation_catchment_boundary(huc8, branch):
         profile['nodata'] = 0
         profile['dtype'] = "int32"
 
-        # This function will be run for each raster window.
-        def process(window):
-            """
-                This function is run for each raster window in parallel. The function will read in the appropriate
-                window of the HAND and catchment datasets for main stem and/or full resolution. The stages will
-                then be mapped from a numpy array to the catchment window. This will create a windowed stage array.
-                The stage array is then compared to the HAND window array to create an inundation array where the
-                HAND values are gte to the stage values.
-
-                Each windowed inundation array is then saved to the output array for that specific window that was
-                ran.
-
-                For more information on rasterio window processing, see
-                https://rasterio.readthedocs.io/en/latest/topics/windowed-rw.html
-
-                If main stem AND full resolution are ran, then the inundation arrays for each configuration will be
-                compared and the highest value for each element in the array will be used. This is how we 'merge'
-                the two configurations. Because the extents of fr and ms are not the same, we do have to reshape
-                the arrays a bit to allow for the comparison
-            """
-            catchment_window = catchment_dataset.read(window=window)  # Read the dataset for the specified window  # noqa
-            results = []
-            for s, v in shapes(catchment_window, mask=None, transform=riowindows.transform(window, catchment_dataset.transform)):
-                if int(v):
-                    results.append((int(v), shape(s)))
-
-            return results
-
-        # Use threading to parallelize the processing of the inundation windows
         geoms = []
         windows = riowindows.subdivide(riowindows.Window(0, 0, width=catchment_dataset.width, height=catchment_dataset.height), 1024, 1024)
         for window in windows:
-            geoms.extend(process(window))
+            catchment_window = catchment_dataset.read(window=window)
+            ctransform = catchment_dataset.window_transform(window)
+            for s, v in shapes(catchment_window, mask=catchment_window!=0, transform=ctransform):
+                geoms.append((int(v), shape(s)))
                         
     except Exception as e:
         raise e
