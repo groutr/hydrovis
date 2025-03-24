@@ -75,7 +75,7 @@ def lambda_handler(event, context):
         try:
             df_inundation.to_postgis(f"{db_table}", con=process_db.engine, schema=db_schema, if_exists='append')
         except Exception as e:
-            raise Exception(f"Failed to add inundation data to DB for {huc8}-{branch} - ({e})")
+            raise Exception(f"Failed to add inundation data to DB for {huc8}-{branch} - ({e})") from e
 
     else:
         print(f"Processing HUC-branch {huc8_branch} for {fim_config_name} for {date}T{hour}:00:00Z")
@@ -146,7 +146,7 @@ def lambda_handler(event, context):
                 df_inundation.to_sql(db_table, con=process_db.engine, schema=db_schema, if_exists='append', index=False)
                 df_inundation_geo.to_postgis(f"{db_table}_geo", con=process_db.engine, schema=db_schema, if_exists='append')
             except Exception as e:
-                raise Exception(f"Failed to add inundation data to DB for {huc8}-{branch} - ({e})")
+                raise Exception(f"Failed to add inundation data to DB for {huc8}-{branch} - ({e})") from e
         
         # If a reference configuration - do things a little diferently.
         elif fim_run_type == 'reference':
@@ -167,7 +167,7 @@ def lambda_handler(event, context):
             try:
                 df_inundation.to_postgis(f"{db_table}", con=process_db.engine, schema=db_schema, if_exists='append')
             except Exception as e:
-                raise Exception(f"Failed to add inundation data to DB for {huc8}-{branch} - ({e})")
+                raise Exception(f"Failed to add inundation data to DB for {huc8}-{branch} - ({e})") from e
 
     print(f"Successfully processed tif for HUC {huc8} and branch {branch} for {product} for {reference_time}")
 
