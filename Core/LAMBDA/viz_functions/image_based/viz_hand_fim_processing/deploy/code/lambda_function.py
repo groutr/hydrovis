@@ -358,15 +358,14 @@ def map_inundation_stages(catchment_window, catchment_nodata, hand_window, hand_
     conditions = reclass_window > hand_window  
     conditions &= reclass_window != -9999
 
-    inundation_window = np.where(conditions, catchment_window, 0)
-
     # Checking to see if there is any inundated areas in the window
     # Because of how inundation_window is constructed, conditions are all non-zero locations.
-    results = []
     if not conditions.any():
         return results
 
+    inundation_window = np.where(conditions, catchment_window, 0)
     if inundation_window.max() != 0:
+        results = []
         for s, v in shapes(inundation_window, mask=conditions, transform=hand_transform):
             results.append((int(v), shape(s)))
             
