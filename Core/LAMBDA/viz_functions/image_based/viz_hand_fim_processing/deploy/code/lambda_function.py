@@ -123,14 +123,14 @@ def lambda_handler(event, context):
         if fim_run_type == 'normal':
             # Split geometry into seperate table per new schema
             df_inundation_geo = df_inundation[['hand_id', 'rc_stage_ft', 'geom']]
-            df_inundation.drop(columns=['geom'], inplace=True)
+            df_inundation = df_inundation.drop(columns=['geom'])
             
             # If records exist in stage_lookup that don't exist in df_inundation, add those to the zero_stage table.
             df_no_inundation = stage_lookup.merge(df_inundation.drop_duplicates(), on=['hand_id'],how='left',indicator=True)
             df_no_inundation = df_no_inundation.loc[df_no_inundation['_merge'] == 'left_only']
             if df_no_inundation.empty == False:
                 # print(f"Adding {len(df_no_inundation)} reaches with NaN inundation to zero_stage table")
-                df_no_inundation.drop(df_no_inundation.columns.difference(['hand_id','rc_discharge_cms','note']), axis=1,  inplace=True)
+                df_no_inundation = df_no_inundation.drop(df_no_inundation.columns.difference(['hand_id','rc_discharge_cms','note']), axis=1)
                 df_no_inundation['note'] = "Error - No inundation returned from hand processing."
                 df_no_inundation.to_sql(f"{db_table}_zero_stage", con=process_db.engine, schema=db_schema, if_exists='append', index=False)
             
@@ -140,7 +140,7 @@ def lambda_handler(event, context):
         
             # print(f"Adding data to {db_fim_table}")# Only process inundation configuration if available data
             try:
-                df_inundation.drop(columns=['hydro_id', 'feature_id'], inplace=True)
+                df_inundation = df_inundation.drop(columns=['hydro_id', 'feature_id'])
                 df_inundation.to_sql(db_table, con=process_db.engine, schema=db_schema, if_exists='append', index=False)
                 df_inundation_geo.to_postgis(f"{db_table}_geo", con=process_db.engine, schema=db_schema, if_exists='append')
             except Exception as e:
@@ -153,7 +153,7 @@ def lambda_handler(event, context):
                 return
             
             # Re-format data for aep tables
-            df_inundation.drop(columns=['hand_id', 'rc_stage_ft', 'rc_previous_stage_ft', 'rc_discharge_cfs', 'rc_previous_discharge_cfs', 'prc_method', ], inplace=True)
+            df_inundation = df_inundation.drop(columns=['hand_id', 'rc_stage_ft', 'rc_previous_stage_ft', 'rc_discharge_cfs', 'rc_previous_discharge_cfs', 'prc_method', ])
             df_inundation = df_inundation.rename(columns={"forecast_stage_ft": "fim_stage_ft", "forecast_discharge_cfs": "streamflow_cfs"})
             df_inundation['feature_id_str'] = df_inundation['feature_id'].astype(str)
             df_inundation['hydro_id_str'] = df_inundation['hydro_id'].astype(str)
@@ -424,9 +424,9 @@ def calculate_stage_values(hydrotable_key, subsetted_streams_bucket, subsetted_s
     df_zero_stage['note'] = np.where(df_zero_stage.note.isnull(), "0 Stage After Hydrotable Lookup", "NaN")
     df_forecast = df_forecast[~stage0]
 
-    df_zero_stage.drop(columns=['discharge_cms', 'stage_m', 'rc_stage_m', 'rc_previous_stage_m', 'rc_previous_discharge_cms', 'flood_area_above_expected_coeff'], inplace=True)
+    df_zero_stage = df_zero_stage.drop(columns=['discharge_cms', 'stage_m', 'rc_stage_m', 'rc_previous_stage_m', 'rc_previous_discharge_cms', 'flood_area_above_expected_coeff'])
     df_zero_stage = df_zero_stage.reset_index()
-    df_zero_stage.drop(columns=['hydro_id','feature_id'], inplace=True)
+    df_zero_stage = df_zero_stage.drop(columns=['hydro_id','feature_id'])
 
     df_forecast = df_forecast.join(df_hydro_max)
     # print(f"{len(df_forecast)} reaches will be processed")
