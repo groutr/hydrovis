@@ -30,6 +30,7 @@ data "archive_file" "viz_service_zip" {
     content  = file("${path.module}/../../../layers/viz_lambda_shared_funcs/python/viz_classes.py")
     filename = "code/viz_classes.py"
   }
+
   source {
     content = file("${path.module}/buildspec.yml")
     filename = "buildspec.yml"
