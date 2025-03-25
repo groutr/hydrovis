@@ -27,6 +27,7 @@ CREATE TABLE {db_fim_table}
     rc_previous_stage_ft integer,
     max_rc_stage_ft double precision,
     max_rc_discharge_cfs double precision,
+    flood_area_above_expected_coeff double precision,
     model_version varchar(20),
     fim_version varchar(12),
     reference_time varchar(30),

@@ -37,6 +37,7 @@ def setup_huc_inundation(event):
     # fim_publish_db_type = fim_config['publish_db'] # TODO: Add this to step function only to pass to hand_processing?
     target_table = fim_config['target_table']
     product = event['args']['product']['product']
+    domain = event['args']['product']['domain']
     configuration = event['args']['product']['configuration']
     reference_time = event['args']['reference_time']
     reference_date = datetime.datetime.strptime(reference_time, "%Y-%m-%d %H:%M:%S")
@@ -69,6 +70,7 @@ def setup_huc_inundation(event):
     else:
         hand_sql = open("templates_sql/hand_features.sql", 'r').read()
         hand_sql = hand_sql.replace("{db_fim_table}", target_table)
+        hand_sql = hand_sql.replace("{domain}", domain)
     
     # Using the sql defined above, pull features for running hand into a dataframe
     df_streamflows = viz_db.sql_to_dataframe(hand_sql)

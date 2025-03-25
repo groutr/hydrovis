@@ -16,6 +16,7 @@ SELECT
 	inun.rc_stage_ft as fim_stage_ft,
 	inun.max_rc_stage_ft,
 	inun.max_rc_discharge_cfs,
+	inun.flood_area_above_expected_coeff,
 	inun.fim_version,
 	inun.model_version,
 	to_char('1900-01-01 00:00:00'::timestamp without time zone, 'YYYY-MM-DD HH24:MI:SS UTC') AS reference_time,

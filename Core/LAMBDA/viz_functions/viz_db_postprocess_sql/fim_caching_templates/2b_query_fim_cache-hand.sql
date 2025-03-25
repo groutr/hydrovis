@@ -1,7 +1,7 @@
 -- Query the hand cache.
 INSERT INTO {db_fim_table} (
     hand_id, forecast_discharge_cfs, rc_discharge_cfs, rc_previous_discharge_cfs, rc_stage_ft, rc_previous_stage_ft,
-    max_rc_stage_ft, max_rc_discharge_cfs, model_version, fim_version, reference_time, prc_method
+    max_rc_stage_ft, max_rc_discharge_cfs, flood_area_above_expected_coeff, model_version, fim_version, reference_time, prc_method
 )
 SELECT
     fs.hand_id,
@@ -12,6 +12,7 @@ SELECT
     cf.rc_previous_stage_ft,
     cfm.max_rc_stage_ft,
     cfm.max_rc_discharge_cfs,
+    cf.flood_area_above_expected_coeff,
     cfm.model_version,
     '{fim_version}' as fim_version,
     to_char('1900-01-01 00:00:00'::timestamp without time zone, 'YYYY-MM-DD HH24:MI:SS UTC') AS reference_time,

@@ -542,6 +542,7 @@ resource "aws_lambda_function_event_invoke_config" "viz_initialize_pipeline_dest
 }
 
 resource "aws_cloudwatch_event_target" "viz_initialize_pipeline_every_five_minutes" {
+  count     = var.environment == "ti" ? 0 : 1
   rule      = var.five_minute_trigger.name
   target_id = aws_lambda_function.viz_initialize_pipeline.function_name
   arn       = aws_lambda_function.viz_initialize_pipeline.arn
@@ -549,6 +550,7 @@ resource "aws_cloudwatch_event_target" "viz_initialize_pipeline_every_five_minut
 }
 
 resource "aws_lambda_permission" "viz_initialize_pipeline_called_by_rule" {
+  count         = var.environment == "ti" ? 0 : 1
   statement_id  = "AllowExecutionFromCloudWatch"
   action        = "lambda:InvokeFunction"
   function_name = aws_lambda_function.viz_initialize_pipeline.function_name

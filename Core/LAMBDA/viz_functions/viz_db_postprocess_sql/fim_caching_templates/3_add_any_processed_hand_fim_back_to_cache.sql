@@ -15,13 +15,14 @@ WHERE fim.prc_method = 'HAND_Processing'
     AND hcm.hand_id IS NULL;
 
 -- 2. Add records for each stage_ft step of the hydrotable to the hydrotable_cached table
-INSERT INTO handfim_cache.hydrotable_cached (hand_id, rc_discharge_cfs, rc_previous_discharge_cfs, rc_stage_ft, rc_previous_stage_ft)
+INSERT INTO handfim_cache.hydrotable_cached (hand_id, rc_discharge_cfs, rc_previous_discharge_cfs, rc_stage_ft, rc_previous_stage_ft, flood_area_above_expected_coeff)
 SELECT
     fim.hand_id,
     fim.rc_discharge_cfs,
     fim.rc_previous_discharge_cfs,
     fim.rc_stage_ft,
-    fim.rc_previous_stage_ft
+    fim.rc_previous_stage_ft,
+    fim.flood_area_above_expected_coeff
 FROM {db_fim_table} AS fim
 LEFT OUTER JOIN handfim_cache.hydrotable_cached AS hc ON fim.hand_id = hc.hand_id AND fim.rc_stage_ft = hc.rc_stage_ft
 WHERE fim.prc_method = 'HAND_Processing' AND

@@ -109,8 +109,6 @@ def lambda_handler(event, context):
         # If not a reference/egis fim run, Upload zero_stage reaches for tracking / FIM cache
         if fim_run_type != 'reference' and not df_zero_stage_records.empty:
             # print(f"Adding zero stage data to {db_table}_zero_stage")# Only process inundation configuration if available data
-            df_zero_stage_records = df_zero_stage_records.reset_index()
-            df_zero_stage_records.drop(columns=['hydro_id','feature_id'], inplace=True)
             df_zero_stage_records.to_sql(f"{db_table}_zero_stage", con=process_db.engine, schema=db_schema, if_exists='append', index=False)
         
         # If no features with above zero stages are present, then just copy an unflood raster instead of processing nothing
@@ -392,9 +390,9 @@ def calculate_stage_values(hydrotable_key, subsetted_streams_bucket, subsetted_s
         Returns:
             stage_dict (dict): A dictionary with the hydroid as the key and interpolated stage as the value
     """
-    hydrocols = ['HydroID', 'feature_id', 'stage', 'discharge_cms', 'LakeID']
+    hydrocols = ['HydroID', 'feature_id', 'stage', 'discharge_cms', 'SurfaceArea (m2)']
     df_hydro = s3_csv_to_df(HAND_BUCKET, hydrotable_key, columns=hydrocols)
-    df_hydro = df_hydro.rename(columns={'HydroID': 'hydro_id', 'stage': 'stage_m'})
+    df_hydro = df_hydro.rename(columns={'HydroID': 'hydro_id', 'stage': 'stage_m', 'SurfaceArea (m2)': 'surface_area_m2'})
 
     df_hydro_max = df_hydro.loc[df_hydro.groupby('hydro_id')['stage_m'].idxmax()]
     df_hydro_max = df_hydro_max.set_index('hydro_id')
@@ -403,9 +401,16 @@ def calculate_stage_values(hydrotable_key, subsetted_streams_bucket, subsetted_s
     df_forecast = s3_csv_to_df(subsetted_streams_bucket, subsetted_streams)
     df_forecast = df_forecast.loc[df_forecast['huc8_branch']==huc8_branch]
     df_forecast = df_forecast.rename(columns={'streamflow_cms': 'discharge_cms'}) #TODO: Change the output CSV to list discharge instead of streamflow for consistency?
-    df_forecast[['stage_m', 'rc_stage_m', 'rc_previous_stage_m', 'rc_discharge_cms', 'rc_previous_discharge_cms']] = df_forecast.apply(lambda row : interpolate_stage(row, df_hydro), axis=1).apply(pd.Series)
+    df_forecast[[
+        'stage_m', 
+        'rc_stage_m', 
+        'rc_previous_stage_m', 
+        'rc_discharge_cms', 
+        'rc_previous_discharge_cms',
+        'flood_area_above_expected_coeff'
+    ]] = df_forecast.apply(lambda row : interpolate_stage(row, df_hydro), axis=1).apply(pd.Series)
     
-    df_forecast = df_forecast.drop(columns=['huc8_branch', 'huc'])
+    df_forecast = df_forecast.drop(columns=['huc8_branch', 'huc', 'high_water_threshold'])
     df_forecast = df_forecast.set_index('hydro_id')
     
     # print(f"Removing {len(df_forecast[df_forecast['stage_m'].isna()])} reaches with a NaN interpolated stage")
@@ -419,8 +424,10 @@ def calculate_stage_values(hydrotable_key, subsetted_streams_bucket, subsetted_s
     df_zero_stage['note'] = np.where(df_zero_stage.note.isnull(), "0 Stage After Hydrotable Lookup", "NaN")
     df_forecast = df_forecast[~stage0]
 
-    df_zero_stage.drop(columns=['discharge_cms', 'stage_m', 'rc_stage_m', 'rc_previous_stage_m', 'rc_previous_discharge_cms'], inplace=True)
-    
+    df_zero_stage.drop(columns=['discharge_cms', 'stage_m', 'rc_stage_m', 'rc_previous_stage_m', 'rc_previous_discharge_cms', 'flood_area_above_expected_coeff'], inplace=True)
+    df_zero_stage = df_zero_stage.reset_index()
+    df_zero_stage.drop(columns=['hydro_id','feature_id'], inplace=True)
+
     df_forecast = df_forecast.join(df_hydro_max)
     # print(f"{len(df_forecast)} reaches will be processed")
      
@@ -445,24 +452,29 @@ def interpolate_stage(df_row, df_hydro):
     '''
     hydro_id = df_row['hydro_id']
     forecast = df_row['discharge_cms']
+    high_water_threshold = df_row['high_water_threshold']
     
     hydro_mask = df_hydro.hydro_id == hydro_id
     
     # Filter the hydrotable to this hydroid and pull out discharge and stages into arrays
-    subset_hydro = df_hydro.loc[hydro_mask, ['discharge_cms', 'stage_m']]
+    subset_hydro = df_hydro.loc[hydro_mask, ['discharge_cms', 'stage_m', 'surface_area_m2']]
     if subset_hydro.empty:
-        return np.nan, np.nan, np.nan, np.nan, np.nan
+        return np.nan, np.nan, np.nan, np.nan, np.nan, np.nan
 
     subset_hydro = subset_hydro.sort_values('discharge_cms')
     discharges = subset_hydro['discharge_cms'].values
     stages = subset_hydro['stage_m'].values
+    surface_areas_m2 = subset_hydro['surface_area_m2'].values
     
     # Get the interpolated stage by using the discharge forecast value against the arrays
     interpolated_stage = round(np.interp(forecast, discharges, stages), 2)
+    forecast_interpolated_surface_area_m2 = round(np.interp(forecast, discharges, surface_areas_m2), 2)
+    high_water_interpolated_surface_area_m2 = round(np.interp(high_water_threshold, discharges, surface_areas_m2), 2)
+    flood_area_above_expected_coeff = round(forecast_interpolated_surface_area_m2 / high_water_interpolated_surface_area_m2, 2)
 
     if np.isnan(interpolated_stage):
         print(f"WARNING: Interpolated stage is NaN where hydro_id == {hydro_id}")
-        return np.nan, np.nan, np.nan, np.nan, np.nan
+        return np.nan, np.nan, np.nan, np.nan, np.nan, np.nan
 
     # Get the upper and lower values of the 1-ft hydrotable array that the current forecast / interpolated stage is at
     hydrotable_index = np.searchsorted(discharges, forecast, side='right')
@@ -486,4 +498,4 @@ def interpolate_stage(df_row, df_hydro):
         rc_previous_stage = max(rounded_stage - CACHE_FIM_RESOLUTION_FT, 0)
         rc_previous_discharge = round(np.interp(rc_previous_stage, stages, discharges), 2)
 
-    return interpolated_stage, rounded_stage, rc_previous_stage, rc_discharge, rc_previous_discharge
+    return interpolated_stage, rounded_stage, rc_previous_stage, rc_discharge, rc_previous_discharge, flood_area_above_expected_coeff
