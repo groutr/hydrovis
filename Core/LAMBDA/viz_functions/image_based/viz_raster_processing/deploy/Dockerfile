@@ -31,11 +31,7 @@ COPY --from=micromamba --chown=root /usr/local/bin/_*.sh /usr/local/bin/
 WORKDIR /home/code
 
 # Copy function code
-COPY products/ ./products/
-COPY lambda_function.py \
-    viz_classes.py \
-    viz_lambda_shared_funcs.py \
-    ./
+COPY code/ ./
 
 SHELL ["/usr/local/bin/_dockerfile_shell.sh"]
 
