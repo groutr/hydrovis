@@ -36,6 +36,7 @@ product_summaries:
       - publish.srf_18hr_max_inundation_building_footprints
       - publish.srf_18hr_max_inundation_counties
       - publish.srf_18hr_max_inundation_hucs
+      - publish.srf_18hr_max_inundation_critical_infrastructure
 
 services:
   - srf_18hr_max_inundation_extent_noaa

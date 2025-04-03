@@ -39,6 +39,7 @@ product_summaries:
       - publish.ana_inundation_building_footprints
       - publish.ana_inundation_counties
       - publish.ana_inundation_hucs
+      - publish.ana_inundation_critical_infrastructure
 
 services:
   - ana_inundation_extent

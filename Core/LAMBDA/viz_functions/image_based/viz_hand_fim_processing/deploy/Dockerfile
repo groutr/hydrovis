@@ -1,7 +1,7 @@
 FROM mambaorg/micromamba AS micromamba
 
 # Create conda environment for hydrovis
-RUN --mount=type=bind,source=conda-linux-64.lock,target=/tmp/conda.lock \
+RUN --mount=type=bind,source=conda-linux-aarch64.lock,target=/tmp/conda.lock \
     micromamba install -y --file /tmp/conda.lock && \
     micromamba clean -afy
 
@@ -30,9 +30,7 @@ COPY --from=micromamba --chown=root /usr/local/bin/_*.sh /usr/local/bin/
 WORKDIR /home/code
 
 # Copy function code
-COPY viz_classes.py \
-    lambda_function.py \
-    ./
+COPY code/ ./
 
 SHELL ["/usr/local/bin/_dockerfile_shell.sh"]
 

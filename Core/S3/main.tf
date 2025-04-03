@@ -18,6 +18,10 @@ variable "buckets_and_bucket_users" {
   type = map(list(string))
 }
 
+variable "lifecycle_rules" {
+  type = map(any)
+}
+
 
 resource "aws_s3_account_public_access_block" "main" {
   block_public_acls   = true
@@ -35,6 +39,8 @@ module "bucket" {
   name                  = each.key
   access_principal_arns = compact(each.value)
   admin_team_arns       = var.admin_team_arns
+
+  lifecycle_rules = contains(keys(var.lifecycle_rules), each.key) ? var.lifecycle_rules[each.key] : []
 }
 
 output "buckets" {

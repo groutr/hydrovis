@@ -9,7 +9,7 @@ dependencies:
   - sqlalchemy
   - geoalchemy2
   - psycopg2
-  - rasterio>=1.3.0,<1.4.0
+  - rasterio>=1.4
   - geopandas
   - pandas>=2.1
   - fsspec

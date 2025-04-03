@@ -186,6 +186,20 @@ module "s3" {
     #   # module.iam-users.user_ISEDServiceAccount.arn
     # ]
   }
+
+  lifecycle_rules = {
+    "fim" = [
+      {
+        "prefix" = "viz_cache/",
+        "transitions" = {
+          "60" = "STANDARD_IA",
+          "365" = "GLACIER",
+          "730" = "DEEP_ARCHIVE",
+        },
+        # "expire" = 1825
+      }
+    ]
+  }
 }
 
 module "egis" {

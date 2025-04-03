@@ -14,7 +14,11 @@ description: "Depicts the inundation extent of the National Water Model (NWM) st
   (as of August, 2022). Occupancy type data is only available for AL, CA, FL, GA,
   LA, MS, NC, SC, TX, and VA at this time. Also shown are a relative density heatmap
   of potentially impacted buildings (based on extent), county, and HUC level summary
-  layers.\n\nUpdated hourly. \n\nThis service is for internal use only for NOAA employees
+  layers.\n\nEstimated Impacted Critical Infrastructure: Depicts colleges, 
+  fire stations, hospitals, nursing homes, police stations, and schools
+  that intersect inundation extents. The critical infrastructure data is derived
+  from the static FEMA Infrastructure dataset.\n\nUpdated hourly. 
+  \n\nThis service is for internal use only for NOAA employees
   and requires access to view.  Please do not share externally without prior approval
   from OWP as this service is experimental and undergoing regular developmental changes.
   \n\nFor feedback or questions please reach out to GID directly via slack at national-water-center-gid

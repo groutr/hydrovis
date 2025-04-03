@@ -15,8 +15,8 @@
     "illumination" : {
       "type" : "CIMIlluminationProperties",
       "ambientLight" : 75,
-      "sunPositionX" : -0.61237243569579,
-      "sunPositionY" : 0.61237243569579,
+      "sunPositionX" : -0.61237243569579003,
+      "sunPositionY" : 0.61237243569579003,
       "sunPositionZ" : 0.5,
       "illuminationSource" : "AbsoluteSunPosition",
       "sunAzimuth" : 315,
@@ -36,23 +36,23 @@
         [
           [
             -15224159.214216806,
-            2159597.880736096
+            2159597.88073609583
           ],
           [
             -15224159.214216806,
             7211496.010788572
           ],
           [
-            -6228307.888008264,
+            -6228307.88800826389,
             7211496.010788572
           ],
           [
-            -6228307.888008264,
-            2159597.880736096
+            -6228307.88800826389,
+            2159597.88073609583
           ],
           [
             -15224159.214216806,
-            2159597.880736096
+            2159597.88073609583
           ]
         ]
       ],
@@ -423,10 +423,10 @@
           "oIDFields" : "oid",
           "geometryType" : "esriGeometryPoint",
           "extent" : {
-            "xmin" : -124.28338099999996,
-            "ymin" : 27.220882450000033,
-            "xmax" : -67.93527777999998,
-            "ymax" : 48.99916667000008,
+            "xmin" : -124.283380999999963,
+            "ymin" : 27.2208824500000333,
+            "xmax" : -67.9352777799999785,
+            "ymax" : 48.9991666700000792,
             "spatialReference" : {
               "wkid" : 4326,
               "latestWkid" : 4326
@@ -805,9 +805,9 @@
                               "color" : {
                                 "type" : "CIMHSVColor",
                                 "values" : [
-                                  32.77,
-                                  92.86,
-                                  54.9,
+                                  32.770000000000003,
+                                  92.859999999999999,
+                                  54.899999999999999,
                                   100
                                 ]
                               }
@@ -902,9 +902,9 @@
                               "color" : {
                                 "type" : "CIMHSVColor",
                                 "values" : [
-                                  40.7,
-                                  53.24,
-                                  84.71,
+                                  40.700000000000003,
+                                  53.240000000000002,
+                                  84.709999999999994,
                                   100
                                 ]
                               }
@@ -962,7 +962,7 @@
                                     2
                                   ],
                                   [
-                                    4.127128581421953e-15,
+                                    4.1271285814219533e-15,
                                     0
                                   ],
                                   0,
@@ -999,9 +999,9 @@
                               "color" : {
                                 "type" : "CIMHSVColor",
                                 "values" : [
-                                  43.53,
+                                  43.530000000000001,
                                   20.73,
-                                  96.47,
+                                  96.469999999999999,
                                   100
                                 ]
                               }
@@ -1059,7 +1059,7 @@
                                     2
                                   ],
                                   [
-                                    4.127128581421953e-15,
+                                    4.1271285814219533e-15,
                                     0
                                   ],
                                   0,
@@ -1098,7 +1098,7 @@
                                 "values" : [
                                   0,
                                   0,
-                                  96.08,
+                                  96.079999999999998,
                                   100
                                 ]
                               }
@@ -1156,7 +1156,7 @@
                                     2
                                   ],
                                   [
-                                    4.127128581421953e-15,
+                                    4.1271285814219533e-15,
                                     0
                                   ],
                                   0,
@@ -1193,9 +1193,9 @@
                               "color" : {
                                 "type" : "CIMHSVColor",
                                 "values" : [
-                                  171.43,
-                                  14.96,
-                                  91.76,
+                                  171.43000000000001,
+                                  14.960000000000001,
+                                  91.760000000000005,
                                   100
                                 ]
                               }
@@ -1290,9 +1290,9 @@
                               "color" : {
                                 "type" : "CIMHSVColor",
                                 "values" : [
-                                  174.67,
+                                  174.66999999999999,
                                   50,
-                                  70.59,
+                                  70.590000000000003,
                                   100
                                 ]
                               }
@@ -1388,7 +1388,7 @@
                                 "type" : "CIMHSVColor",
                                 "values" : [
                                   175.25,
-                                  99.02,
+                                  99.019999999999996,
                                   40,
                                   100
                                 ]
@@ -1507,7 +1507,7 @@
                           "joinStyle" : "Round",
                           "lineStyle3D" : "Strip",
                           "miterLimit" : 10,
-                          "width" : 0.7,
+                          "width" : 0.69999999999999996,
                           "color" : {
                             "type" : "CIMRGBColor",
                             "values" : [
@@ -1602,7 +1602,7 @@
                           "joinStyle" : "Round",
                           "lineStyle3D" : "Strip",
                           "miterLimit" : 10,
-                          "width" : 0.7,
+                          "width" : 0.69999999999999996,
                           "color" : {
                             "type" : "CIMRGBColor",
                             "values" : [
@@ -1817,9 +1817,9 @@
           "geometryType" : "esriGeometryPoint",
           "extent" : {
             "xmin" : -13667986.8586,
-            "ymin" : 2976131.9767000005,
-            "xmax" : -7545985.205399999,
-            "ymax" : 6264345.286700003,
+            "ymin" : 2976131.97670000046,
+            "xmax" : -7545985.2053999994,
+            "ymax" : 6264345.28670000285,
             "spatialReference" : {
               "wkid" : 102100,
               "latestWkid" : 3857
@@ -2573,26 +2573,26 @@
             }
           ],
           "weights" : [
-            0.07692307692307694,
-            0.07692307692307694,
-            0.07692307692307694,
-            0.07692307692307694,
-            0.07692307692307694,
-            0.07692307692307694,
-            0.07692307692307694,
-            0.07692307692307694,
-            0.07692307692307694,
-            0.07692307692307694,
-            0.07692307692307694,
-            0.07692307692307694,
-            0.07692307692307694
+            0.076923076923076941,
+            0.076923076923076941,
+            0.076923076923076941,
+            0.076923076923076941,
+            0.076923076923076941,
+            0.076923076923076941,
+            0.076923076923076941,
+            0.076923076923076941,
+            0.076923076923076941,
+            0.076923076923076941,
+            0.076923076923076941,
+            0.076923076923076941,
+            0.076923076923076941
           ]
         },
         "radius" : 30,
         "rendererQuality" : 2,
         "minLabel" : "Sparse",
         "maxLabel" : "Dense",
-        "maxPixelIntensity" : 3.127700489026043e-07,
+        "maxPixelIntensity" : 3.1277004890260432e-07,
         "pixelIntensityStops" : [
           0.0011764705882353343,
           1
@@ -2605,6 +2605,929 @@
       "symbolLayerDrawing" : {
         "type" : "CIMSymbolLayerDrawing"
       }
+    },
+    {
+      "type" : "CIMFeatureLayer",
+      "name" : "Past 7 Days - Max Estimated Critical Infrastructure - Heatmap",
+      "uRI" : "CIMPATH=nwm_past_14_days_max_fim_extent_analysis/res_ana_past_7day_max_inundation_critical_infrastructure.xml",
+      "sourceModifiedTime" : {
+        "type" : "TimeInstant"
+      },
+      "useSourceMetadata" : true,
+      "description" : "vizprocessing.postgres.ana_past_7day_max_inundation_critical_infrastructure",
+      "layerElevation" : {
+        "type" : "CIMLayerElevationSurface",
+        "mapElevationID" : "{84F61CAA-CD53-4C26-BBF2-C7F7CA71C354}"
+      },
+      "expanded" : true,
+      "layerType" : "Operational",
+      "showLegends" : true,
+      "visibility" : false,
+      "displayCacheType" : "Permanent",
+      "maxDisplayCacheAge" : 5,
+      "showPopups" : true,
+      "serviceLayerID" : -1,
+      "refreshRate" : -1,
+      "refreshRateUnit" : "esriTimeUnitsSeconds",
+      "blendingMode" : "Alpha",
+      "autoGenerateFeatureTemplates" : true,
+      "featureElevationExpression" : "0",
+      "featureTable" : {
+        "type" : "CIMFeatureTable",
+        "displayField" : "name",
+        "editable" : true,
+        "dataConnection" : {
+          "type" : "CIMSqlQueryDataConnection",
+          "workspaceConnectionString" : "ENCRYPTED_PASSWORD=00022e6851656558326e7a365a7a6e2b796a707277555a47514f786d7157623755416577364d31484e796f7a696d35365a4a6e352b474f41734336646e39413652322f322a00;SERVER=hv-vpp-ti-viz-processing.c4vzypepnkx3.us-east-1.rds.amazonaws.com;INSTANCE=sde:postgresql:hv-vpp-ti-viz-processing.c4vzypepnkx3.us-east-1.rds.amazonaws.com;DBCLIENT=postgresql;DB_CONNECTION_PROPERTIES=hv-vpp-ti-viz-processing.c4vzypepnkx3.us-east-1.rds.amazonaws.com;DATABASE=vizprocessing;USER=postgres;AUTHENTICATION_MODE=DBMS",
+          "workspaceFactory" : "SDE",
+          "dataset" : "vizprocessing.postgres.%ana_past_7day_max_inundation_critical_infrastructure",
+          "datasetType" : "esriDTFeatureClass",
+          "sqlQuery" : "select oid,build_type,name,geom,city,country,state,population,beds,naics_code,specialty,sourcedate,zipcode,status,trauma,alias,county,naics_desc,alt_name,naicsdescr,helipad,level_,source,type,hydro_id,hydro_id_str,feature_id,feature_id_str,streamflow_cfs,fim_stage_ft from vizprocessing.publish.ana_past_7day_max_inundation_critical_infrastructure",
+          "srid" : "3857",
+          "spatialReference" : {
+            "wkid" : 102100,
+            "latestWkid" : 3857
+          },
+          "oIDFields" : "oid",
+          "geometryType" : "esriGeometryPoint",
+          "extent" : {
+            "xmin" : -13742275.1329,
+            "ymin" : 3166721.97920000181,
+            "xmax" : -8066621.58500000089,
+            "ymax" : 5616258.131099999,
+            "spatialReference" : {
+              "wkid" : 102100,
+              "latestWkid" : 3857
+            }
+          },
+          "queryFields" : [
+            {
+              "name" : "oid",
+              "type" : "esriFieldTypeInteger",
+              "alias" : "oid"
+            },
+            {
+              "name" : "build_type",
+              "type" : "esriFieldTypeString",
+              "alias" : "build_type",
+              "length" : 60000
+            },
+            {
+              "name" : "name",
+              "type" : "esriFieldTypeString",
+              "alias" : "name",
+              "length" : 60000
+            },
+            {
+              "name" : "geom",
+              "type" : "esriFieldTypeGeometry",
+              "alias" : "geom",
+              "geometryDef" : {
+                "avgNumPoints" : 0,
+                "geometryType" : "esriGeometryPoint",
+                "hasM" : false,
+                "hasZ" : false,
+                "spatialReference" : {
+                  "wkid" : 102100,
+                  "latestWkid" : 3857
+                }
+              }
+            },
+            {
+              "name" : "city",
+              "type" : "esriFieldTypeString",
+              "alias" : "city",
+              "length" : 60000
+            },
+            {
+              "name" : "country",
+              "type" : "esriFieldTypeString",
+              "alias" : "country",
+              "length" : 60000
+            },
+            {
+              "name" : "state",
+              "type" : "esriFieldTypeString",
+              "alias" : "state",
+              "length" : 60000
+            },
+            {
+              "name" : "population",
+              "type" : "esriFieldTypeDouble",
+              "alias" : "population"
+            },
+            {
+              "name" : "beds",
+              "type" : "esriFieldTypeDouble",
+              "alias" : "beds"
+            },
+            {
+              "name" : "naics_code",
+              "type" : "esriFieldTypeString",
+              "alias" : "naics_code",
+              "length" : 60000
+            },
+            {
+              "name" : "specialty",
+              "type" : "esriFieldTypeString",
+              "alias" : "specialty",
+              "length" : 60000
+            },
+            {
+              "name" : "sourcedate",
+              "type" : "esriFieldTypeDouble",
+              "alias" : "sourcedate"
+            },
+            {
+              "name" : "zipcode",
+              "type" : "esriFieldTypeString",
+              "alias" : "zipcode",
+              "length" : 60000
+            },
+            {
+              "name" : "status",
+              "type" : "esriFieldTypeString",
+              "alias" : "status",
+              "length" : 60000
+            },
+            {
+              "name" : "trauma",
+              "type" : "esriFieldTypeString",
+              "alias" : "trauma",
+              "length" : 60000
+            },
+            {
+              "name" : "alias",
+              "type" : "esriFieldTypeString",
+              "alias" : "alias",
+              "length" : 60000
+            },
+            {
+              "name" : "county",
+              "type" : "esriFieldTypeString",
+              "alias" : "county",
+              "length" : 60000
+            },
+            {
+              "name" : "naics_desc",
+              "type" : "esriFieldTypeString",
+              "alias" : "naics_desc",
+              "length" : 60000
+            },
+            {
+              "name" : "alt_name",
+              "type" : "esriFieldTypeString",
+              "alias" : "alt_name",
+              "length" : 60000
+            },
+            {
+              "name" : "naicsdescr",
+              "type" : "esriFieldTypeString",
+              "alias" : "naicsdescr",
+              "length" : 60000
+            },
+            {
+              "name" : "helipad",
+              "type" : "esriFieldTypeString",
+              "alias" : "helipad",
+              "length" : 60000
+            },
+            {
+              "name" : "level_",
+              "type" : "esriFieldTypeString",
+              "alias" : "level_",
+              "length" : 60000
+            },
+            {
+              "name" : "source",
+              "type" : "esriFieldTypeString",
+              "alias" : "source",
+              "length" : 60000
+            },
+            {
+              "name" : "type",
+              "type" : "esriFieldTypeString",
+              "alias" : "type",
+              "length" : 60000
+            },
+            {
+              "name" : "hydro_id",
+              "type" : "esriFieldTypeInteger",
+              "alias" : "hydro_id"
+            },
+            {
+              "name" : "hydro_id_str",
+              "type" : "esriFieldTypeString",
+              "alias" : "hydro_id_str",
+              "length" : 60000
+            },
+            {
+              "name" : "feature_id",
+              "type" : "esriFieldTypeDouble",
+              "alias" : "feature_id"
+            },
+            {
+              "name" : "feature_id_str",
+              "type" : "esriFieldTypeString",
+              "alias" : "feature_id_str",
+              "length" : 60000
+            },
+            {
+              "name" : "streamflow_cfs",
+              "type" : "esriFieldTypeDouble",
+              "alias" : "streamflow_cfs"
+            },
+            {
+              "name" : "fim_stage_ft",
+              "type" : "esriFieldTypeInteger",
+              "alias" : "fim_stage_ft"
+            }
+          ],
+          "spatialStorageType" : 8
+        },
+        "studyAreaSpatialRel" : "esriSpatialRelUndefined",
+        "searchOrder" : "esriSearchOrderSpatial"
+      },
+      "htmlPopupEnabled" : true,
+      "isFlattened" : true,
+      "selectable" : true,
+      "featureCacheType" : "Session",
+      "displayFiltersType" : "ByScale",
+      "featureBlendingMode" : "Alpha",
+      "labelClasses" : [
+        {
+          "type" : "CIMLabelClass",
+          "expressionTitle" : "Custom",
+          "expression" : "$feature.build_id",
+          "expressionEngine" : "Arcade",
+          "featuresToLabel" : "AllVisibleFeatures",
+          "maplexLabelPlacementProperties" : {
+            "type" : "CIMMaplexLabelPlacementProperties",
+            "featureType" : "Point",
+            "avoidPolygonHoles" : true,
+            "canOverrunFeature" : true,
+            "canPlaceLabelOutsidePolygon" : true,
+            "canRemoveOverlappingLabel" : true,
+            "canStackLabel" : true,
+            "connectionType" : "Unambiguous",
+            "constrainOffset" : "NoConstraint",
+            "contourAlignmentType" : "Page",
+            "contourLadderType" : "Straight",
+            "contourMaximumAngle" : 90,
+            "enableConnection" : true,
+            "enablePointPlacementPriorities" : true,
+            "featureWeight" : 0,
+            "fontHeightReductionLimit" : 4,
+            "fontHeightReductionStep" : 0.5,
+            "fontWidthReductionLimit" : 90,
+            "fontWidthReductionStep" : 5,
+            "graticuleAlignmentType" : "Straight",
+            "keyNumberGroupName" : "Default",
+            "labelBuffer" : 15,
+            "labelLargestPolygon" : true,
+            "labelPriority" : -1,
+            "labelStackingProperties" : {
+              "type" : "CIMMaplexLabelStackingProperties",
+              "stackAlignment" : "ChooseBest",
+              "maximumNumberOfLines" : 3,
+              "minimumNumberOfCharsPerLine" : 3,
+              "maximumNumberOfCharsPerLine" : 24,
+              "separators" : [
+                {
+                  "type" : "CIMMaplexStackingSeparator",
+                  "separator" : " ",
+                  "splitAfter" : true
+                },
+                {
+                  "type" : "CIMMaplexStackingSeparator",
+                  "separator" : ",",
+                  "visible" : true,
+                  "splitAfter" : true
+                }
+              ]
+            },
+            "lineFeatureType" : "General",
+            "linePlacementMethod" : "OffsetCurvedFromLine",
+            "maximumLabelOverrun" : 36,
+            "maximumLabelOverrunUnit" : "Point",
+            "minimumFeatureSizeUnit" : "Map",
+            "multiPartOption" : "OneLabelPerPart",
+            "offsetAlongLineProperties" : {
+              "type" : "CIMMaplexOffsetAlongLineProperties",
+              "placementMethod" : "BestPositionAlongLine",
+              "labelAnchorPoint" : "CenterOfLabel",
+              "distanceUnit" : "Percentage",
+              "useLineDirection" : true
+            },
+            "pointExternalZonePriorities" : {
+              "type" : "CIMMaplexExternalZonePriorities",
+              "aboveLeft" : 4,
+              "aboveCenter" : 2,
+              "aboveRight" : 1,
+              "centerRight" : 3,
+              "belowRight" : 5,
+              "belowCenter" : 7,
+              "belowLeft" : 8,
+              "centerLeft" : 6
+            },
+            "pointPlacementMethod" : "AroundPoint",
+            "polygonAnchorPointType" : "GeometricCenter",
+            "polygonBoundaryWeight" : 0,
+            "polygonExternalZones" : {
+              "type" : "CIMMaplexExternalZonePriorities",
+              "aboveLeft" : 4,
+              "aboveCenter" : 2,
+              "aboveRight" : 1,
+              "centerRight" : 3,
+              "belowRight" : 5,
+              "belowCenter" : 7,
+              "belowLeft" : 8,
+              "centerLeft" : 6
+            },
+            "polygonFeatureType" : "General",
+            "polygonInternalZones" : {
+              "type" : "CIMMaplexInternalZonePriorities",
+              "center" : 1
+            },
+            "polygonPlacementMethod" : "CurvedInPolygon",
+            "primaryOffset" : 1,
+            "primaryOffsetUnit" : "Point",
+            "removeExtraWhiteSpace" : true,
+            "repetitionIntervalUnit" : "Point",
+            "rotationProperties" : {
+              "type" : "CIMMaplexRotationProperties",
+              "rotationType" : "Arithmetic",
+              "alignmentType" : "Straight"
+            },
+            "secondaryOffset" : 100,
+            "strategyPriorities" : {
+              "type" : "CIMMaplexStrategyPriorities",
+              "stacking" : 1,
+              "overrun" : 2,
+              "fontCompression" : 3,
+              "fontReduction" : 4,
+              "abbreviation" : 5
+            },
+            "thinningDistanceUnit" : "Point",
+            "truncationMarkerCharacter" : ".",
+            "truncationMinimumLength" : 1,
+            "truncationPreferredCharacters" : "aeiou",
+            "truncationExcludedCharacters" : "0123456789",
+            "polygonAnchorPointPerimeterInsetUnit" : "Point"
+          },
+          "name" : "Class 1",
+          "priority" : -1,
+          "standardLabelPlacementProperties" : {
+            "type" : "CIMStandardLabelPlacementProperties",
+            "featureType" : "Line",
+            "featureWeight" : "None",
+            "labelWeight" : "High",
+            "numLabelsOption" : "OneLabelPerName",
+            "lineLabelPosition" : {
+              "type" : "CIMStandardLineLabelPosition",
+              "above" : true,
+              "inLine" : true,
+              "parallel" : true
+            },
+            "lineLabelPriorities" : {
+              "type" : "CIMStandardLineLabelPriorities",
+              "aboveStart" : 3,
+              "aboveAlong" : 3,
+              "aboveEnd" : 3,
+              "centerStart" : 3,
+              "centerAlong" : 3,
+              "centerEnd" : 3,
+              "belowStart" : 3,
+              "belowAlong" : 3,
+              "belowEnd" : 3
+            },
+            "pointPlacementMethod" : "AroundPoint",
+            "pointPlacementPriorities" : {
+              "type" : "CIMStandardPointPlacementPriorities",
+              "aboveLeft" : 2,
+              "aboveCenter" : 2,
+              "aboveRight" : 1,
+              "centerLeft" : 3,
+              "centerRight" : 2,
+              "belowLeft" : 3,
+              "belowCenter" : 3,
+              "belowRight" : 2
+            },
+            "rotationType" : "Arithmetic",
+            "polygonPlacementMethod" : "AlwaysHorizontal"
+          },
+          "textSymbol" : {
+            "type" : "CIMSymbolReference",
+            "symbol" : {
+              "type" : "CIMTextSymbol",
+              "blockProgression" : "TTB",
+              "depth3D" : 1,
+              "extrapolateBaselines" : true,
+              "fontEffects" : "Normal",
+              "fontEncoding" : "Unicode",
+              "fontFamilyName" : "Tahoma",
+              "fontStyleName" : "Regular",
+              "fontType" : "Unspecified",
+              "haloSize" : 1,
+              "height" : 10,
+              "hinting" : "Default",
+              "horizontalAlignment" : "Left",
+              "kerning" : true,
+              "letterWidth" : 100,
+              "ligatures" : true,
+              "lineGapType" : "ExtraLeading",
+              "symbol" : {
+                "type" : "CIMPolygonSymbol",
+                "symbolLayers" : [
+                  {
+                    "type" : "CIMSolidFill",
+                    "enable" : true,
+                    "color" : {
+                      "type" : "CIMRGBColor",
+                      "values" : [
+                        0,
+                        0,
+                        0,
+                        100
+                      ]
+                    }
+                  }
+                ]
+              },
+              "textCase" : "Normal",
+              "textDirection" : "LTR",
+              "verticalAlignment" : "Bottom",
+              "verticalGlyphOrientation" : "Right",
+              "wordSpacing" : 100,
+              "billboardMode3D" : "FaceNearPlane"
+            }
+          },
+          "useCodedValue" : true,
+          "visibility" : true,
+          "iD" : -1
+        }
+      ],
+      "renderer" : {
+        "type" : "CIMHeatMapRenderer",
+        "colorScheme" : {
+          "type" : "CIMMultipartColorRamp",
+          "colorSpace" : {
+            "type" : "CIMICCColorSpace",
+            "url" : "Default RGB"
+          },
+          "colorRamps" : [
+            {
+              "type" : "CIMLinearContinuousColorRamp",
+              "colorSpace" : {
+                "type" : "CIMICCColorSpace",
+                "url" : "Default RGB"
+              },
+              "fromColor" : {
+                "type" : "CIMRGBColor",
+                "colorSpace" : {
+                  "type" : "CIMICCColorSpace",
+                  "url" : "Default RGB"
+                },
+                "values" : [
+                  133,
+                  193,
+                  200,
+                  0
+                ]
+              },
+              "toColor" : {
+                "type" : "CIMRGBColor",
+                "values" : [
+                  133,
+                  193,
+                  200,
+                  100
+                ]
+              }
+            },
+            {
+              "type" : "CIMLinearContinuousColorRamp",
+              "colorSpace" : {
+                "type" : "CIMICCColorSpace",
+                "url" : "Default RGB"
+              },
+              "fromColor" : {
+                "type" : "CIMRGBColor",
+                "values" : [
+                  133,
+                  193,
+                  200,
+                  100
+                ]
+              },
+              "toColor" : {
+                "type" : "CIMRGBColor",
+                "colorSpace" : {
+                  "type" : "CIMICCColorSpace",
+                  "url" : "Default RGB"
+                },
+                "values" : [
+                  144,
+                  161,
+                  190,
+                  100
+                ]
+              }
+            },
+            {
+              "type" : "CIMLinearContinuousColorRamp",
+              "colorSpace" : {
+                "type" : "CIMICCColorSpace",
+                "url" : "Default RGB"
+              },
+              "fromColor" : {
+                "type" : "CIMRGBColor",
+                "colorSpace" : {
+                  "type" : "CIMICCColorSpace",
+                  "url" : "Default RGB"
+                },
+                "values" : [
+                  144,
+                  161,
+                  190,
+                  100
+                ]
+              },
+              "toColor" : {
+                "type" : "CIMRGBColor",
+                "colorSpace" : {
+                  "type" : "CIMICCColorSpace",
+                  "url" : "Default RGB"
+                },
+                "values" : [
+                  156,
+                  129,
+                  132,
+                  100
+                ]
+              }
+            },
+            {
+              "type" : "CIMLinearContinuousColorRamp",
+              "colorSpace" : {
+                "type" : "CIMICCColorSpace",
+                "url" : "Default RGB"
+              },
+              "fromColor" : {
+                "type" : "CIMRGBColor",
+                "colorSpace" : {
+                  "type" : "CIMICCColorSpace",
+                  "url" : "Default RGB"
+                },
+                "values" : [
+                  156,
+                  129,
+                  132,
+                  100
+                ]
+              },
+              "toColor" : {
+                "type" : "CIMRGBColor",
+                "colorSpace" : {
+                  "type" : "CIMICCColorSpace",
+                  "url" : "Default RGB"
+                },
+                "values" : [
+                  167,
+                  97,
+                  170,
+                  100
+                ]
+              }
+            },
+            {
+              "type" : "CIMLinearContinuousColorRamp",
+              "colorSpace" : {
+                "type" : "CIMICCColorSpace",
+                "url" : "Default RGB"
+              },
+              "fromColor" : {
+                "type" : "CIMRGBColor",
+                "colorSpace" : {
+                  "type" : "CIMICCColorSpace",
+                  "url" : "Default RGB"
+                },
+                "values" : [
+                  167,
+                  97,
+                  170,
+                  100
+                ]
+              },
+              "toColor" : {
+                "type" : "CIMRGBColor",
+                "colorSpace" : {
+                  "type" : "CIMICCColorSpace",
+                  "url" : "Default RGB"
+                },
+                "values" : [
+                  175,
+                  73,
+                  128,
+                  100
+                ]
+              }
+            },
+            {
+              "type" : "CIMLinearContinuousColorRamp",
+              "colorSpace" : {
+                "type" : "CIMICCColorSpace",
+                "url" : "Default RGB"
+              },
+              "fromColor" : {
+                "type" : "CIMRGBColor",
+                "colorSpace" : {
+                  "type" : "CIMICCColorSpace",
+                  "url" : "Default RGB"
+                },
+                "values" : [
+                  175,
+                  73,
+                  128,
+                  100
+                ]
+              },
+              "toColor" : {
+                "type" : "CIMRGBColor",
+                "colorSpace" : {
+                  "type" : "CIMICCColorSpace",
+                  "url" : "Default RGB"
+                },
+                "values" : [
+                  184,
+                  48,
+                  85,
+                  100
+                ]
+              }
+            },
+            {
+              "type" : "CIMLinearContinuousColorRamp",
+              "colorSpace" : {
+                "type" : "CIMICCColorSpace",
+                "url" : "Default RGB"
+              },
+              "fromColor" : {
+                "type" : "CIMRGBColor",
+                "colorSpace" : {
+                  "type" : "CIMICCColorSpace",
+                  "url" : "Default RGB"
+                },
+                "values" : [
+                  184,
+                  48,
+                  85,
+                  100
+                ]
+              },
+              "toColor" : {
+                "type" : "CIMRGBColor",
+                "colorSpace" : {
+                  "type" : "CIMICCColorSpace",
+                  "url" : "Default RGB"
+                },
+                "values" : [
+                  192,
+                  24,
+                  42,
+                  100
+                ]
+              }
+            },
+            {
+              "type" : "CIMLinearContinuousColorRamp",
+              "colorSpace" : {
+                "type" : "CIMICCColorSpace",
+                "url" : "Default RGB"
+              },
+              "fromColor" : {
+                "type" : "CIMRGBColor",
+                "colorSpace" : {
+                  "type" : "CIMICCColorSpace",
+                  "url" : "Default RGB"
+                },
+                "values" : [
+                  192,
+                  24,
+                  42,
+                  100
+                ]
+              },
+              "toColor" : {
+                "type" : "CIMRGBColor",
+                "colorSpace" : {
+                  "type" : "CIMICCColorSpace",
+                  "url" : "Default RGB"
+                },
+                "values" : [
+                  200,
+                  0,
+                  0,
+                  100
+                ]
+              }
+            },
+            {
+              "type" : "CIMLinearContinuousColorRamp",
+              "colorSpace" : {
+                "type" : "CIMICCColorSpace",
+                "url" : "Default RGB"
+              },
+              "fromColor" : {
+                "type" : "CIMRGBColor",
+                "colorSpace" : {
+                  "type" : "CIMICCColorSpace",
+                  "url" : "Default RGB"
+                },
+                "values" : [
+                  200,
+                  0,
+                  0,
+                  100
+                ]
+              },
+              "toColor" : {
+                "type" : "CIMRGBColor",
+                "colorSpace" : {
+                  "type" : "CIMICCColorSpace",
+                  "url" : "Default RGB"
+                },
+                "values" : [
+                  211,
+                  51,
+                  0,
+                  100
+                ]
+              }
+            },
+            {
+              "type" : "CIMLinearContinuousColorRamp",
+              "colorSpace" : {
+                "type" : "CIMICCColorSpace",
+                "url" : "Default RGB"
+              },
+              "fromColor" : {
+                "type" : "CIMRGBColor",
+                "colorSpace" : {
+                  "type" : "CIMICCColorSpace",
+                  "url" : "Default RGB"
+                },
+                "values" : [
+                  211,
+                  51,
+                  0,
+                  100
+                ]
+              },
+              "toColor" : {
+                "type" : "CIMRGBColor",
+                "colorSpace" : {
+                  "type" : "CIMICCColorSpace",
+                  "url" : "Default RGB"
+                },
+                "values" : [
+                  222,
+                  102,
+                  0,
+                  100
+                ]
+              }
+            },
+            {
+              "type" : "CIMLinearContinuousColorRamp",
+              "colorSpace" : {
+                "type" : "CIMICCColorSpace",
+                "url" : "Default RGB"
+              },
+              "fromColor" : {
+                "type" : "CIMRGBColor",
+                "colorSpace" : {
+                  "type" : "CIMICCColorSpace",
+                  "url" : "Default RGB"
+                },
+                "values" : [
+                  222,
+                  102,
+                  0,
+                  100
+                ]
+              },
+              "toColor" : {
+                "type" : "CIMRGBColor",
+                "colorSpace" : {
+                  "type" : "CIMICCColorSpace",
+                  "url" : "Default RGB"
+                },
+                "values" : [
+                  233,
+                  153,
+                  0,
+                  100
+                ]
+              }
+            },
+            {
+              "type" : "CIMLinearContinuousColorRamp",
+              "colorSpace" : {
+                "type" : "CIMICCColorSpace",
+                "url" : "Default RGB"
+              },
+              "fromColor" : {
+                "type" : "CIMRGBColor",
+                "colorSpace" : {
+                  "type" : "CIMICCColorSpace",
+                  "url" : "Default RGB"
+                },
+                "values" : [
+                  233,
+                  153,
+                  0,
+                  100
+                ]
+              },
+              "toColor" : {
+                "type" : "CIMRGBColor",
+                "colorSpace" : {
+                  "type" : "CIMICCColorSpace",
+                  "url" : "Default RGB"
+                },
+                "values" : [
+                  244,
+                  204,
+                  0,
+                  100
+                ]
+              }
+            },
+            {
+              "type" : "CIMLinearContinuousColorRamp",
+              "colorSpace" : {
+                "type" : "CIMICCColorSpace",
+                "url" : "Default RGB"
+              },
+              "fromColor" : {
+                "type" : "CIMRGBColor",
+                "colorSpace" : {
+                  "type" : "CIMICCColorSpace",
+                  "url" : "Default RGB"
+                },
+                "values" : [
+                  244,
+                  204,
+                  0,
+                  100
+                ]
+              },
+              "toColor" : {
+                "type" : "CIMRGBColor",
+                "colorSpace" : {
+                  "type" : "CIMICCColorSpace",
+                  "url" : "Default RGB"
+                },
+                "values" : [
+                  255,
+                  255,
+                  0,
+                  100
+                ]
+              }
+            }
+          ],
+          "weights" : [
+            0.076923076923076941,
+            0.076923076923076941,
+            0.076923076923076941,
+            0.076923076923076941,
+            0.076923076923076941,
+            0.076923076923076941,
+            0.076923076923076941,
+            0.076923076923076941,
+            0.076923076923076941,
+            0.076923076923076941,
+            0.076923076923076941,
+            0.076923076923076941,
+            0.076923076923076941
+          ]
+        },
+        "radius" : 30,
+        "rendererQuality" : 2,
+        "minLabel" : "Sparse",
+        "maxLabel" : "Dense",
+        "maxPixelIntensity" : 3.1277004890260432e-07,
+        "pixelIntensityStops" : [
+          0.0011764705882353343,
+          1
+        ],
+        "autoAdjustPixelIntensity" : true,
+        "maxPixelIntensityReferenceScale" : 30887910.260900345
+      },
+      "scaleSymbols" : true,
+      "snappable" : true
     },
     {
       "type" : "CIMFeatureLayer",
@@ -2931,8 +3854,8 @@
           "extent" : {
             "xmin" : -13702752.5208,
             "ymin" : 2900684.3673,
-            "xmax" : -7456492.422700001,
-            "ymax" : 6265558.830300003,
+            "xmax" : -7456492.42270000093,
+            "ymax" : 6265558.83030000329,
             "spatialReference" : {
               "wkid" : 102100,
               "latestWkid" : 3857
@@ -3300,7 +4223,7 @@
                     "joinStyle" : "Round",
                     "lineStyle3D" : "Strip",
                     "miterLimit" : 10,
-                    "width" : 0.7,
+                    "width" : 0.69999999999999996,
                     "color" : {
                       "type" : "CIMRGBColor",
                       "values" : [
@@ -3345,7 +4268,7 @@
                     "joinStyle" : "Round",
                     "lineStyle3D" : "Strip",
                     "miterLimit" : 10,
-                    "width" : 0.7,
+                    "width" : 0.69999999999999996,
                     "color" : {
                       "type" : "CIMRGBColor",
                       "values" : [
@@ -3390,7 +4313,7 @@
                     "joinStyle" : "Round",
                     "lineStyle3D" : "Strip",
                     "miterLimit" : 10,
-                    "width" : 0.7,
+                    "width" : 0.69999999999999996,
                     "color" : {
                       "type" : "CIMRGBColor",
                       "values" : [
@@ -3435,7 +4358,7 @@
                     "joinStyle" : "Round",
                     "lineStyle3D" : "Strip",
                     "miterLimit" : 10,
-                    "width" : 0.7,
+                    "width" : 0.69999999999999996,
                     "color" : {
                       "type" : "CIMRGBColor",
                       "values" : [
@@ -3480,7 +4403,7 @@
                     "joinStyle" : "Round",
                     "lineStyle3D" : "Strip",
                     "miterLimit" : 10,
-                    "width" : 0.7,
+                    "width" : 0.69999999999999996,
                     "color" : {
                       "type" : "CIMRGBColor",
                       "values" : [
@@ -3601,7 +4524,7 @@
                 "joinStyle" : "Round",
                 "lineStyle3D" : "Strip",
                 "miterLimit" : 10,
-                "width" : 0.7,
+                "width" : 0.69999999999999996,
                 "color" : {
                   "type" : "CIMRGBColor",
                   "values" : [
@@ -3644,7 +4567,7 @@
                 "joinStyle" : "Round",
                 "lineStyle3D" : "Strip",
                 "miterLimit" : 10,
-                "width" : 0.7,
+                "width" : 0.69999999999999996,
                 "color" : {
                   "type" : "CIMRGBColor",
                   "values" : [
@@ -4004,10 +4927,10 @@
           "oIDFields" : "oid",
           "geometryType" : "esriGeometryPolygon",
           "extent" : {
-            "xmin" : -13714908.124699999,
-            "ymin" : 2892633.5918999985,
-            "xmax" : -7445653.492900001,
-            "ymax" : 6274987.502999999,
+            "xmin" : -13714908.1246999986,
+            "ymin" : 2892633.59189999849,
+            "xmax" : -7445653.49290000089,
+            "ymax" : 6274987.50299999863,
             "spatialReference" : {
               "wkid" : 102100,
               "latestWkid" : 3857
@@ -4382,7 +5305,7 @@
                     "joinStyle" : "Round",
                     "lineStyle3D" : "Strip",
                     "miterLimit" : 10,
-                    "width" : 0.7,
+                    "width" : 0.69999999999999996,
                     "color" : {
                       "type" : "CIMRGBColor",
                       "values" : [
@@ -4427,7 +5350,7 @@
                     "joinStyle" : "Round",
                     "lineStyle3D" : "Strip",
                     "miterLimit" : 10,
-                    "width" : 0.7,
+                    "width" : 0.69999999999999996,
                     "color" : {
                       "type" : "CIMRGBColor",
                       "values" : [
@@ -4472,7 +5395,7 @@
                     "joinStyle" : "Round",
                     "lineStyle3D" : "Strip",
                     "miterLimit" : 10,
-                    "width" : 0.7,
+                    "width" : 0.69999999999999996,
                     "color" : {
                       "type" : "CIMRGBColor",
                       "values" : [
@@ -4517,7 +5440,7 @@
                     "joinStyle" : "Round",
                     "lineStyle3D" : "Strip",
                     "miterLimit" : 10,
-                    "width" : 0.7,
+                    "width" : 0.69999999999999996,
                     "color" : {
                       "type" : "CIMRGBColor",
                       "values" : [
@@ -4562,7 +5485,7 @@
                     "joinStyle" : "Round",
                     "lineStyle3D" : "Strip",
                     "miterLimit" : 10,
-                    "width" : 0.7,
+                    "width" : 0.69999999999999996,
                     "color" : {
                       "type" : "CIMRGBColor",
                       "values" : [
@@ -4683,7 +5606,7 @@
                 "joinStyle" : "Round",
                 "lineStyle3D" : "Strip",
                 "miterLimit" : 10,
-                "width" : 0.7,
+                "width" : 0.69999999999999996,
                 "color" : {
                   "type" : "CIMRGBColor",
                   "values" : [
@@ -4726,7 +5649,7 @@
                 "joinStyle" : "Round",
                 "lineStyle3D" : "Strip",
                 "miterLimit" : 10,
-                "width" : 0.7,
+                "width" : 0.69999999999999996,
                 "color" : {
                   "type" : "CIMRGBColor",
                   "values" : [
@@ -4972,9 +5895,9 @@
           "geometryType" : "esriGeometryPolygon",
           "extent" : {
             "xmin" : -13578523.488499999,
-            "ymin" : 3096599.3299000002,
-            "xmax" : -7616764.763599999,
-            "ymax" : 6208676.231600001,
+            "ymin" : 3096599.32990000024,
+            "xmax" : -7616764.76359999925,
+            "ymax" : 6208676.23160000145,
             "spatialReference" : {
               "wkid" : 102100,
               "latestWkid" : 3857
@@ -5333,7 +6256,7 @@
                 "joinStyle" : "Round",
                 "lineStyle3D" : "Strip",
                 "miterLimit" : 10,
-                "width" : 0.7,
+                "width" : 0.69999999999999996,
                 "color" : {
                   "type" : "CIMRGBColor",
                   "values" : [
@@ -5384,7 +6307,7 @@
                         "joinStyle" : "Round",
                         "lineStyle3D" : "Strip",
                         "miterLimit" : 10,
-                        "width" : 0.7,
+                        "width" : 0.69999999999999996,
                         "color" : {
                           "type" : "CIMRGBColor",
                           "values" : [
@@ -5437,7 +6360,7 @@
                         "joinStyle" : "Round",
                         "lineStyle3D" : "Strip",
                         "miterLimit" : 10,
-                        "width" : 0.7,
+                        "width" : 0.69999999999999996,
                         "color" : {
                           "type" : "CIMRGBColor",
                           "values" : [
@@ -5490,7 +6413,7 @@
                         "joinStyle" : "Round",
                         "lineStyle3D" : "Strip",
                         "miterLimit" : 10,
-                        "width" : 0.7,
+                        "width" : 0.69999999999999996,
                         "color" : {
                           "type" : "CIMRGBColor",
                           "values" : [
@@ -5543,7 +6466,7 @@
                         "joinStyle" : "Round",
                         "lineStyle3D" : "Strip",
                         "miterLimit" : 10,
-                        "width" : 0.7,
+                        "width" : 0.69999999999999996,
                         "color" : {
                           "type" : "CIMRGBColor",
                           "values" : [
@@ -5596,7 +6519,7 @@
                         "joinStyle" : "Round",
                         "lineStyle3D" : "Strip",
                         "miterLimit" : 10,
-                        "width" : 0.7,
+                        "width" : 0.69999999999999996,
                         "color" : {
                           "type" : "CIMRGBColor",
                           "values" : [
@@ -5649,7 +6572,7 @@
                         "joinStyle" : "Round",
                         "lineStyle3D" : "Strip",
                         "miterLimit" : 10,
-                        "width" : 0.7,
+                        "width" : 0.69999999999999996,
                         "color" : {
                           "type" : "CIMRGBColor",
                           "values" : [
@@ -5702,7 +6625,7 @@
                         "joinStyle" : "Round",
                         "lineStyle3D" : "Strip",
                         "miterLimit" : 10,
-                        "width" : 0.7,
+                        "width" : 0.69999999999999996,
                         "color" : {
                           "type" : "CIMRGBColor",
                           "values" : [
@@ -5755,7 +6678,7 @@
                         "joinStyle" : "Round",
                         "lineStyle3D" : "Strip",
                         "miterLimit" : 10,
-                        "width" : 0.7,
+                        "width" : 0.69999999999999996,
                         "color" : {
                           "type" : "CIMRGBColor",
                           "values" : [
@@ -5819,7 +6742,6 @@
         "type" : "CIMLayerElevationSurface",
         "mapElevationID" : "{84F61CAA-CD53-4C26-BBF2-C7F7CA71C354}"
       },
-      "expanded" : true,
       "layerType" : "Operational",
       "showLegends" : true,
       "visibility" : false,
@@ -5832,6 +6754,7 @@
       "blendingMode" : "Alpha",
       "layers" : [
         "CIMPATH=nwm_short_range_max_fim_analysis/18_hour_max_estimated_impacted_buildings___heatmap.xml",
+        "CIMPATH=nwm_past_14_days_max_fim_extent_analysis/res_ana_past_7day_max_inundation_critical_infrastructure.xml",
         "CIMPATH=nwm_short_range_max_fim_analysis/8_hour_max_estimated_impacted_buildings___huc10_hotspots2.xml",
         "CIMPATH=nwm_short_range_max_fim_analysis/vizprocessing_dev_srf_max_inundation_counties.xml",
         "CIMPATH=nwm_short_range_max_fim_analysis/r_max_estimated_impacted_buildings__fema_usa_structures_.xml"
@@ -5851,6 +6774,7 @@
         "type" : "CIMLayerElevationSurface",
         "mapElevationID" : "{84F61CAA-CD53-4C26-BBF2-C7F7CA71C354}"
       },
+      "expanded" : true,
       "layerType" : "Operational",
       "showLegends" : true,
       "visibility" : false,
@@ -6477,7 +7401,7 @@
                 "joinStyle" : "Round",
                 "lineStyle3D" : "Strip",
                 "miterLimit" : 10,
-                "width" : 0.7,
+                "width" : 0.69999999999999996,
                 "color" : {
                   "type" : "CIMRGBColor",
                   "values" : [
@@ -6714,10 +7638,10 @@
           "oIDFields" : "oid",
           "geometryType" : "esriGeometryPoint",
           "extent" : {
-            "xmin" : -124.28338099999996,
-            "ymin" : 27.220882450000033,
-            "xmax" : -67.93527777999998,
-            "ymax" : 48.99916667000008,
+            "xmin" : -124.283380999999963,
+            "ymin" : 27.2208824500000333,
+            "xmax" : -67.9352777799999785,
+            "ymax" : 48.9991666700000792,
             "spatialReference" : {
               "wkid" : 4326,
               "latestWkid" : 4326
@@ -7059,7 +7983,7 @@
                                     2
                                   ],
                                   [
-                                    4.012524914363872e-15,
+                                    4.0125249143638719e-15,
                                     0
                                   ],
                                   0,
@@ -7096,9 +8020,9 @@
                               "color" : {
                                 "type" : "CIMHSVColor",
                                 "values" : [
-                                  32.77,
-                                  92.86,
-                                  54.9,
+                                  32.770000000000003,
+                                  92.859999999999999,
+                                  54.899999999999999,
                                   100
                                 ]
                               }
@@ -7156,7 +8080,7 @@
                                     2
                                   ],
                                   [
-                                    4.012524914363872e-15,
+                                    4.0125249143638719e-15,
                                     0
                                   ],
                                   0,
@@ -7193,9 +8117,9 @@
                               "color" : {
                                 "type" : "CIMHSVColor",
                                 "values" : [
-                                  40.7,
-                                  53.24,
-                                  84.71,
+                                  40.700000000000003,
+                                  53.240000000000002,
+                                  84.709999999999994,
                                   100
                                 ]
                               }
@@ -7290,9 +8214,9 @@
                               "color" : {
                                 "type" : "CIMHSVColor",
                                 "values" : [
-                                  43.53,
+                                  43.530000000000001,
                                   20.73,
-                                  96.47,
+                                  96.469999999999999,
                                   100
                                 ]
                               }
@@ -7389,7 +8313,7 @@
                                 "values" : [
                                   0,
                                   0,
-                                  96.08,
+                                  96.079999999999998,
                                   100
                                 ]
                               }
@@ -7484,9 +8408,9 @@
                               "color" : {
                                 "type" : "CIMHSVColor",
                                 "values" : [
-                                  171.43,
-                                  14.96,
-                                  91.76,
+                                  171.43000000000001,
+                                  14.960000000000001,
+                                  91.760000000000005,
                                   100
                                 ]
                               }
@@ -7544,7 +8468,7 @@
                                     2
                                   ],
                                   [
-                                    3.740341205100928e-15,
+                                    3.7403412051009278e-15,
                                     0
                                   ],
                                   0,
@@ -7581,9 +8505,9 @@
                               "color" : {
                                 "type" : "CIMHSVColor",
                                 "values" : [
-                                  174.67,
+                                  174.66999999999999,
                                   50,
-                                  70.59,
+                                  70.590000000000003,
                                   100
                                 ]
                               }
@@ -7641,7 +8565,7 @@
                                     2
                                   ],
                                   [
-                                    3.740341205100928e-15,
+                                    3.7403412051009278e-15,
                                     0
                                   ],
                                   0,
@@ -7679,7 +8603,7 @@
                                 "type" : "CIMHSVColor",
                                 "values" : [
                                   175.25,
-                                  99.02,
+                                  99.019999999999996,
                                   40,
                                   100
                                 ]
@@ -7798,7 +8722,7 @@
                           "joinStyle" : "Round",
                           "lineStyle3D" : "Strip",
                           "miterLimit" : 10,
-                          "width" : 0.7,
+                          "width" : 0.69999999999999996,
                           "color" : {
                             "type" : "CIMRGBColor",
                             "values" : [
@@ -7893,7 +8817,7 @@
                           "joinStyle" : "Round",
                           "lineStyle3D" : "Strip",
                           "miterLimit" : 10,
-                          "width" : 0.7,
+                          "width" : 0.69999999999999996,
                           "color" : {
                             "type" : "CIMRGBColor",
                             "values" : [
@@ -8115,9 +9039,9 @@
           "geometryType" : "esriGeometryPoint",
           "extent" : {
             "xmin" : -13667986.8586,
-            "ymin" : 2976131.9767000005,
-            "xmax" : -7545985.205399999,
-            "ymax" : 6264345.286700003,
+            "ymin" : 2976131.97670000046,
+            "xmax" : -7545985.2053999994,
+            "ymax" : 6264345.28670000285,
             "spatialReference" : {
               "wkid" : 102100,
               "latestWkid" : 3857
@@ -8871,26 +9795,26 @@
             }
           ],
           "weights" : [
-            0.07692307692307694,
-            0.07692307692307694,
-            0.07692307692307694,
-            0.07692307692307694,
-            0.07692307692307694,
-            0.07692307692307694,
-            0.07692307692307694,
-            0.07692307692307694,
-            0.07692307692307694,
-            0.07692307692307694,
-            0.07692307692307694,
-            0.07692307692307694,
-            0.07692307692307694
+            0.076923076923076941,
+            0.076923076923076941,
+            0.076923076923076941,
+            0.076923076923076941,
+            0.076923076923076941,
+            0.076923076923076941,
+            0.076923076923076941,
+            0.076923076923076941,
+            0.076923076923076941,
+            0.076923076923076941,
+            0.076923076923076941,
+            0.076923076923076941,
+            0.076923076923076941
           ]
         },
         "radius" : 30,
         "rendererQuality" : 2,
         "minLabel" : "Sparse",
         "maxLabel" : "Dense",
-        "maxPixelIntensity" : 3.127700489026043e-07,
+        "maxPixelIntensity" : 3.1277004890260432e-07,
         "pixelIntensityStops" : [
           0.0011764705882353343,
           1
@@ -8903,6 +9827,929 @@
       "symbolLayerDrawing" : {
         "type" : "CIMSymbolLayerDrawing"
       }
+    },
+    {
+      "type" : "CIMFeatureLayer",
+      "name" : "Past 14 Days - Max Estimated Impacted Critical Infrastructure - Heatmap",
+      "uRI" : "CIMPATH=nwm_past_14_days_max_fim_extent_analysis/es_ana_past_14day_max_inundation_critical_infrastructure.xml",
+      "sourceModifiedTime" : {
+        "type" : "TimeInstant"
+      },
+      "useSourceMetadata" : true,
+      "description" : "vizprocessing.postgres.ana_past_14day_max_inundation_critical_infrastructure",
+      "layerElevation" : {
+        "type" : "CIMLayerElevationSurface",
+        "mapElevationID" : "{84F61CAA-CD53-4C26-BBF2-C7F7CA71C354}"
+      },
+      "expanded" : true,
+      "layerType" : "Operational",
+      "showLegends" : true,
+      "visibility" : false,
+      "displayCacheType" : "Permanent",
+      "maxDisplayCacheAge" : 5,
+      "showPopups" : true,
+      "serviceLayerID" : -1,
+      "refreshRate" : -1,
+      "refreshRateUnit" : "esriTimeUnitsSeconds",
+      "blendingMode" : "Alpha",
+      "autoGenerateFeatureTemplates" : true,
+      "featureElevationExpression" : "0",
+      "featureTable" : {
+        "type" : "CIMFeatureTable",
+        "displayField" : "name",
+        "editable" : true,
+        "dataConnection" : {
+          "type" : "CIMSqlQueryDataConnection",
+          "workspaceConnectionString" : "ENCRYPTED_PASSWORD=00022e686130517a54345465444a69454c71526b3643552f45336c59435059775a58387a344f656f754259764e36784573387a4c6142704d6542455a6639593969556c492a00;SERVER=hv-vpp-ti-viz-processing.c4vzypepnkx3.us-east-1.rds.amazonaws.com;INSTANCE=sde:postgresql:hv-vpp-ti-viz-processing.c4vzypepnkx3.us-east-1.rds.amazonaws.com;DBCLIENT=postgresql;DB_CONNECTION_PROPERTIES=hv-vpp-ti-viz-processing.c4vzypepnkx3.us-east-1.rds.amazonaws.com;DATABASE=vizprocessing;USER=postgres;AUTHENTICATION_MODE=DBMS",
+          "workspaceFactory" : "SDE",
+          "dataset" : "vizprocessing.postgres.%ana_past_14day_max_inundation_critical_infrastructure",
+          "datasetType" : "esriDTFeatureClass",
+          "sqlQuery" : "select oid,build_type,name,geom,city,country,state,population,beds,naics_code,specialty,sourcedate,zipcode,status,trauma,alias,county,naics_desc,alt_name,naicsdescr,helipad,level_,source,type,hydro_id,hydro_id_str,feature_id,feature_id_str,streamflow_cfs,fim_stage_ft from vizprocessing.publish.ana_past_14day_max_inundation_critical_infrastructure",
+          "srid" : "3857",
+          "spatialReference" : {
+            "wkid" : 102100,
+            "latestWkid" : 3857
+          },
+          "oIDFields" : "oid",
+          "geometryType" : "esriGeometryPoint",
+          "extent" : {
+            "xmin" : -13812275.429,
+            "ymin" : 3153258.05660000071,
+            "xmax" : -8066621.58500000089,
+            "ymax" : 5616258.131099999,
+            "spatialReference" : {
+              "wkid" : 102100,
+              "latestWkid" : 3857
+            }
+          },
+          "queryFields" : [
+            {
+              "name" : "oid",
+              "type" : "esriFieldTypeInteger",
+              "alias" : "oid"
+            },
+            {
+              "name" : "build_type",
+              "type" : "esriFieldTypeString",
+              "alias" : "build_type",
+              "length" : 60000
+            },
+            {
+              "name" : "name",
+              "type" : "esriFieldTypeString",
+              "alias" : "name",
+              "length" : 60000
+            },
+            {
+              "name" : "geom",
+              "type" : "esriFieldTypeGeometry",
+              "alias" : "geom",
+              "geometryDef" : {
+                "avgNumPoints" : 0,
+                "geometryType" : "esriGeometryPoint",
+                "hasM" : false,
+                "hasZ" : false,
+                "spatialReference" : {
+                  "wkid" : 102100,
+                  "latestWkid" : 3857
+                }
+              }
+            },
+            {
+              "name" : "city",
+              "type" : "esriFieldTypeString",
+              "alias" : "city",
+              "length" : 60000
+            },
+            {
+              "name" : "country",
+              "type" : "esriFieldTypeString",
+              "alias" : "country",
+              "length" : 60000
+            },
+            {
+              "name" : "state",
+              "type" : "esriFieldTypeString",
+              "alias" : "state",
+              "length" : 60000
+            },
+            {
+              "name" : "population",
+              "type" : "esriFieldTypeDouble",
+              "alias" : "population"
+            },
+            {
+              "name" : "beds",
+              "type" : "esriFieldTypeDouble",
+              "alias" : "beds"
+            },
+            {
+              "name" : "naics_code",
+              "type" : "esriFieldTypeString",
+              "alias" : "naics_code",
+              "length" : 60000
+            },
+            {
+              "name" : "specialty",
+              "type" : "esriFieldTypeString",
+              "alias" : "specialty",
+              "length" : 60000
+            },
+            {
+              "name" : "sourcedate",
+              "type" : "esriFieldTypeDouble",
+              "alias" : "sourcedate"
+            },
+            {
+              "name" : "zipcode",
+              "type" : "esriFieldTypeString",
+              "alias" : "zipcode",
+              "length" : 60000
+            },
+            {
+              "name" : "status",
+              "type" : "esriFieldTypeString",
+              "alias" : "status",
+              "length" : 60000
+            },
+            {
+              "name" : "trauma",
+              "type" : "esriFieldTypeString",
+              "alias" : "trauma",
+              "length" : 60000
+            },
+            {
+              "name" : "alias",
+              "type" : "esriFieldTypeString",
+              "alias" : "alias",
+              "length" : 60000
+            },
+            {
+              "name" : "county",
+              "type" : "esriFieldTypeString",
+              "alias" : "county",
+              "length" : 60000
+            },
+            {
+              "name" : "naics_desc",
+              "type" : "esriFieldTypeString",
+              "alias" : "naics_desc",
+              "length" : 60000
+            },
+            {
+              "name" : "alt_name",
+              "type" : "esriFieldTypeString",
+              "alias" : "alt_name",
+              "length" : 60000
+            },
+            {
+              "name" : "naicsdescr",
+              "type" : "esriFieldTypeString",
+              "alias" : "naicsdescr",
+              "length" : 60000
+            },
+            {
+              "name" : "helipad",
+              "type" : "esriFieldTypeString",
+              "alias" : "helipad",
+              "length" : 60000
+            },
+            {
+              "name" : "level_",
+              "type" : "esriFieldTypeString",
+              "alias" : "level_",
+              "length" : 60000
+            },
+            {
+              "name" : "source",
+              "type" : "esriFieldTypeString",
+              "alias" : "source",
+              "length" : 60000
+            },
+            {
+              "name" : "type",
+              "type" : "esriFieldTypeString",
+              "alias" : "type",
+              "length" : 60000
+            },
+            {
+              "name" : "hydro_id",
+              "type" : "esriFieldTypeInteger",
+              "alias" : "hydro_id"
+            },
+            {
+              "name" : "hydro_id_str",
+              "type" : "esriFieldTypeString",
+              "alias" : "hydro_id_str",
+              "length" : 60000
+            },
+            {
+              "name" : "feature_id",
+              "type" : "esriFieldTypeDouble",
+              "alias" : "feature_id"
+            },
+            {
+              "name" : "feature_id_str",
+              "type" : "esriFieldTypeString",
+              "alias" : "feature_id_str",
+              "length" : 60000
+            },
+            {
+              "name" : "streamflow_cfs",
+              "type" : "esriFieldTypeDouble",
+              "alias" : "streamflow_cfs"
+            },
+            {
+              "name" : "fim_stage_ft",
+              "type" : "esriFieldTypeInteger",
+              "alias" : "fim_stage_ft"
+            }
+          ],
+          "spatialStorageType" : 8
+        },
+        "studyAreaSpatialRel" : "esriSpatialRelUndefined",
+        "searchOrder" : "esriSearchOrderSpatial"
+      },
+      "htmlPopupEnabled" : true,
+      "isFlattened" : true,
+      "selectable" : true,
+      "featureCacheType" : "Session",
+      "displayFiltersType" : "ByScale",
+      "featureBlendingMode" : "Alpha",
+      "labelClasses" : [
+        {
+          "type" : "CIMLabelClass",
+          "expressionTitle" : "Custom",
+          "expression" : "$feature.build_id",
+          "expressionEngine" : "Arcade",
+          "featuresToLabel" : "AllVisibleFeatures",
+          "maplexLabelPlacementProperties" : {
+            "type" : "CIMMaplexLabelPlacementProperties",
+            "featureType" : "Point",
+            "avoidPolygonHoles" : true,
+            "canOverrunFeature" : true,
+            "canPlaceLabelOutsidePolygon" : true,
+            "canRemoveOverlappingLabel" : true,
+            "canStackLabel" : true,
+            "connectionType" : "Unambiguous",
+            "constrainOffset" : "NoConstraint",
+            "contourAlignmentType" : "Page",
+            "contourLadderType" : "Straight",
+            "contourMaximumAngle" : 90,
+            "enableConnection" : true,
+            "enablePointPlacementPriorities" : true,
+            "featureWeight" : 0,
+            "fontHeightReductionLimit" : 4,
+            "fontHeightReductionStep" : 0.5,
+            "fontWidthReductionLimit" : 90,
+            "fontWidthReductionStep" : 5,
+            "graticuleAlignmentType" : "Straight",
+            "keyNumberGroupName" : "Default",
+            "labelBuffer" : 15,
+            "labelLargestPolygon" : true,
+            "labelPriority" : -1,
+            "labelStackingProperties" : {
+              "type" : "CIMMaplexLabelStackingProperties",
+              "stackAlignment" : "ChooseBest",
+              "maximumNumberOfLines" : 3,
+              "minimumNumberOfCharsPerLine" : 3,
+              "maximumNumberOfCharsPerLine" : 24,
+              "separators" : [
+                {
+                  "type" : "CIMMaplexStackingSeparator",
+                  "separator" : " ",
+                  "splitAfter" : true
+                },
+                {
+                  "type" : "CIMMaplexStackingSeparator",
+                  "separator" : ",",
+                  "visible" : true,
+                  "splitAfter" : true
+                }
+              ]
+            },
+            "lineFeatureType" : "General",
+            "linePlacementMethod" : "OffsetCurvedFromLine",
+            "maximumLabelOverrun" : 36,
+            "maximumLabelOverrunUnit" : "Point",
+            "minimumFeatureSizeUnit" : "Map",
+            "multiPartOption" : "OneLabelPerPart",
+            "offsetAlongLineProperties" : {
+              "type" : "CIMMaplexOffsetAlongLineProperties",
+              "placementMethod" : "BestPositionAlongLine",
+              "labelAnchorPoint" : "CenterOfLabel",
+              "distanceUnit" : "Percentage",
+              "useLineDirection" : true
+            },
+            "pointExternalZonePriorities" : {
+              "type" : "CIMMaplexExternalZonePriorities",
+              "aboveLeft" : 4,
+              "aboveCenter" : 2,
+              "aboveRight" : 1,
+              "centerRight" : 3,
+              "belowRight" : 5,
+              "belowCenter" : 7,
+              "belowLeft" : 8,
+              "centerLeft" : 6
+            },
+            "pointPlacementMethod" : "AroundPoint",
+            "polygonAnchorPointType" : "GeometricCenter",
+            "polygonBoundaryWeight" : 0,
+            "polygonExternalZones" : {
+              "type" : "CIMMaplexExternalZonePriorities",
+              "aboveLeft" : 4,
+              "aboveCenter" : 2,
+              "aboveRight" : 1,
+              "centerRight" : 3,
+              "belowRight" : 5,
+              "belowCenter" : 7,
+              "belowLeft" : 8,
+              "centerLeft" : 6
+            },
+            "polygonFeatureType" : "General",
+            "polygonInternalZones" : {
+              "type" : "CIMMaplexInternalZonePriorities",
+              "center" : 1
+            },
+            "polygonPlacementMethod" : "CurvedInPolygon",
+            "primaryOffset" : 1,
+            "primaryOffsetUnit" : "Point",
+            "removeExtraWhiteSpace" : true,
+            "repetitionIntervalUnit" : "Point",
+            "rotationProperties" : {
+              "type" : "CIMMaplexRotationProperties",
+              "rotationType" : "Arithmetic",
+              "alignmentType" : "Straight"
+            },
+            "secondaryOffset" : 100,
+            "strategyPriorities" : {
+              "type" : "CIMMaplexStrategyPriorities",
+              "stacking" : 1,
+              "overrun" : 2,
+              "fontCompression" : 3,
+              "fontReduction" : 4,
+              "abbreviation" : 5
+            },
+            "thinningDistanceUnit" : "Point",
+            "truncationMarkerCharacter" : ".",
+            "truncationMinimumLength" : 1,
+            "truncationPreferredCharacters" : "aeiou",
+            "truncationExcludedCharacters" : "0123456789",
+            "polygonAnchorPointPerimeterInsetUnit" : "Point"
+          },
+          "name" : "Class 1",
+          "priority" : -1,
+          "standardLabelPlacementProperties" : {
+            "type" : "CIMStandardLabelPlacementProperties",
+            "featureType" : "Line",
+            "featureWeight" : "None",
+            "labelWeight" : "High",
+            "numLabelsOption" : "OneLabelPerName",
+            "lineLabelPosition" : {
+              "type" : "CIMStandardLineLabelPosition",
+              "above" : true,
+              "inLine" : true,
+              "parallel" : true
+            },
+            "lineLabelPriorities" : {
+              "type" : "CIMStandardLineLabelPriorities",
+              "aboveStart" : 3,
+              "aboveAlong" : 3,
+              "aboveEnd" : 3,
+              "centerStart" : 3,
+              "centerAlong" : 3,
+              "centerEnd" : 3,
+              "belowStart" : 3,
+              "belowAlong" : 3,
+              "belowEnd" : 3
+            },
+            "pointPlacementMethod" : "AroundPoint",
+            "pointPlacementPriorities" : {
+              "type" : "CIMStandardPointPlacementPriorities",
+              "aboveLeft" : 2,
+              "aboveCenter" : 2,
+              "aboveRight" : 1,
+              "centerLeft" : 3,
+              "centerRight" : 2,
+              "belowLeft" : 3,
+              "belowCenter" : 3,
+              "belowRight" : 2
+            },
+            "rotationType" : "Arithmetic",
+            "polygonPlacementMethod" : "AlwaysHorizontal"
+          },
+          "textSymbol" : {
+            "type" : "CIMSymbolReference",
+            "symbol" : {
+              "type" : "CIMTextSymbol",
+              "blockProgression" : "TTB",
+              "depth3D" : 1,
+              "extrapolateBaselines" : true,
+              "fontEffects" : "Normal",
+              "fontEncoding" : "Unicode",
+              "fontFamilyName" : "Tahoma",
+              "fontStyleName" : "Regular",
+              "fontType" : "Unspecified",
+              "haloSize" : 1,
+              "height" : 10,
+              "hinting" : "Default",
+              "horizontalAlignment" : "Left",
+              "kerning" : true,
+              "letterWidth" : 100,
+              "ligatures" : true,
+              "lineGapType" : "ExtraLeading",
+              "symbol" : {
+                "type" : "CIMPolygonSymbol",
+                "symbolLayers" : [
+                  {
+                    "type" : "CIMSolidFill",
+                    "enable" : true,
+                    "color" : {
+                      "type" : "CIMRGBColor",
+                      "values" : [
+                        0,
+                        0,
+                        0,
+                        100
+                      ]
+                    }
+                  }
+                ]
+              },
+              "textCase" : "Normal",
+              "textDirection" : "LTR",
+              "verticalAlignment" : "Bottom",
+              "verticalGlyphOrientation" : "Right",
+              "wordSpacing" : 100,
+              "billboardMode3D" : "FaceNearPlane"
+            }
+          },
+          "useCodedValue" : true,
+          "visibility" : true,
+          "iD" : -1
+        }
+      ],
+      "renderer" : {
+        "type" : "CIMHeatMapRenderer",
+        "colorScheme" : {
+          "type" : "CIMMultipartColorRamp",
+          "colorSpace" : {
+            "type" : "CIMICCColorSpace",
+            "url" : "Default RGB"
+          },
+          "colorRamps" : [
+            {
+              "type" : "CIMLinearContinuousColorRamp",
+              "colorSpace" : {
+                "type" : "CIMICCColorSpace",
+                "url" : "Default RGB"
+              },
+              "fromColor" : {
+                "type" : "CIMRGBColor",
+                "colorSpace" : {
+                  "type" : "CIMICCColorSpace",
+                  "url" : "Default RGB"
+                },
+                "values" : [
+                  133,
+                  193,
+                  200,
+                  0
+                ]
+              },
+              "toColor" : {
+                "type" : "CIMRGBColor",
+                "values" : [
+                  133,
+                  193,
+                  200,
+                  100
+                ]
+              }
+            },
+            {
+              "type" : "CIMLinearContinuousColorRamp",
+              "colorSpace" : {
+                "type" : "CIMICCColorSpace",
+                "url" : "Default RGB"
+              },
+              "fromColor" : {
+                "type" : "CIMRGBColor",
+                "values" : [
+                  133,
+                  193,
+                  200,
+                  100
+                ]
+              },
+              "toColor" : {
+                "type" : "CIMRGBColor",
+                "colorSpace" : {
+                  "type" : "CIMICCColorSpace",
+                  "url" : "Default RGB"
+                },
+                "values" : [
+                  144,
+                  161,
+                  190,
+                  100
+                ]
+              }
+            },
+            {
+              "type" : "CIMLinearContinuousColorRamp",
+              "colorSpace" : {
+                "type" : "CIMICCColorSpace",
+                "url" : "Default RGB"
+              },
+              "fromColor" : {
+                "type" : "CIMRGBColor",
+                "colorSpace" : {
+                  "type" : "CIMICCColorSpace",
+                  "url" : "Default RGB"
+                },
+                "values" : [
+                  144,
+                  161,
+                  190,
+                  100
+                ]
+              },
+              "toColor" : {
+                "type" : "CIMRGBColor",
+                "colorSpace" : {
+                  "type" : "CIMICCColorSpace",
+                  "url" : "Default RGB"
+                },
+                "values" : [
+                  156,
+                  129,
+                  132,
+                  100
+                ]
+              }
+            },
+            {
+              "type" : "CIMLinearContinuousColorRamp",
+              "colorSpace" : {
+                "type" : "CIMICCColorSpace",
+                "url" : "Default RGB"
+              },
+              "fromColor" : {
+                "type" : "CIMRGBColor",
+                "colorSpace" : {
+                  "type" : "CIMICCColorSpace",
+                  "url" : "Default RGB"
+                },
+                "values" : [
+                  156,
+                  129,
+                  132,
+                  100
+                ]
+              },
+              "toColor" : {
+                "type" : "CIMRGBColor",
+                "colorSpace" : {
+                  "type" : "CIMICCColorSpace",
+                  "url" : "Default RGB"
+                },
+                "values" : [
+                  167,
+                  97,
+                  170,
+                  100
+                ]
+              }
+            },
+            {
+              "type" : "CIMLinearContinuousColorRamp",
+              "colorSpace" : {
+                "type" : "CIMICCColorSpace",
+                "url" : "Default RGB"
+              },
+              "fromColor" : {
+                "type" : "CIMRGBColor",
+                "colorSpace" : {
+                  "type" : "CIMICCColorSpace",
+                  "url" : "Default RGB"
+                },
+                "values" : [
+                  167,
+                  97,
+                  170,
+                  100
+                ]
+              },
+              "toColor" : {
+                "type" : "CIMRGBColor",
+                "colorSpace" : {
+                  "type" : "CIMICCColorSpace",
+                  "url" : "Default RGB"
+                },
+                "values" : [
+                  175,
+                  73,
+                  128,
+                  100
+                ]
+              }
+            },
+            {
+              "type" : "CIMLinearContinuousColorRamp",
+              "colorSpace" : {
+                "type" : "CIMICCColorSpace",
+                "url" : "Default RGB"
+              },
+              "fromColor" : {
+                "type" : "CIMRGBColor",
+                "colorSpace" : {
+                  "type" : "CIMICCColorSpace",
+                  "url" : "Default RGB"
+                },
+                "values" : [
+                  175,
+                  73,
+                  128,
+                  100
+                ]
+              },
+              "toColor" : {
+                "type" : "CIMRGBColor",
+                "colorSpace" : {
+                  "type" : "CIMICCColorSpace",
+                  "url" : "Default RGB"
+                },
+                "values" : [
+                  184,
+                  48,
+                  85,
+                  100
+                ]
+              }
+            },
+            {
+              "type" : "CIMLinearContinuousColorRamp",
+              "colorSpace" : {
+                "type" : "CIMICCColorSpace",
+                "url" : "Default RGB"
+              },
+              "fromColor" : {
+                "type" : "CIMRGBColor",
+                "colorSpace" : {
+                  "type" : "CIMICCColorSpace",
+                  "url" : "Default RGB"
+                },
+                "values" : [
+                  184,
+                  48,
+                  85,
+                  100
+                ]
+              },
+              "toColor" : {
+                "type" : "CIMRGBColor",
+                "colorSpace" : {
+                  "type" : "CIMICCColorSpace",
+                  "url" : "Default RGB"
+                },
+                "values" : [
+                  192,
+                  24,
+                  42,
+                  100
+                ]
+              }
+            },
+            {
+              "type" : "CIMLinearContinuousColorRamp",
+              "colorSpace" : {
+                "type" : "CIMICCColorSpace",
+                "url" : "Default RGB"
+              },
+              "fromColor" : {
+                "type" : "CIMRGBColor",
+                "colorSpace" : {
+                  "type" : "CIMICCColorSpace",
+                  "url" : "Default RGB"
+                },
+                "values" : [
+                  192,
+                  24,
+                  42,
+                  100
+                ]
+              },
+              "toColor" : {
+                "type" : "CIMRGBColor",
+                "colorSpace" : {
+                  "type" : "CIMICCColorSpace",
+                  "url" : "Default RGB"
+                },
+                "values" : [
+                  200,
+                  0,
+                  0,
+                  100
+                ]
+              }
+            },
+            {
+              "type" : "CIMLinearContinuousColorRamp",
+              "colorSpace" : {
+                "type" : "CIMICCColorSpace",
+                "url" : "Default RGB"
+              },
+              "fromColor" : {
+                "type" : "CIMRGBColor",
+                "colorSpace" : {
+                  "type" : "CIMICCColorSpace",
+                  "url" : "Default RGB"
+                },
+                "values" : [
+                  200,
+                  0,
+                  0,
+                  100
+                ]
+              },
+              "toColor" : {
+                "type" : "CIMRGBColor",
+                "colorSpace" : {
+                  "type" : "CIMICCColorSpace",
+                  "url" : "Default RGB"
+                },
+                "values" : [
+                  211,
+                  51,
+                  0,
+                  100
+                ]
+              }
+            },
+            {
+              "type" : "CIMLinearContinuousColorRamp",
+              "colorSpace" : {
+                "type" : "CIMICCColorSpace",
+                "url" : "Default RGB"
+              },
+              "fromColor" : {
+                "type" : "CIMRGBColor",
+                "colorSpace" : {
+                  "type" : "CIMICCColorSpace",
+                  "url" : "Default RGB"
+                },
+                "values" : [
+                  211,
+                  51,
+                  0,
+                  100
+                ]
+              },
+              "toColor" : {
+                "type" : "CIMRGBColor",
+                "colorSpace" : {
+                  "type" : "CIMICCColorSpace",
+                  "url" : "Default RGB"
+                },
+                "values" : [
+                  222,
+                  102,
+                  0,
+                  100
+                ]
+              }
+            },
+            {
+              "type" : "CIMLinearContinuousColorRamp",
+              "colorSpace" : {
+                "type" : "CIMICCColorSpace",
+                "url" : "Default RGB"
+              },
+              "fromColor" : {
+                "type" : "CIMRGBColor",
+                "colorSpace" : {
+                  "type" : "CIMICCColorSpace",
+                  "url" : "Default RGB"
+                },
+                "values" : [
+                  222,
+                  102,
+                  0,
+                  100
+                ]
+              },
+              "toColor" : {
+                "type" : "CIMRGBColor",
+                "colorSpace" : {
+                  "type" : "CIMICCColorSpace",
+                  "url" : "Default RGB"
+                },
+                "values" : [
+                  233,
+                  153,
+                  0,
+                  100
+                ]
+              }
+            },
+            {
+              "type" : "CIMLinearContinuousColorRamp",
+              "colorSpace" : {
+                "type" : "CIMICCColorSpace",
+                "url" : "Default RGB"
+              },
+              "fromColor" : {
+                "type" : "CIMRGBColor",
+                "colorSpace" : {
+                  "type" : "CIMICCColorSpace",
+                  "url" : "Default RGB"
+                },
+                "values" : [
+                  233,
+                  153,
+                  0,
+                  100
+                ]
+              },
+              "toColor" : {
+                "type" : "CIMRGBColor",
+                "colorSpace" : {
+                  "type" : "CIMICCColorSpace",
+                  "url" : "Default RGB"
+                },
+                "values" : [
+                  244,
+                  204,
+                  0,
+                  100
+                ]
+              }
+            },
+            {
+              "type" : "CIMLinearContinuousColorRamp",
+              "colorSpace" : {
+                "type" : "CIMICCColorSpace",
+                "url" : "Default RGB"
+              },
+              "fromColor" : {
+                "type" : "CIMRGBColor",
+                "colorSpace" : {
+                  "type" : "CIMICCColorSpace",
+                  "url" : "Default RGB"
+                },
+                "values" : [
+                  244,
+                  204,
+                  0,
+                  100
+                ]
+              },
+              "toColor" : {
+                "type" : "CIMRGBColor",
+                "colorSpace" : {
+                  "type" : "CIMICCColorSpace",
+                  "url" : "Default RGB"
+                },
+                "values" : [
+                  255,
+                  255,
+                  0,
+                  100
+                ]
+              }
+            }
+          ],
+          "weights" : [
+            0.076923076923076941,
+            0.076923076923076941,
+            0.076923076923076941,
+            0.076923076923076941,
+            0.076923076923076941,
+            0.076923076923076941,
+            0.076923076923076941,
+            0.076923076923076941,
+            0.076923076923076941,
+            0.076923076923076941,
+            0.076923076923076941,
+            0.076923076923076941,
+            0.076923076923076941
+          ]
+        },
+        "radius" : 30,
+        "rendererQuality" : 2,
+        "minLabel" : "Sparse",
+        "maxLabel" : "Dense",
+        "maxPixelIntensity" : 3.1277004890260432e-07,
+        "pixelIntensityStops" : [
+          0.0011764705882353343,
+          1
+        ],
+        "autoAdjustPixelIntensity" : true,
+        "maxPixelIntensityReferenceScale" : 30887910.260900345
+      },
+      "scaleSymbols" : true,
+      "snappable" : true
     },
     {
       "type" : "CIMFeatureLayer",
@@ -9229,8 +11076,8 @@
           "extent" : {
             "xmin" : -13702752.5208,
             "ymin" : 2900684.3673,
-            "xmax" : -7456492.422700001,
-            "ymax" : 6265558.830300003,
+            "xmax" : -7456492.42270000093,
+            "ymax" : 6265558.83030000329,
             "spatialReference" : {
               "wkid" : 102100,
               "latestWkid" : 3857
@@ -9598,7 +11445,7 @@
                     "joinStyle" : "Round",
                     "lineStyle3D" : "Strip",
                     "miterLimit" : 10,
-                    "width" : 0.7,
+                    "width" : 0.69999999999999996,
                     "color" : {
                       "type" : "CIMRGBColor",
                       "values" : [
@@ -9643,7 +11490,7 @@
                     "joinStyle" : "Round",
                     "lineStyle3D" : "Strip",
                     "miterLimit" : 10,
-                    "width" : 0.7,
+                    "width" : 0.69999999999999996,
                     "color" : {
                       "type" : "CIMRGBColor",
                       "values" : [
@@ -9688,7 +11535,7 @@
                     "joinStyle" : "Round",
                     "lineStyle3D" : "Strip",
                     "miterLimit" : 10,
-                    "width" : 0.7,
+                    "width" : 0.69999999999999996,
                     "color" : {
                       "type" : "CIMRGBColor",
                       "values" : [
@@ -9733,7 +11580,7 @@
                     "joinStyle" : "Round",
                     "lineStyle3D" : "Strip",
                     "miterLimit" : 10,
-                    "width" : 0.7,
+                    "width" : 0.69999999999999996,
                     "color" : {
                       "type" : "CIMRGBColor",
                       "values" : [
@@ -9778,7 +11625,7 @@
                     "joinStyle" : "Round",
                     "lineStyle3D" : "Strip",
                     "miterLimit" : 10,
-                    "width" : 0.7,
+                    "width" : 0.69999999999999996,
                     "color" : {
                       "type" : "CIMRGBColor",
                       "values" : [
@@ -9899,7 +11746,7 @@
                 "joinStyle" : "Round",
                 "lineStyle3D" : "Strip",
                 "miterLimit" : 10,
-                "width" : 0.7,
+                "width" : 0.69999999999999996,
                 "color" : {
                   "type" : "CIMRGBColor",
                   "values" : [
@@ -9942,7 +11789,7 @@
                 "joinStyle" : "Round",
                 "lineStyle3D" : "Strip",
                 "miterLimit" : 10,
-                "width" : 0.7,
+                "width" : 0.69999999999999996,
                 "color" : {
                   "type" : "CIMRGBColor",
                   "values" : [
@@ -10302,10 +12149,10 @@
           "oIDFields" : "oid",
           "geometryType" : "esriGeometryPolygon",
           "extent" : {
-            "xmin" : -13714908.124699999,
-            "ymin" : 2892633.5918999985,
-            "xmax" : -7445653.492900001,
-            "ymax" : 6274987.502999999,
+            "xmin" : -13714908.1246999986,
+            "ymin" : 2892633.59189999849,
+            "xmax" : -7445653.49290000089,
+            "ymax" : 6274987.50299999863,
             "spatialReference" : {
               "wkid" : 102100,
               "latestWkid" : 3857
@@ -10680,7 +12527,7 @@
                     "joinStyle" : "Round",
                     "lineStyle3D" : "Strip",
                     "miterLimit" : 10,
-                    "width" : 0.7,
+                    "width" : 0.69999999999999996,
                     "color" : {
                       "type" : "CIMRGBColor",
                       "values" : [
@@ -10725,7 +12572,7 @@
                     "joinStyle" : "Round",
                     "lineStyle3D" : "Strip",
                     "miterLimit" : 10,
-                    "width" : 0.7,
+                    "width" : 0.69999999999999996,
                     "color" : {
                       "type" : "CIMRGBColor",
                       "values" : [
@@ -10770,7 +12617,7 @@
                     "joinStyle" : "Round",
                     "lineStyle3D" : "Strip",
                     "miterLimit" : 10,
-                    "width" : 0.7,
+                    "width" : 0.69999999999999996,
                     "color" : {
                       "type" : "CIMRGBColor",
                       "values" : [
@@ -10815,7 +12662,7 @@
                     "joinStyle" : "Round",
                     "lineStyle3D" : "Strip",
                     "miterLimit" : 10,
-                    "width" : 0.7,
+                    "width" : 0.69999999999999996,
                     "color" : {
                       "type" : "CIMRGBColor",
                       "values" : [
@@ -10860,7 +12707,7 @@
                     "joinStyle" : "Round",
                     "lineStyle3D" : "Strip",
                     "miterLimit" : 10,
-                    "width" : 0.7,
+                    "width" : 0.69999999999999996,
                     "color" : {
                       "type" : "CIMRGBColor",
                       "values" : [
@@ -10981,7 +12828,7 @@
                 "joinStyle" : "Round",
                 "lineStyle3D" : "Strip",
                 "miterLimit" : 10,
-                "width" : 0.7,
+                "width" : 0.69999999999999996,
                 "color" : {
                   "type" : "CIMRGBColor",
                   "values" : [
@@ -11024,7 +12871,7 @@
                 "joinStyle" : "Round",
                 "lineStyle3D" : "Strip",
                 "miterLimit" : 10,
-                "width" : 0.7,
+                "width" : 0.69999999999999996,
                 "color" : {
                   "type" : "CIMRGBColor",
                   "values" : [
@@ -11263,9 +13110,9 @@
           "geometryType" : "esriGeometryPolygon",
           "extent" : {
             "xmin" : -13578523.488499999,
-            "ymin" : 3096599.3299000002,
-            "xmax" : -7616764.763599999,
-            "ymax" : 6208676.231600001,
+            "ymin" : 3096599.32990000024,
+            "xmax" : -7616764.76359999925,
+            "ymax" : 6208676.23160000145,
             "spatialReference" : {
               "wkid" : 102100,
               "latestWkid" : 3857
@@ -11624,7 +13471,7 @@
                 "joinStyle" : "Round",
                 "lineStyle3D" : "Strip",
                 "miterLimit" : 10,
-                "width" : 0.7,
+                "width" : 0.69999999999999996,
                 "color" : {
                   "type" : "CIMRGBColor",
                   "values" : [
@@ -11675,7 +13522,7 @@
                         "joinStyle" : "Round",
                         "lineStyle3D" : "Strip",
                         "miterLimit" : 10,
-                        "width" : 0.7,
+                        "width" : 0.69999999999999996,
                         "color" : {
                           "type" : "CIMRGBColor",
                           "values" : [
@@ -11728,7 +13575,7 @@
                         "joinStyle" : "Round",
                         "lineStyle3D" : "Strip",
                         "miterLimit" : 10,
-                        "width" : 0.7,
+                        "width" : 0.69999999999999996,
                         "color" : {
                           "type" : "CIMRGBColor",
                           "values" : [
@@ -11781,7 +13628,7 @@
                         "joinStyle" : "Round",
                         "lineStyle3D" : "Strip",
                         "miterLimit" : 10,
-                        "width" : 0.7,
+                        "width" : 0.69999999999999996,
                         "color" : {
                           "type" : "CIMRGBColor",
                           "values" : [
@@ -11834,7 +13681,7 @@
                         "joinStyle" : "Round",
                         "lineStyle3D" : "Strip",
                         "miterLimit" : 10,
-                        "width" : 0.7,
+                        "width" : 0.69999999999999996,
                         "color" : {
                           "type" : "CIMRGBColor",
                           "values" : [
@@ -11887,7 +13734,7 @@
                         "joinStyle" : "Round",
                         "lineStyle3D" : "Strip",
                         "miterLimit" : 10,
-                        "width" : 0.7,
+                        "width" : 0.69999999999999996,
                         "color" : {
                           "type" : "CIMRGBColor",
                           "values" : [
@@ -11940,7 +13787,7 @@
                         "joinStyle" : "Round",
                         "lineStyle3D" : "Strip",
                         "miterLimit" : 10,
-                        "width" : 0.7,
+                        "width" : 0.69999999999999996,
                         "color" : {
                           "type" : "CIMRGBColor",
                           "values" : [
@@ -11993,7 +13840,7 @@
                         "joinStyle" : "Round",
                         "lineStyle3D" : "Strip",
                         "miterLimit" : 10,
-                        "width" : 0.7,
+                        "width" : 0.69999999999999996,
                         "color" : {
                           "type" : "CIMRGBColor",
                           "values" : [
@@ -12046,7 +13893,7 @@
                         "joinStyle" : "Round",
                         "lineStyle3D" : "Strip",
                         "miterLimit" : 10,
-                        "width" : 0.7,
+                        "width" : 0.69999999999999996,
                         "color" : {
                           "type" : "CIMRGBColor",
                           "values" : [
@@ -12123,6 +13970,7 @@
       "blendingMode" : "Alpha",
       "layers" : [
         "CIMPATH=m_past_14_day_max_analysis_and_assimilation_fim_analysis/past_7_day_max_estimated_impacted_buildings___heatmap.xml",
+        "CIMPATH=nwm_past_14_days_max_fim_extent_analysis/es_ana_past_14day_max_inundation_critical_infrastructure.xml",
         "CIMPATH=m_past_14_day_max_analysis_and_assimilation_fim_analysis/_7_day_max_estimated_impacted_buildings___huc10_hotspots.xml",
         "CIMPATH=m_past_14_day_max_analysis_and_assimilation_fim_analysis/7_day_max_estimated_impacted_buildings___county_hotspots.xml",
         "CIMPATH=m_past_14_day_max_analysis_and_assimilation_fim_analysis/y_max_estimated_impacted_buildings__fema_usa_structures_.xml"
@@ -12142,6 +13990,7 @@
         "type" : "CIMLayerElevationSurface",
         "mapElevationID" : "{84F61CAA-CD53-4C26-BBF2-C7F7CA71C354}"
       },
+      "expanded" : true,
       "layerType" : "Operational",
       "showLegends" : true,
       "visibility" : false,
@@ -12768,7 +14617,7 @@
                 "joinStyle" : "Round",
                 "lineStyle3D" : "Strip",
                 "miterLimit" : 10,
-                "width" : 0.7,
+                "width" : 0.69999999999999996,
                 "color" : {
                   "type" : "CIMRGBColor",
                   "values" : [
@@ -12813,7 +14662,6 @@
         "type" : "CIMLayerElevationSurface",
         "mapElevationID" : "{84F61CAA-CD53-4C26-BBF2-C7F7CA71C354}"
       },
-      "expanded" : true,
       "layerType" : "Operational",
       "showLegends" : true,
       "visibility" : true,

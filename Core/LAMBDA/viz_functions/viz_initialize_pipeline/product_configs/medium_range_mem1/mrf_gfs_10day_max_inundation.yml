@@ -63,6 +63,7 @@ product_summaries:
       - publish.mrf_gfs_max_inundation_3day_building_footprints
       - publish.mrf_gfs_max_inundation_3day_counties
       - publish.mrf_gfs_max_inundation_3day_hucs
+      - publish.mrf_gfs_3day_max_inundation_critical_infrastructure
   - sql_file:  5day_src_skill
     target_table:
       - publish.mrf_gfs_max_inundation_5day_src_skill
@@ -71,6 +72,7 @@ product_summaries:
       - publish.mrf_gfs_max_inundation_5day_building_footprints
       - publish.mrf_gfs_max_inundation_5day_counties
       - publish.mrf_gfs_max_inundation_5day_hucs
+      - publish.mrf_gfs_5day_max_inundation_critical_infrastructure
   - sql_file:  10day_src_skill
     target_table:
       - publish.mrf_gfs_max_inundation_10day_src_skill
@@ -79,6 +81,7 @@ product_summaries:
       - publish.mrf_gfs_max_inundation_10day_building_footprints
       - publish.mrf_gfs_max_inundation_10day_counties
       - publish.mrf_gfs_max_inundation_10day_hucs
+      - publish.mrf_gfs_10day_max_inundation_critical_infrastructure
 
 services:
   - mrf_gfs_10day_max_inundation_extent_noaa

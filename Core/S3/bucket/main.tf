@@ -22,6 +22,11 @@ variable "access_principal_arns" {
   type = list(string)
 }
 
+variable "lifecycle_rules" {
+  type = list(any)
+  default = []
+}
+
 resource "aws_kms_key" "hydrovis-s3" {
   description         = "Used for hydrovis-${var.environment}-${var.name}-${var.region} bucket encryption"
   enable_key_rotation = true
@@ -160,10 +165,50 @@ resource "aws_s3_bucket_policy" "hydrovis" {
   )
 }
 
+
+resource "aws_s3_bucket_lifecycle_configuration" "lifecycle_config" {
+  count = length(var.lifecycle_rules) > 0 ? 1 : 0
+  bucket = aws_s3_bucket.hydrovis.id
+
+  # Create a lifecycle rule for each list element
+  dynamic "rule" {
+    for_each = var.lifecycle_rules
+    content {
+      id     = rule.value["prefix"]
+      status = "Enabled"
+
+      filter {
+        prefix = rule.value["prefix"]
+      }
+
+      # Create each transition for the given lifecycle rule
+      dynamic "transition" {
+        for_each = rule.value["transitions"]
+        content {
+          days          = transition.key
+          storage_class = transition.value
+        }
+      }
+
+      # Create the expiration contraint if it exists 
+      dynamic "expiration" {
+        for_each = try([rule.value["expire"]], [])
+        content {
+          days = expiration.value
+        }
+      }
+    }
+  }
+}
+
 output "bucket" {
   value = aws_s3_bucket.hydrovis
 }
 
 output "key" {
   value = aws_kms_key.hydrovis-s3
+}
+
+output "lifecycle_config" {
+  value = try(aws_s3_bucket_lifecycle_configuration.lifecycle_config[0], "")
 }

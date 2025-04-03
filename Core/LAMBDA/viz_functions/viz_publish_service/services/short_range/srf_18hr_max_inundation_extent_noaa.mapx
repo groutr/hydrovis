@@ -2681,9 +2681,9 @@
               "length" : 1073741822
             },
             {
-              "name" : "geometry",
+              "name" : "geom",
               "type" : "esriFieldTypeGeometry",
-              "alias" : "geometry",
+              "alias" : "geom",
               "geometryDef" : {
                 "avgNumPoints" : 0,
                 "geometryType" : "esriGeometryPoint",
@@ -2851,6 +2851,7 @@
         "searchOrder" : "esriSearchOrderSpatial"
       },
       "htmlPopupEnabled" : true,
+      "isFlattened" : true,
       "selectable" : true,
       "featureCacheType" : "Session",
       "displayFiltersType" : "ByScale",
@@ -2859,7 +2860,7 @@
         {
           "type" : "CIMLabelClass",
           "expressionTitle" : "Custom",
-          "expression" : "$feature.name",
+          "expression" : "$feature.build_id",
           "expressionEngine" : "Arcade",
           "featuresToLabel" : "AllVisibleFeatures",
           "maplexLabelPlacementProperties" : {
@@ -3500,32 +3501,32 @@
             }
           ],
           "weights" : [
-            0.076923076923076927,
-            0.076923076923076927,
-            0.076923076923076927,
-            0.076923076923076927,
-            0.076923076923076927,
-            0.076923076923076927,
-            0.076923076923076927,
-            0.076923076923076927,
-            0.076923076923076927,
-            0.076923076923076927,
-            0.076923076923076927,
-            0.076923076923076927,
-            0.076923076923076927
+            0.076923076923076941,
+            0.076923076923076941,
+            0.076923076923076941,
+            0.076923076923076941,
+            0.076923076923076941,
+            0.076923076923076941,
+            0.076923076923076941,
+            0.076923076923076941,
+            0.076923076923076941,
+            0.076923076923076941,
+            0.076923076923076941,
+            0.076923076923076941,
+            0.076923076923076941
           ]
         },
         "radius" : 30,
-        "rendererQuality" : 5,
+        "rendererQuality" : 2,
         "minLabel" : "Sparse",
         "maxLabel" : "Dense",
-        "maxPixelIntensity" : 1.451244015104933e-08,
+        "maxPixelIntensity" : 3.1277004890260432e-07,
         "pixelIntensityStops" : [
-          0,
+          0.0011764705882353343,
           1
         ],
-        "autoAdjustPixelIntensity" : false,
-        "maxPixelIntensityReferenceScale" : 54465762.648160771
+        "autoAdjustPixelIntensity" : true,
+        "maxPixelIntensityReferenceScale" : 30887910.260900345
       },
       "scaleSymbols" : true,
       "snappable" : true,

@@ -87,3 +87,45 @@ JOIN derived.featureid_huc_crosswalk AS crosswalk ON hucs.huc8 = crosswalk.huc8
 JOIN publish.mrf_gfs_max_inundation_3day AS fim on crosswalk.feature_id = fim.feature_id
 JOIN publish.mrf_gfs_max_inundation_3day_building_footprints AS buildings ON crosswalk.feature_id = buildings.feature_id
 GROUP BY hucs.huc8, hucs.geom;
+
+--------------- Critical Infrastructure Points ---------------
+DROP TABLE IF EXISTS publish.mrf_gfs_3day_max_inundation_critical_infrastructure;
+CREATE INDEX IF NOT EXISTS idx_critpoints_geom ON derived.static_public_critical_infrastructure_points_fema USING GIST(geometry);
+ANALYZE derived.static_public_critical_infrastructure_points_fema;
+CREATE INDEX IF NOT EXISTS idx_fim_geo_geom ON fim_ingest.mrf_gfs_max_inundation_3day_geo USING GIST(geom);
+ANALYZE fim_ingest.mrf_gfs_max_inundation_3day_geo;
+SELECT
+	critpoints.build_type,
+	critpoints.name,
+	critpoints.geometry as geom,
+	critpoints.city,
+	critpoints.country,
+	critpoints.state,
+	critpoints.population,
+	critpoints.beds,
+	critpoints.naics_code,
+	critpoints.specialty,
+	critpoints.sourcedate,
+	critpoints.zipcode,
+	critpoints.status,
+	critpoints.trauma,
+	critpoints.alias,
+	critpoints.county,
+	critpoints.naics_desc,
+	critpoints.alt_name,
+	critpoints.naicsdescr,
+	critpoints.helipad,
+	critpoints.level_,
+	critpoints.source,
+	critpoints.type,
+	flows.hydro_id,
+	flows.hydro_id::TEXT AS hydro_id_str,
+	flows.feature_id,
+	flows.feature_id::TEXT AS feature_id_str,
+	flows.discharge_cfs AS streamflow_cfs,
+	fim.rc_stage_ft AS fim_stage_ft
+INTO publish.mrf_gfs_3day_max_inundation_critical_infrastructure
+FROM derived.static_public_critical_infrastructure_points_fema as critpoints
+JOIN fim_ingest.mrf_gfs_max_inundation_3day_geo fim_geo ON ST_INTERSECTS(fim_geo.geom, critpoints.geometry)
+JOIN fim_ingest.mrf_gfs_max_inundation_3day_flows flows ON fim_geo.hand_id = flows.hand_id
+JOIN fim_ingest.mrf_gfs_max_inundation_3day fim ON fim_geo.hand_id = fim.hand_id;

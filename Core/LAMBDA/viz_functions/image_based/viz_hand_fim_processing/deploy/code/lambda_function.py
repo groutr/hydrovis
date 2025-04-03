@@ -9,9 +9,9 @@ import time
 import datetime
 from math import floor, ceil
 from shapely.geometry import shape
+import fsspec
 
-
-from viz_classes import s3_file, database
+from viz_classes import database
 
 FIM_VERSION = os.environ['FIM_VERSION']
 HAND_BUCKET = os.environ['HAND_BUCKET']
@@ -21,57 +21,8 @@ HAND_PREFIX = f"fim/hand_{HAND_VERSION.replace('.', '_')}/hand_datasets"
 CACHE_FIM_RESOLUTION_FT = 0.25
 CACHE_FIM_RESOLUTION_ROUNDING = 'up'
 
+CACHED_S3 = fsspec.filesystem('blockcache', target_protocol='s3')
 
-# Vendor subdivide from Rasterio 1.4
-# REMOVE when rasterio is upgraded!
-def subdivide(window, height, width):
-    """Divide a window into smaller windows.
-
-    Windows have no overlap and will be at most the desired
-    height and width. Smaller windows will be generated where
-    the height and width do not evenly divide the window dimensions.
-
-    Parameters
-    ----------
-    window : Window
-        Source window to subdivide.
-    height : int
-        Subwindow height.
-    width : int
-        Subwindow width.
-
-    Returns
-    -------
-    list of Windows
-    """
-    subwindows = []
-
-    irow = window.row_off + window.height
-    icol = window.col_off + window.width
-
-    row_off = window.row_off
-    col_off = window.col_off
-    while row_off < irow:
-        if row_off + height > irow:
-            _height = irow - row_off
-        else:
-            _height = height
-
-        while col_off < icol:
-            if col_off + width > icol:
-                _width = icol - col_off
-            else:
-                _width = width
-
-            subwindows.append(riowindows.Window(col_off, row_off, _width, _height))
-            col_off += width
-
-        row_off += height
-        col_off = window.col_off
-    return subwindows
-
-class HANDDatasetReadError(Exception):
-    """ my custom exception class """
 
 def lambda_handler(event, context):
     """
@@ -124,9 +75,7 @@ def lambda_handler(event, context):
         try:
             df_inundation.to_postgis(f"{db_table}", con=process_db.engine, schema=db_schema, if_exists='append')
         except Exception as e:
-            process_db.engine.dispose()
-            raise Exception(f"Failed to add inundation data to DB for {huc8}-{branch} - ({e})")
-        process_db.engine.dispose()
+            raise Exception(f"Failed to add inundation data to DB for {huc8}-{branch} - ({e})") from e
 
     else:
         print(f"Processing HUC-branch {huc8_branch} for {fim_config_name} for {date}T{hour}:00:00Z")
@@ -138,15 +87,16 @@ def lambda_handler(event, context):
             stage_lookup = s3_csv_to_df(data_bucket, subsetted_data)
             stage_lookup = stage_lookup.set_index('hydro_id')
         else:
+            s3 = fsspec.filesystem('s3')
             # Validate main stem datasets by checking cathment, hand, and rating curves existence for the HUC
             catchment_key = f'{HAND_PREFIX}/{huc8}/branches/{branch}/gw_catchments_reaches_filtered_addedAttributes_{branch}.tif'
-            catch_exists = s3_file(HAND_BUCKET, catchment_key).check_existence()
+            catch_exists = s3.exists(f"s3://{HAND_BUCKET}/{catchment_key}")
 
             hand_key = f'{HAND_PREFIX}/{huc8}/branches/{branch}/rem_zeroed_masked_{branch}.tif'
-            hand_exists = s3_file(HAND_BUCKET, hand_key).check_existence()
+            hand_exists = s3.exists(f"s3://{HAND_BUCKET}/{hand_key}")
 
             rating_curve_key = f'{HAND_PREFIX}/{huc8}/branches/{branch}/hydroTable_{branch}.csv'
-            rating_curve_exists = s3_file(HAND_BUCKET, rating_curve_key).check_existence()
+            rating_curve_exists = s3.exists(f"s3://{HAND_BUCKET}/{rating_curve_key}")
 
             stage_lookup = pd.DataFrame()
             df_zero_stage_records = pd.DataFrame()
@@ -173,14 +123,14 @@ def lambda_handler(event, context):
         if fim_run_type == 'normal':
             # Split geometry into seperate table per new schema
             df_inundation_geo = df_inundation[['hand_id', 'rc_stage_ft', 'geom']]
-            df_inundation.drop(columns=['geom'], inplace=True)
+            df_inundation = df_inundation.drop(columns=['geom'])
             
             # If records exist in stage_lookup that don't exist in df_inundation, add those to the zero_stage table.
             df_no_inundation = stage_lookup.merge(df_inundation.drop_duplicates(), on=['hand_id'],how='left',indicator=True)
             df_no_inundation = df_no_inundation.loc[df_no_inundation['_merge'] == 'left_only']
             if df_no_inundation.empty == False:
                 # print(f"Adding {len(df_no_inundation)} reaches with NaN inundation to zero_stage table")
-                df_no_inundation.drop(df_no_inundation.columns.difference(['hand_id','rc_discharge_cms','note']), axis=1,  inplace=True)
+                df_no_inundation = df_no_inundation.drop(df_no_inundation.columns.difference(['hand_id','rc_discharge_cms','note']), axis=1)
                 df_no_inundation['note'] = "Error - No inundation returned from hand processing."
                 df_no_inundation.to_sql(f"{db_table}_zero_stage", con=process_db.engine, schema=db_schema, if_exists='append', index=False)
             
@@ -190,13 +140,11 @@ def lambda_handler(event, context):
         
             # print(f"Adding data to {db_fim_table}")# Only process inundation configuration if available data
             try:
-                df_inundation.drop(columns=['hydro_id', 'feature_id'], inplace=True)
+                df_inundation = df_inundation.drop(columns=['hydro_id', 'feature_id'])
                 df_inundation.to_sql(db_table, con=process_db.engine, schema=db_schema, if_exists='append', index=False)
                 df_inundation_geo.to_postgis(f"{db_table}_geo", con=process_db.engine, schema=db_schema, if_exists='append')
             except Exception as e:
-                process_db.engine.dispose()
-                raise Exception(f"Failed to add inundation data to DB for {huc8}-{branch} - ({e})")
-            process_db.engine.dispose()
+                raise Exception(f"Failed to add inundation data to DB for {huc8}-{branch} - ({e})") from e
         
         # If a reference configuration - do things a little diferently.
         elif fim_run_type == 'reference':
@@ -205,7 +153,7 @@ def lambda_handler(event, context):
                 return
             
             # Re-format data for aep tables
-            df_inundation.drop(columns=['hand_id', 'rc_stage_ft', 'rc_previous_stage_ft', 'rc_discharge_cfs', 'rc_previous_discharge_cfs', 'prc_method', ], inplace=True)
+            df_inundation = df_inundation.drop(columns=['hand_id', 'rc_stage_ft', 'rc_previous_stage_ft', 'rc_discharge_cfs', 'rc_previous_discharge_cfs', 'prc_method', ])
             df_inundation = df_inundation.rename(columns={"forecast_stage_ft": "fim_stage_ft", "forecast_discharge_cfs": "streamflow_cfs"})
             df_inundation['feature_id_str'] = df_inundation['feature_id'].astype(str)
             df_inundation['hydro_id_str'] = df_inundation['hydro_id'].astype(str)
@@ -217,9 +165,7 @@ def lambda_handler(event, context):
             try:
                 df_inundation.to_postgis(f"{db_table}", con=process_db.engine, schema=db_schema, if_exists='append')
             except Exception as e:
-                process_db.engine.dispose()
-                raise Exception(f"Failed to add inundation data to DB for {huc8}-{branch} - ({e})")
-            process_db.engine.dispose()
+                raise Exception(f"Failed to add inundation data to DB for {huc8}-{branch} - ({e})") from e
 
     print(f"Successfully processed tif for HUC {huc8} and branch {branch} for {product} for {reference_time}")
 
@@ -228,25 +174,12 @@ def create_inundation_catchment_boundary(huc8, branch):
         Creates the catchment boundary polygons
     """
     catchment_key = f'{HAND_PREFIX}/{huc8}/branches/{branch}/gw_catchments_reaches_filtered_addedAttributes_{branch}.tif'
-    
+    catchment_url = f"s3://{HAND_BUCKET}/{catchment_key}"
+
     catchment_dataset = None
     try:
-        # print("--> Connecting to S3 datasets")
-        tries = 0
-        raster_open_success = False
-        while tries < 3:
-            try:
-                catchment_dataset = rasterio.open(f's3://{HAND_BUCKET}/{catchment_key}')  # open catchment grid from S3  # noqa
-                tries = 3
-                raster_open_success = True
-            except Exception as e:
-                tries += 1
-                time.sleep(30)
-                # print(f"Failed to open datasets. Trying again in 30 seconds - ({e})")
-
-        if not raster_open_success:
-            raise HANDDatasetReadError("Failed to open HAND and Catchment datasets")
-            
+        catchment_dataset = rasterio.open(catchment_url, opener=CACHED_S3)  # open catchment grid from S3  # noqa
+    
         # print("--> Setting up mapping array")
         profile = catchment_dataset.profile  # get the rasterio profile so the output can use the profile and match the input  # noqa
 
@@ -254,61 +187,13 @@ def create_inundation_catchment_boundary(huc8, branch):
         profile['nodata'] = 0
         profile['dtype'] = "int32"
 
-        # Open the output raster using rasterio. This will allow the inner function to be parallel and write to it
-        # print("--> Setting up windows")
-
-        # Get the list of windows according to the raster metadata so they can be looped through
-        windows = subdivide(riowindows.Window(0, 0, width=catchment_dataset.width, height=catchment_dataset.height), 1024, 1024)
-
-        # This function will be run for each raster window.
-        def process(window):
-            """
-                This function is run for each raster window in parallel. The function will read in the appropriate
-                window of the HAND and catchment datasets for main stem and/or full resolution. The stages will
-                then be mapped from a numpy array to the catchment window. This will create a windowed stage array.
-                The stage array is then compared to the HAND window array to create an inundation array where the
-                HAND values are gte to the stage values.
-
-                Each windowed inundation array is then saved to the output array for that specific window that was
-                ran.
-
-                For more information on rasterio window processing, see
-                https://rasterio.readthedocs.io/en/latest/topics/windowed-rw.html
-
-                If main stem AND full resolution are ran, then the inundation arrays for each configuration will be
-                compared and the highest value for each element in the array will be used. This is how we 'merge'
-                the two configurations. Because the extents of fr and ms are not the same, we do have to reshape
-                the arrays a bit to allow for the comparison
-            """
-            tries = 0
-            catchment_open_success = False
-            while tries < 3:
-                try:
-                    catchment_window = catchment_dataset.read(window=window)  # Read the dataset for the specified window  # noqa
-                    tries = 3
-                    catchment_open_success = True
-                except Exception as e:
-                    tries += 1
-                    time.sleep(10)
-                    # print(f"Failed to open catchment. Trying again in 10 seconds - ({e})")
-
-            if not catchment_open_success:
-                raise HANDDatasetReadError("Failed to open Catchment dataset window")
-            
-            results = []
-            for s, v in shapes(catchment_window, mask=None, transform=riowindows.transform(window, catchment_dataset.transform)):
-                if int(v):
-                    results.append((int(v), shape(s)))
-
-            return results
-
-        # Use threading to parallelize the processing of the inundation windows
         geoms = []
+        windows = riowindows.subdivide(riowindows.Window(0, 0, width=catchment_dataset.width, height=catchment_dataset.height), 1024, 1024)
         for window in windows:
-            geoms.extend(process(window))
-                        
-    except Exception as e:
-        raise e
+            catchment_window = catchment_dataset.read(window=window)
+            ctransform = catchment_dataset.window_transform(window)
+            for s, v in shapes(catchment_window, mask=catchment_window!=0, transform=ctransform):
+                geoms.append((int(v), shape(s)))
     finally:
         if catchment_dataset is not None:
             catchment_dataset.close()
@@ -346,156 +231,40 @@ def create_inundation_output(huc8, branch, stage_lookup, reference_time, input_v
     try:
         print(f"Creating inundation for huc {huc8} and branch {branch}")
         
-        # Create a folder for the local tif outputs
-        if not os.path.exists('/tmp/raw_rasters/'):
-            os.mkdir('/tmp/raw_rasters/')
-        
-        # print("--> Connecting to S3 datasets")
-        tries = 0
-        raster_open_success = False
-        while tries < 3:
-            try:
-                hand_dataset = rasterio.open(f's3://{HAND_BUCKET}/{hand_key}')  # open HAND grid from S3
-                catchment_dataset = rasterio.open(f's3://{HAND_BUCKET}/{catchment_key}')  # open catchment grid from S3  # noqa
-                tries = 3
-                raster_open_success = True
-            except Exception as e:
-                tries += 1
-                time.sleep(30)
-                print(f"Failed to open datasets. Trying again in 30 seconds - ({e})")
-
-        if not raster_open_success:
-            raise HANDDatasetReadError("Failed to open HAND and Catchment datasets")
+        hand_dataset = rasterio.open(f's3://{HAND_BUCKET}/{hand_key}', opener=CACHED_S3)  # open HAND grid from S3
+        catchment_dataset = rasterio.open(f's3://{HAND_BUCKET}/{catchment_key}', opener=CACHED_S3)  # open catchment grid from S3  # noqa
             
         # print("--> Setting up mapping array")
         catchment_nodata = int(catchment_dataset.nodata)  # get no_data value for catchment raster
-        valid_catchments = stage_lookup.index.tolist() # parse lookup to get features with >0 stages  # noqa
-        hydroids = stage_lookup.index.tolist()  # parse lookup to get all features
+        valid_catchments = stage_lookup.index.values # parse lookup to get features with >0 stages  # noqa
         
         # Notable FIM Caching Change: Use the rc_stage_m (upper rating curve table step) for extents when running normal cached workflows (default)
         if stage_ft_round_up:
-            stages = stage_lookup['rc_stage_m'].tolist()  # uses the upper rating curve step for the extent
+            stages = stage_lookup['rc_stage_m'].values  # uses the upper rating curve step for the extent
         else:
-            stages = stage_lookup['stage_m'].tolist()  # uses the interpolated stage value for the extent
+            stages = stage_lookup['stage_m'].values  # uses the interpolated stage value for the extent
 
-        hydroids = np.array(hydroids)  # Create a feature numpy array from the list
-        stages = np.array(stages)  # Create a stage numpy array from the list
+        hydroids = valid_catchments  # Create a feature numpy array from the list
 
-        hydro_id_max = hydroids.max()  # Get the max feature id in the array
-
-        hand_nodata = hand_dataset.nodata  # get the no_data value for the HAND raster
-        hand_dtype = hand_dataset.dtypes[0]  # get the dtype for the HAND raster
         profile = hand_dataset.profile  # get the rasterio profile so the output can use the profile and match the input  # noqa
 
         # set the output nodata to 0
         profile['nodata'] = 0
         profile['dtype'] = "int32"
 
-        # Open the output raster using rasterio. This will allow the inner function to be parallel and write to it
-        # print("--> Setting up windows")
-
-        # Get the list of windows according to the raster metadata so they can be looped through
-        windows = subdivide(riowindows.Window(0, 0, width=hand_dataset.width, height=hand_dataset.height), 1024, 1024)
-
-        # This function will be run for each raster window.
-        def process(window):
-            """
-                This function is run for each raster window in parallel. The function will read in the appropriate
-                window of the HAND and catchment datasets for main stem and/or full resolution. The stages will
-                then be mapped from a numpy array to the catchment window. This will create a windowed stage array.
-                The stage array is then compared to the HAND window array to create an inundation array where the
-                HAND values are gte to the stage values.
-
-                Each windowed inundation array is then saved to the output array for that specific window that was
-                ran.
-
-                For more information on rasterio window processing, see
-                https://rasterio.readthedocs.io/en/latest/topics/windowed-rw.html
-
-                If main stem AND full resolution are ran, then the inundation arrays for each configuration will be
-                compared and the highest value for each element in the array will be used. This is how we 'merge'
-                the two configurations. Because the extents of fr and ms are not the same, we do have to reshape
-                the arrays a bit to allow for the comparison
-            """
-            tries = 0
-            catchment_open_success = False
-            while tries < 3:
-                try:
-                    catchment_window = catchment_dataset.read(window=window)  # Read the dataset for the specified window  # noqa
-                    tries = 3
-                    catchment_open_success = True
-                except Exception as e:
-                    tries += 1
-                    time.sleep(10)
-                    print(f"Failed to open catchment. Trying again in 10 seconds - ({e})")
-
-            if not catchment_open_success:
-                raise HANDDatasetReadError("Failed to open Catchment dataset window")
-
-            unique_window_catchments = np.unique(catchment_window).tolist()  # Get a list of unique hydroids within the window  # noqa
-            window_valid_catchments = [catchment for catchment in unique_window_catchments if catchment in valid_catchments]  # Check to see if any hydroids with stages >0 are inside this window  # noqa
-            # Only process if there are hydroids with stage >0 in this window
-            if not window_valid_catchments:
-                return 
-
-
-            tries = 0
-            hand_open_success = False
-            while tries < 3:
-                try:
-                    hand_window = hand_dataset.read(window=window)
-                    tries = 3
-                    hand_open_success = True
-                except Exception as e:
-                    tries += 1
-                    time.sleep(10)
-                    print(f"Failed to open catchment. Trying again in 10 seconds - ({e})")
-
-            if not hand_open_success:
-                raise HANDDatasetReadError("Failed to open HAND dataset window")
-            
-            # Create an empty numpy array with the nodata value that will be overwritten
-            inundation_window = np.full(catchment_window.shape, hand_nodata, hand_dtype)
-
-            # If catchment window values exist, then find the max between the stage mapper and the window
-            mapping_ar_max = max(hydro_id_max, catchment_window.max())
-
-            # Create a stage mapper that will convert hydroids to their corresponding stage. -9999 is null or
-            # no value. we cant use 0 because it will mess up the mapping and use the 0 index
-            mapping_ar = np.full(mapping_ar_max+1, -9999, dtype="float32")
-            mapping_ar[hydroids] = stages
-
-            catchment_window[catchment_window == catchment_nodata] = 0  # Convert catchment values to 0 where the catchment = catchment_nodata  # noqa
-            catchment_window[hand_window == hand_nodata] = 0  # Convert catchment values to 0 where the HAND = HAND_nodata. THis will ensure we are only processing where we have HAND values!  # noqa
-
-            reclass_window = mapping_ar[catchment_window]  # Convert the catchment to stage
-
-            conditions = reclass_window > hand_window  # Select where stage is gte to HAND
-            conditions &= reclass_window != -9999  # Select where stage is gte to HAND
-
-            inundation_window = np.where(conditions, catchment_window, 0).astype('int32')
-
-            # Checking to see if there is any inundated areas in the window
-            if not (inundation_window != 0).any():
-                return 
-
-            if np.max(inundation_window) != 0:
-                results = []
-                for s, v in shapes(inundation_window, mask=None, transform=riowindows.transform(window, hand_dataset.transform)):
-                    if int(v):
-                        results.append((int(v), shape(s)))
-                    
-                return results
-
-        # Use threading to parallelize the processing of the inundation windows
         geoms = []
+        windows = riowindows.subdivide(riowindows.Window(0, 0, width=hand_dataset.width, height=hand_dataset.height), 1024, 1024)
         for window in windows:
-            inundation_windows = process(window)
-            if inundation_windows:
-                geoms.extend(inundation_windows)
-                        
-    except Exception as e:
-        raise e
+            catchment_window = catchment_dataset.read(window=window)
+            # Only process if there are hydroids with stage >0 in this window
+            if not np.isin(catchment_window, valid_catchments).any():
+                continue 
+            hand_window = hand_dataset.read(window=window)
+            results = map_inundation_stages(catchment_window, catchment_nodata,
+                                            hand_window, hand_dataset.nodata, hand_dataset.window_transform(window),
+                                            hydroids, stages)
+
+            geoms.extend(results)
     finally:
         if hand_dataset is not None:
             hand_dataset.close()
@@ -547,22 +316,67 @@ def create_inundation_output(huc8, branch, stage_lookup, reference_time, input_v
                 
     return df_final
 
+
+def map_inundation_stages(catchment_window, catchment_nodata, hand_window, hand_nodata, hand_transform, hydroids, stages):
+    """
+        The function will read in the appropriate
+        window of the HAND and catchment datasets for main stem and/or full resolution. The stages will
+        then be mapped from a numpy array to the catchment window. This will create a windowed stage array.
+        The stage array is then compared to the HAND window array to create an inundation array where the
+        HAND values are gte to the stage values.
+
+        Each windowed inundation array is then saved to the output array for that specific window that was
+        ran.
+
+        For more information on rasterio window processing, see
+        https://rasterio.readthedocs.io/en/latest/topics/windowed-rw.html
+
+        If main stem AND full resolution are ran, then the inundation arrays for each configuration will be
+        compared and the highest value for each element in the array will be used. This is how we 'merge'
+        the two configurations. Because the extents of fr and ms are not the same, we do have to reshape
+        the arrays a bit to allow for the comparison
+    """
+    # If catchment window values exist, then find the max between the stage mapper and the window
+    mapping_ar_max = max(hydroids.max(), catchment_window.max())
+
+    # Create a stage mapper that will convert hydroids to their corresponding stage. -9999 is null or
+    # no value. we cant use 0 because it will mess up the mapping and use the 0 index
+    mapping_ar = np.full(mapping_ar_max+1, -9999, dtype="float32")
+    mapping_ar[hydroids] = stages
+
+    # Convert catchment values to 0 where the catchment = catchment_nodata  # noqa
+    catchment_window[catchment_window == catchment_nodata] = 0  
+    # Convert catchment values to 0 where the HAND = HAND_nodata. This will ensure we are only processing where we have HAND values!  # noqa
+    catchment_window[hand_window == hand_nodata] = 0  
+
+    # Convert the catchment to stage
+    reclass_window = mapping_ar[catchment_window]
+
+    # Select where stage is gte to HAND
+    conditions = reclass_window > hand_window  
+    conditions &= reclass_window != -9999
+
+    # Checking to see if there is any inundated areas in the window
+    # Because of how inundation_window is constructed, conditions are all non-zero locations.
+    results = []
+    if not conditions.any():
+        return results
+
+    inundation_window = np.where(conditions, catchment_window, 0)
+    if inundation_window.max() != 0:
+        for s, v in shapes(inundation_window, mask=conditions, transform=hand_transform):
+            results.append((int(v), shape(s)))
+            
+        return results
+            
+
 def s3_csv_to_df(bucket, key, columns=None):    
-    # Allow retrying a few times before failing
     extra_pd_args = {}
     if columns is not None:
         extra_pd_args['usecols'] = columns
-    for i in range(5):
-        try:
-            # Read S3 csv file into Pandas DataFrame
-            # print(f"Reading {key} from {bucket} into DataFrame")
-            df = pd.read_csv(f"s3://{bucket}/{key}", **extra_pd_args)
-            # print("DataFrame creation Successful")
-        except Exception as e:
-            if i == 4: print(f"Failed to read from S3:\n{e}")
-            continue
-        break
-
+    
+    # Read S3 csv file into Pandas DataFrame
+    df = pd.read_csv(f"s3://{bucket}/{key}", **extra_pd_args)
     return df
 
 def calculate_stage_values(hydrotable_key, subsetted_streams_bucket, subsetted_streams, huc8_branch):
@@ -610,9 +424,9 @@ def calculate_stage_values(hydrotable_key, subsetted_streams_bucket, subsetted_s
     df_zero_stage['note'] = np.where(df_zero_stage.note.isnull(), "0 Stage After Hydrotable Lookup", "NaN")
     df_forecast = df_forecast[~stage0]
 
-    df_zero_stage.drop(columns=['discharge_cms', 'stage_m', 'rc_stage_m', 'rc_previous_stage_m', 'rc_previous_discharge_cms', 'flood_area_above_expected_coeff'], inplace=True)
+    df_zero_stage = df_zero_stage.drop(columns=['discharge_cms', 'stage_m', 'rc_stage_m', 'rc_previous_stage_m', 'rc_previous_discharge_cms', 'flood_area_above_expected_coeff'])
     df_zero_stage = df_zero_stage.reset_index()
-    df_zero_stage.drop(columns=['hydro_id','feature_id'], inplace=True)
+    df_zero_stage = df_zero_stage.drop(columns=['hydro_id','feature_id'])
 
     df_forecast = df_forecast.join(df_hydro_max)
     # print(f"{len(df_forecast)} reaches will be processed")

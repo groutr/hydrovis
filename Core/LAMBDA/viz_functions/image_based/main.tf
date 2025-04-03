@@ -363,150 +363,35 @@ data "aws_lambda_function" "viz_optimize_rasters" {
   ]
 }
 
-################################
-## HAND HUC PROCESSING LAMBDA ##
-################################
 
-data "archive_file" "hand_fim_processing_zip" {
-  type = "zip"
-  output_path = "${path.module}/temp/viz_hand_fim_processing_${var.environment}_${var.region}.zip"
-
-  dynamic "source" {
-    for_each = fileset("${path.module}/viz_hand_fim_processing", "**")
-    content {
-      content  = file("${path.module}/viz_hand_fim_processing/${source.key}")
-      filename = source.key
-    }
+############################
+# HAND FIM processing
+############################
+module "hand-fim-processing" {
+  source = "./viz_hand_fim_processing"
+  providers = {
+    aws = aws
+    aws.no_tags = aws.no_tags
   }
-
-  source {
-    content  = file("${path.module}/../../layers/viz_lambda_shared_funcs/python/viz_classes.py")
-    filename = "viz_classes.py"
-  }
-
-  source {
-    content = templatefile("${path.module}/viz_hand_fim_processing/serverless.yml.tmpl", {
-      SERVICE_NAME       = replace(local.viz_hand_fim_processing_lambda_name, "_", "-")
-      LAMBDA_TAGS        = jsonencode(merge(var.default_tags, { Name = local.viz_hand_fim_processing_lambda_name }))
-      DEPLOYMENT_BUCKET  = var.deployment_bucket
-      AWS_DEFAULT_REGION = var.region
-      LAMBDA_NAME        = local.viz_hand_fim_processing_lambda_name
-      AWS_ACCOUNT_ID     = var.account_id
-      IMAGE_REPO_NAME    = aws_ecr_repository.viz_hand_fim_processing_image.name
-      IMAGE_TAG          = var.ecr_repository_image_tag
-      LAMBDA_ROLE_ARN    = var.lambda_role
-      FIM_VERSION        = var.fim_version
-      HAND_BUCKET        = var.fim_data_bucket
-      HAND_VERSION       = var.hand_version
-      VIZ_DB_DATABASE    = var.viz_db_name
-      VIZ_DB_HOST        = var.viz_db_host
-      VIZ_DB_USERNAME    = jsondecode(var.viz_db_user_secret_string)["username"]
-      VIZ_DB_PASSWORD    = jsondecode(var.viz_db_user_secret_string)["password"]
-      EGIS_DB_DATABASE   = var.egis_db_name
-      EGIS_DB_HOST       = var.egis_db_host
-      EGIS_DB_USERNAME   = jsondecode(var.egis_db_user_secret_string)["username"]
-      EGIS_DB_PASSWORD   = jsondecode(var.egis_db_user_secret_string)["password"]
-      SECURITY_GROUP_1   = var.hand_fim_processing_sgs[0]
-      SUBNET_1           = var.hand_fim_processing_subnets[0]
-      SUBNET_2           = var.hand_fim_processing_subnets[1]
-    })
-    filename = "serverless.yml"
-  }
-}
-
-resource "aws_s3_object" "hand_fim_processing_zip_upload" {
-  provider    = aws.no_tags  
-  bucket      = var.deployment_bucket
-  key         = "terraform_artifacts/${path.module}/viz_hand_fim_processing.zip"
-  source      = data.archive_file.hand_fim_processing_zip.output_path
-  source_hash = data.archive_file.hand_fim_processing_zip.output_md5
-}
-
-resource "aws_ecr_repository" "viz_hand_fim_processing_image" {
-  name                 = local.viz_hand_fim_processing_lambda_name
-  image_tag_mutability = "MUTABLE"
-
-  force_delete = true
-
-  image_scanning_configuration {
-    scan_on_push = true
-  }
-}
-
-resource "aws_codebuild_project" "viz_hand_fim_processing_lambda" {
-  name          = local.viz_hand_fim_processing_lambda_name
-  description   = "Codebuild project that builds the lambda container based on a zip file with lambda code and dockerfile. Also deploys a lambda function using the ECR image"
-  build_timeout = "60"
-  service_role  = var.lambda_role
-
-  artifacts {
-    type = "NO_ARTIFACTS"
-  }
-
-  environment {
-    compute_type                = "BUILD_GENERAL1_SMALL"
-    image                       = "aws/codebuild/standard:6.0"
-    type                        = "LINUX_CONTAINER"
-    image_pull_credentials_type = "CODEBUILD"
-    privileged_mode             = true
-
-    environment_variable {
-      name  = "AWS_DEFAULT_REGION"
-      value = var.region
-    }
-
-    environment_variable {
-      name  = "AWS_ACCOUNT_ID"
-      value = var.account_id
-    }
-
-    environment_variable {
-      name  = "IMAGE_REPO_NAME"
-      value = aws_ecr_repository.viz_hand_fim_processing_image.name
-    }
-
-    environment_variable {
-      name  = "IMAGE_TAG"
-      value = var.ecr_repository_image_tag
-    }
-  }
-
-  source {
-    type     = "S3"
-    location = "${aws_s3_object.hand_fim_processing_zip_upload.bucket}/${aws_s3_object.hand_fim_processing_zip_upload.key}"
-  }
-}
-
-resource "null_resource" "viz_hand_fim_processing_cluster" {
-  # Changes to any instance of the cluster requires re-provisioning
-  triggers = {
-    source_hash = data.archive_file.hand_fim_processing_zip.output_md5
-    hand_version = var.hand_version
-    fim_version = var.fim_version
-  }
-
-  depends_on = [ aws_s3_object.hand_fim_processing_zip_upload ]
-
-  provisioner "local-exec" {
-    command = "aws codebuild start-build --project-name ${aws_codebuild_project.viz_hand_fim_processing_lambda.name} --profile ${var.environment} --region ${var.region}"
-  }
-}
-
-resource "time_sleep" "wait_for_viz_hand_fim_processing_cluster" {
-  triggers = {
-    function_update = null_resource.viz_hand_fim_processing_cluster.triggers.source_hash
-  }
-  depends_on = [null_resource.viz_hand_fim_processing_cluster]
-
-  create_duration = "120s"
-}
-
-data "aws_lambda_function" "viz_hand_fim_processing" {
-  function_name = local.viz_hand_fim_processing_lambda_name
-
-  depends_on = [
-    time_sleep.wait_for_viz_hand_fim_processing_cluster
-  ]
+  environment = var.environment
+  account_id = var.account_id
+  region = var.region
+  ecr_repository_image_tag = var.ecr_repository_image_tag
+  lambda_role = var.lambda_role
+  security_groups = var.hand_fim_processing_sgs
+  subnets = var.hand_fim_processing_subnets
+  deployment_bucket = var.deployment_bucket
+  viz_db_name = var.viz_db_name
+  viz_db_host = var.viz_db_host
+  viz_db_user_secret_string = var.viz_db_user_secret_string
+  egis_db_host = var.egis_db_host
+  egis_db_name = var.egis_db_name
+  egis_db_user_secret_string = var.egis_db_user_secret_string
+  viz_authoritative_bucket = var.viz_authoritative_bucket
+  default_tags = var.default_tags
+  hand_version = var.hand_version
+  fim_version = var.fim_version
+  fim_data_bucket = var.fim_data_bucket
 }
 
 
@@ -590,7 +475,7 @@ module "python-preprocessing" {
 ####################### OUTPUTS ###################
 
 output "hand_fim_processing" {
-  value = data.aws_lambda_function.viz_hand_fim_processing
+  value = module.hand-fim-processing
 }
 
 output "schism_fim" {

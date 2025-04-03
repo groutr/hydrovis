@@ -88,15 +88,14 @@ GROUP BY hucs.huc10, hucs.geom;
 
 --------------- Critical Infrastructure Points ---------------
 DROP TABLE IF EXISTS publish.srf_18hr_max_inundation_critical_infrastructure;
-CREATE INDEX IF NOT EXISTS idx_critpoints_geom ON dev.static_public_critical_infrastructure_points_fema USING GIST(geometry);
-ANALYZE dev.static_public_critical_infrastructure_points_fema;
+CREATE INDEX IF NOT EXISTS idx_critpoints_geom ON derived.static_public_critical_infrastructure_points_fema USING GIST(geometry);
+ANALYZE derived.static_public_critical_infrastructure_points_fema;
 CREATE INDEX IF NOT EXISTS idx_fim_geo_geom ON fim_ingest.srf_18hr_max_inundation_geo USING GIST(geom);
 ANALYZE fim_ingest.srf_18hr_max_inundation_geo;
 SELECT
-	critpoints.oid,
 	critpoints.build_type,
 	critpoints.name,
-	critpoints.geometry,
+	critpoints.geometry as geom,
 	critpoints.city,
 	critpoints.country,
 	critpoints.state,
@@ -124,7 +123,7 @@ SELECT
 	flows.discharge_cfs AS streamflow_cfs,
 	fim.rc_stage_ft AS fim_stage_ft
 INTO publish.srf_18hr_max_inundation_critical_infrastructure
-FROM dev.static_public_critical_infrastructure_points_fema as critpoints
+FROM derived.static_public_critical_infrastructure_points_fema as critpoints
 JOIN fim_ingest.srf_18hr_max_inundation_geo fim_geo ON ST_INTERSECTS(fim_geo.geom, critpoints.geometry)
 JOIN fim_ingest.srf_18hr_max_inundation_flows flows ON fim_geo.hand_id = flows.hand_id
 JOIN fim_ingest.srf_18hr_max_inundation fim ON fim_geo.hand_id = fim.hand_id;
