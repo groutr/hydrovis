@@ -13,8 +13,7 @@ Returns:
     dictionary: The details of the file that was ingested, to be returned to the state machine.
 """
 ################################################################################
-import os
-import boto3
+import fsspec
 import json
 import re
 from datetime import datetime
@@ -23,11 +22,10 @@ import pandas as pd
 import xarray as xr
 from io import StringIO
 from psycopg2.errors import UndefinedTable, BadCopyFileFormat, InvalidTextRepresentation
-from viz_classes import database
-from viz_lambda_shared_funcs import check_if_file_exists
 
-s3 = boto3.client('s3')
-s3_resource = boto3.resource('s3')
+from viz_s3 import check_file_source
+from viz_database import VizDatabase
+
 
 class MissingS3FileException(Exception):
     """ my custom exception class """
@@ -47,7 +45,7 @@ def lambda_handler(event, context):
     create_table = event.get('iteration_index') == 0
     
     print(f"Checking existance of {file} on S3/Google Cloud/Para Nomads.")
-    download_path = check_if_file_exists(bucket, file, download=True)
+    download_path = check_file_source(bucket, file)
     
     if not target_table:
         dump_dict = {
@@ -58,7 +56,7 @@ def lambda_handler(event, context):
         }
         return json.dumps(dump_dict)
     
-    viz_db = database(db_type="viz")
+    viz_db = VizDatabase(db_type="viz")
     nwm_version = 0
 
     if file.endswith('.nc'):
@@ -111,13 +109,10 @@ def lambda_handler(event, context):
     print(f"--> Preparing and Importing {file}")
     f = StringIO()  # Use StringIO to store the temporary text file in memory (faster than on disk)
     df.to_csv(f, sep='\t', index=False, header=False)
-    f.seek(0)
     try:
-        connection = viz_db.get_db_connection()
-        with connection:
-            with connection.cursor() as cur:
-                cur.copy_expert(f"COPY {target_table} FROM STDIN WITH DELIMITER E'\t' null as ''", f)
-        connection.close()
+        with viz_db.connection.cursor() as cur:
+            f.seek(0)
+            cur.copy_from(f, target_table, sep='\t', null='')
     except (UndefinedTable, BadCopyFileFormat, InvalidTextRepresentation):
         if not create_table:
             raise
@@ -126,12 +121,9 @@ def lambda_handler(event, context):
         create_table_df = df.head(0)
         schema, table = target_table.split('.')
         create_table_df.to_sql(con=viz_db.engine, schema=schema, name=table, index=False, if_exists='replace')
-        connection = viz_db.get_db_connection()
-        with connection:
-            with connection.cursor() as cur:
-                f.seek(0)
-                cur.copy_expert(f"COPY {target_table} FROM STDIN WITH DELIMITER E'\t' null as ''", f)
-        connection.close()
+        with viz_db.connection.cursor() as cur:
+            f.seek(0)
+            cur.copy_from(f, target_table, sep='\t', null='')
 
     print(f"--> Import of {len(df)} rows Complete. Removing {download_path} and closing db connection.")
     os.remove(download_path)
