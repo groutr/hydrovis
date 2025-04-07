@@ -32,6 +32,9 @@ s3_resource = boto3.resource('s3')
 class MissingS3FileException(Exception):
     """ my custom exception class """
 
+class UnrecognizedInput(Exception):
+    pass
+
 def lambda_handler(event, context):
 
     target_table = event['target_table']
@@ -103,8 +106,7 @@ def lambda_handler(event, context):
     elif file.endswith('.csv'):
         df = pd.read_csv(download_path)
     else:
-        print("File format not supported.")
-        exit()
+        raise UnrecognizedInput(f"File format not supported. {file}")
 
     print(f"--> Preparing and Importing {file}")
     f = StringIO()  # Use StringIO to store the temporary text file in memory (faster than on disk)
