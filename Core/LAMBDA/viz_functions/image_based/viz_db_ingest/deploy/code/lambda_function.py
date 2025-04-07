@@ -68,9 +68,9 @@ def lambda_handler(event, context):
 
         try:
             if "hawaii" in file:
-                ds['forecast_hour'] = int(int(re.findall("(\d{8})/[a-z0-9_]*/.*t(\d{2})z.*[ftm](\d*)\.", file)[0][-1])/100)
+                ds['forecast_hour'] = int(int(re.findall(r"(\d{8})/[a-z0-9_]*/.*t(\d{2})z.*[ftm](\d*)\.", file)[0][-1])/100)
             else:
-                ds['forecast_hour'] = int(re.findall("(\d{8})/[a-z0-9_]*/.*t(\d{2})z.*[ftm](\d*)\.", file)[0][-1])
+                ds['forecast_hour'] = int(re.findall(r"(\d{8})/[a-z0-9_]*/.*t(\d{2})z.*[ftm](\d*)\.", file)[0][-1])
             if 'forecast_hour' not in target_cols:
                 target_cols.append('forecast_hour')
         except:
