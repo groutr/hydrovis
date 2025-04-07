@@ -102,9 +102,6 @@ def lambda_handler(event, context):
 
     elif file.endswith('.csv'):
         df = pd.read_csv(download_path)
-        for column in df:  # Replace any 'None' strings with nulls
-            df[column].replace('None', np.nan, inplace=True)
-        df = df.copy()
     else:
         print("File format not supported.")
         exit()
