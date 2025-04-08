@@ -35,6 +35,7 @@ class UnrecognizedInput(Exception):
 def lambda_handler(event, context):
 
     target_table = event['target_table']
+    schema, table = target_table.split(".")
     target_cols = event['target_cols']
     file = event['file']
     bucket = event['bucket']
@@ -111,7 +112,7 @@ def lambda_handler(event, context):
     df = df.head(0)
 
     copy_sql = psql.SQL("COPY {target_table} FROM STDIN WITH (FORMAT CSV);").format(
-        target_table=psql.Identifier(*target_table.split('.'))
+        target_table=psql.Identifier(schema, table)
     )
     try:
         conn = viz_db.connection
@@ -124,7 +125,6 @@ def lambda_handler(event, context):
             raise
 
         print("Error encountered. Recreating table now and retrying import...")
-        schema, table = target_table.split('.')
         df.to_sql(table, viz_db.engine, schema=schema, index=False, if_exists='replace')
         with conn.cursor() as cur:
             f.seek(0)
