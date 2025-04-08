@@ -100,6 +100,7 @@ locals {
   viz_hand_fim_processing_lambda_name = "hv-vpp-${var.environment}-viz-hand-fim-processing"
   viz_schism_fim_processing_lambda_name = "hv-vpp-${var.environment}-viz-schism-fim-processing"
   viz_raster_processing_lambda_name = "hv-vpp-${var.environment}-viz-raster-processing"
+  viz_db_ingest_name = "hv-vpp-${var.environment}-viz-db-ingest"
 }
 
 ##############################
@@ -365,6 +366,30 @@ data "aws_lambda_function" "viz_optimize_rasters" {
 
 
 ############################
+# DB Ingest
+############################
+module "hand-fim-processing" {
+  source = "./viz_db_ingest"
+  providers = {
+    aws = aws
+    aws.no_tags = aws.no_tags
+  }
+  environment = var.environment
+  account_id = var.account_id
+  region = var.region
+  ecr_repository_image_tag = var.ecr_repository_image_tag
+  lambda_role = var.lambda_role
+  security_groups = var.hand_fim_processing_sgs
+  subnets = var.hand_fim_processing_subnets
+  deployment_bucket = var.deployment_bucket
+  viz_db_name = var.viz_db_name
+  viz_db_host = var.viz_db_host
+  viz_db_user_secret_string = var.viz_db_user_secret_string
+  default_tags = var.default_tags
+}
+
+
+############################
 # HAND FIM processing
 ############################
 module "hand-fim-processing" {
@@ -473,6 +498,10 @@ module "python-preprocessing" {
 }
 
 ####################### OUTPUTS ###################
+
+output "hand_fim_processing" {
+  value = module.db-ingest
+}
 
 output "hand_fim_processing" {
   value = module.hand-fim-processing
