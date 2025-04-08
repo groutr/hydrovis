@@ -13,15 +13,14 @@ Returns:
     dictionary: The details of the file that was ingested, to be returned to the state machine.
 """
 ################################################################################
-import fsspec
 import json
 import re
 from datetime import datetime
-import numpy as np
 import pandas as pd
 import xarray as xr
 from io import StringIO
 from psycopg2.errors import UndefinedTable, BadCopyFileFormat, InvalidTextRepresentation
+from psycopg2 import sql as psql
 
 from viz_s3 import check_file_source
 from viz_database import VizDatabase
