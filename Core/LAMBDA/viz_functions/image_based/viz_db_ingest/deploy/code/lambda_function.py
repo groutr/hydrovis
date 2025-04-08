@@ -60,8 +60,8 @@ def lambda_handler(event, context):
     nwm_version = 0
 
     if file.endswith('.nc'):
-        ds = xr.open_dataset(download_path)
-        ds_vars = [var for var in ds.variables]
+        ds = xr.open_dataset(download_path, engine="h5netcdf", chunks={})
+        ds_vars = list(ds.variables.keys())
 
         if not target_cols:
             target_cols = ds_vars
