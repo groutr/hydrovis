@@ -91,10 +91,8 @@ def lambda_handler(event, context):
         if "nwm_vers" not in target_cols:
             target_cols.append('nwm_vers')
             
-        #drop_vars = [var for var in ds_vars if var not in target_cols]
         sel_vars = ds.variables.keys() & target_cols
         df = ds[list(sel_vars)].to_dataframe().reset_index()
-        #df = df.drop(columns=drop_vars)
         ds.close()
         if 'streamflow' in target_cols:
             df = df.loc[df['streamflow'] >= keep_flows_at_or_above].round({'streamflow': 2})  # noqa
