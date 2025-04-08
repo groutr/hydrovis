@@ -108,23 +108,28 @@ def lambda_handler(event, context):
     print(f"--> Preparing and Importing {file}")
     row_count = len(df)
     f = StringIO()  # Use StringIO to store the temporary text file in memory (faster than on disk)
-    df.to_csv(f, sep='\t', index=False, header=False)
-    del df
+    df.to_csv(f, index=False, header=False)
+    df = df.head(0)
+
+    copy_sql = psql.SQL("COPY {target_table} FROM STDIN WITH (FORMAT CSV);").format(
+        target_table=psql.Identifier(*target_table.split('.'))
+    )
     try:
-        with viz_db.connection.cursor() as cur:
+        conn = viz_db.connection
+        with conn.cursor() as cur:
             f.seek(0)
-            cur.copy_from(f, target_table, sep='\t', null='')
+            cur.copy_expert(copy_sql, f)
     except (UndefinedTable, BadCopyFileFormat, InvalidTextRepresentation):
+        conn.driver_connection.rollback()
         if not create_table:
             raise
 
         print("Error encountered. Recreating table now and retrying import...")
-        create_table_df = df.head(0)
         schema, table = target_table.split('.')
-        create_table_df.to_sql(con=viz_db.engine, schema=schema, name=table, index=False, if_exists='replace')
-        with viz_db.connection.cursor() as cur:
+        df.to_sql(table, viz_db.engine, schema=schema, index=False, if_exists='replace')
+        with conn.cursor() as cur:
             f.seek(0)
-            cur.copy_from(f, target_table, sep='\t', null='')
+            cur.copy_expert(copy_sql, f)
 
     print(f"--> Import of {row_count} rows Complete.")
 
