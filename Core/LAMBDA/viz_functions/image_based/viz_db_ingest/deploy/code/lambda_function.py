@@ -106,8 +106,10 @@ def lambda_handler(event, context):
         raise UnrecognizedInput(f"File format not supported. {file}")
 
     print(f"--> Preparing and Importing {file}")
+    row_count = len(df)
     f = StringIO()  # Use StringIO to store the temporary text file in memory (faster than on disk)
     df.to_csv(f, sep='\t', index=False, header=False)
+    del df
     try:
         with viz_db.connection.cursor() as cur:
             f.seek(0)
