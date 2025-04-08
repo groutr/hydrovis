@@ -66,41 +66,40 @@ def lambda_handler(event, context):
         if not target_cols:
             target_cols = ds_vars
 
-        try:
+        forecast_hour = re.search(r"\d{8}/[a-z0-9_]*/.*t\d{2}z.*[ftm](\d*)\.", file)
+        if forecast_hour:
+            forecast_hour = int(forecast_hour.group(1))
             if "hawaii" in file:
-                ds['forecast_hour'] = int(int(re.findall(r"(\d{8})/[a-z0-9_]*/.*t(\d{2})z.*[ftm](\d*)\.", file)[0][-1])/100)
-            else:
-                ds['forecast_hour'] = int(re.findall(r"(\d{8})/[a-z0-9_]*/.*t(\d{2})z.*[ftm](\d*)\.", file)[0][-1])
+                forecast_hour = forecast_hour // 100
+
             if 'forecast_hour' not in target_cols:
                 target_cols.append('forecast_hour')
-        except:
-            print("Regex pattern for the forecast hour didn't match the netcdf file")
+        else:
+            raise ValueError("Regex pattern for the forecast hour didn't match the netcdf file")
 
-        try:
-            try:
-                if not isinstance(ds.NWM_version_number, str):
-                    ds['nwm_vers'] = float(ds.NWM_version_number.values[0].replace("v",""))
-                else:
-                    ds['nwm_vers'] = float(ds.NWM_version_number.replace("v",""))
-            except Exception as e:
-                print(e)
-                try:
-                    ds['nwm_vers'] = float(ds.model_version.replace("NWM ",""))
-                except:
-                    raise
-            if 'nwm_vers' not in target_cols:
-                target_cols.append('nwm_vers')
-        except:
-            print("NWM_version_number property is not available in the netcdf file")
-
-        drop_vars = [var for var in ds_vars if var not in target_cols]
-        df = ds.to_dataframe().reset_index()
-        df = df.drop(columns=drop_vars)
+        if "NWM_version_number" in ds.attrs:
+            nwm_vers = ds.attrs["NWM_version_number"]
+        elif "model_version" in ds.attrs:
+            nwm_vers = ds.attrs['model_version']
+        else:
+            raise ValueError("NWM version not found in netcdf file")
+        
+        if isinstance(nwm_vers, str):
+            nwm_vers = nwm_vers.replace("v", "")
+        else:
+            nwm_vers = nwm_vers.values[0].replace("v", "")
+        if "nwm_vers" not in target_cols:
+            target_cols.append('nwm_vers')
+            
+        #drop_vars = [var for var in ds_vars if var not in target_cols]
+        sel_vars = ds.variables.keys() & target_cols
+        df = ds[list(sel_vars)].to_dataframe().reset_index()
+        #df = df.drop(columns=drop_vars)
         ds.close()
         if 'streamflow' in target_cols:
-            df = df.loc[df['streamflow'] >= keep_flows_at_or_above].round({'streamflow': 2}).copy()  # noqa
-        df = df[target_cols]
-
+            df = df.loc[df['streamflow'] >= keep_flows_at_or_above].round({'streamflow': 2})  # noqa
+        df['nwm_vers'] = nwm_vers
+        df['forecast_hour'] = forecast_hour
     elif file.endswith('.csv'):
         df = pd.read_csv(download_path)
     else:
