@@ -126,14 +126,13 @@ def lambda_handler(event, context):
             f.seek(0)
             cur.copy_from(f, target_table, sep='\t', null='')
 
-    print(f"--> Import of {len(df)} rows Complete. Removing {download_path} and closing db connection.")
-    os.remove(download_path)
+    print(f"--> Import of {row_count} rows Complete.")
 
     dump_dict = {
-                        "file": file,
-                        "target_table": target_table,
-                        "reference_time": reference_time,
-                        "rows_imported": len(df),
-                        "nwm_version": nwm_version
-                    }
+        "file": file,
+        "target_table": target_table,
+        "reference_time": reference_time,
+        "rows_imported": row_count,
+        "nwm_version": nwm_version
+    }
     return json.dumps(dump_dict)    # Return some info on the import
