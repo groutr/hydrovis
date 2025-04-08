@@ -1,0 +1,16 @@
+name: db_ingest
+channels:
+  - conda-forge
+  - nodefaults
+dependencies:
+  - python=3.12
+  - awslambdaric
+  - fsspec
+  - s3fs
+  - aiohttp
+  - pandas
+  - xarray
+  - dask-core
+  - sqlalchemy
+  - psycopg2
+  - h5netcdf
