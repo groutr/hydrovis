@@ -4,8 +4,6 @@ import base64
 
 import sqlalchemy
 
-from botocore.exceptions import ClientError
-
 
 def get_secret_password(secret_name, region_name, key):
     """
@@ -19,6 +17,8 @@ def get_secret_password(secret_name, region_name, key):
             password(str): The text of the password
     """
     import boto3
+    from botocore.exceptions import ClientError
+    
     # Create a Secrets Manager client
     session = boto3.session.Session()
     client = session.client(
