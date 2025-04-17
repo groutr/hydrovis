@@ -368,7 +368,7 @@ data "aws_lambda_function" "viz_optimize_rasters" {
 ############################
 # DB Ingest
 ############################
-module "hand-fim-processing" {
+module "db-ingest" {
   source = "./viz_db_ingest"
   providers = {
     aws = aws
@@ -499,7 +499,7 @@ module "python-preprocessing" {
 
 ####################### OUTPUTS ###################
 
-output "hand_fim_processing" {
+output "db_ingest" {
   value = module.db-ingest
 }
 
