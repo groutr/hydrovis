@@ -1,7 +1,7 @@
 import os
 import shutil
 import boto3
-import OptimizeRasters
+import subprocess
 
 from osgeo import gdal
 
@@ -25,38 +25,14 @@ def lambda_handler(event, context):
     else:
         run_optimize_raster(event)
 
-def create_optimized_rasters(inundation_raster):
-    args = {
-        'input': os.path.dirname(inundation_raster),    # input path. eg. c:/input/mydata
-        'output': '/tmp/or',  # processed output path. eg. c:/output/mydata
-        'subs': 'false',    # Do we included subfolders?
-        'config': 'TIF_to_MRF.xml'  # eg. r'c:/Image_Mgmt_Workflows/OptimizeRasters/Templates/Imagery_to_MRF_LERC.xml'  # noqa
-    }
-    rpt = OptimizeRasters.Report(OptimizeRasters.Base())
-    writeToPath = '/tmp/or'
-    if not os.path.exists(writeToPath):
-        os.mkdir(writeToPath)
-    ORJobFile = os.path.join(writeToPath, '{}{}'.format(rpt.getUniqueFileName(), rpt.CJOB_EXT))
-    rpt.init(ORJobFile)
-    for key in args.keys():
-        rpt.addHeader(key, args[key])   # add necessary headers.
-    rpt.addFile(inundation_raster)  # eg. c:/input/mydata/readme.txt
-    # please note, when adding files into the job file, it's important that all entries should have the same parent folder. In this case, it's (c:/input/mydata/)  # noqa
-    rpt.write()  # create the OR job/.orjob file.
-    args['input'] = ORJobFile      # input now points to the newly created OptimizeRasters Job file.
-    app = OptimizeRasters.Application(args)  # The args{} can contain any valid cmd-line argument name without the prefix '-'  # noqa
-    # app.registerMessageCallback(messages)   # Optional. If messages need to be brought back onto the caller's side.
-    if (not app.init()):
-        return False
-    app.run()  # Do processing..
-    rpt = app.getReport()   # Get report/log status
-    isSuccess = False
-    if (rpt and
-            not rpt.hasFailures()):  # If log has no failures, consider the processing as successful.
-        isSuccess = True
-    print('Results> {}'.format(str(isSuccess)))
+def create_optimized_raster(input_raster, output_raster):
+    args = ["gdal_translate", "-q", "-strict", "-co", "UNIFORM_SCALE=4", "-co", "COMPRESS=DEFLATE"]
+    io_args = ["-of", "MRF", input_raster, output_raster]
 
-    return writeToPath
+    try:
+        rv = subprocess.run(args + io_args, capture_output=True, check=True)
+    except subprocess.CalledProcessError as e:
+        print("Conversion Failed:", e.cmd, e.returncode, e.output)
 
 def run_optimize_raster(event):
     # Parse the event to get the necessary arguments
@@ -77,7 +53,7 @@ def run_optimize_raster(event):
 
     # Run ESRI code to convert a tif to an mrf
     print("Creating optimized raster")
-    mrf_dir = create_optimized_rasters(local_raster)
+    mrf_dir = create_optimized_raster(local_raster)
     
     try:
         os.remove(local_raster)
