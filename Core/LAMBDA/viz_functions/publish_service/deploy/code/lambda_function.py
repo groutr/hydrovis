@@ -11,6 +11,7 @@ def lambda_handler(event, context):
 	s3 = boto3.client('s3')
 	s3_bucket = os.getenv('S3_BUCKET')
 	s3_sd_path = os.getenv('SD_S3_PATH') # not to be confused with sd_s3_path
+	s3_mapx_path = os.getenv("MAPX_S3_PATH")
 	egis_db_host = os.getenv('EGIS_DB_HOST')
 	egis_db_username = os.getenv('EGIS_DB_USERNAME')
 	egis_db_password = os.getenv('EGIS_DB_PASSWORD')
@@ -84,7 +85,26 @@ def lambda_handler(event, context):
 					raise Exception(f"Retried gp service publish {i} times. Skipping {sd_s3_path}. Please investigate and republish manually using ArcGIS Rest Services Directory")
 				try:
 					# Make POST request to GP Service to (re)create a service definition file in order to (re)publish.
-					mapx_to_sd(service_name, summary, description, public_service, tags, credits, feature_service, s3_sd_path, gis, egis_db_host, egis_db_username, egis_db_password, egis_db_database, s3_bucket, environment, folder, egis_db_password_secret_name)
+					mapx_to_sd(
+						service_name, 
+						summary, 
+						description, 
+						public_service, 
+						tags, 
+						credits, 
+						feature_service, 
+						s3_sd_path, 
+						gis, 
+						egis_db_host, 
+						egis_db_username, 
+						egis_db_password, 
+						egis_db_database, 
+						s3_bucket, 
+						environment, 
+						folder, 
+						egis_db_password_secret_name,
+						s3_mapx_path,
+					)
 				except Exception as e:
 					print("Error with publishing")
 					raise e
@@ -197,7 +217,26 @@ def get_service_metadata(folder, service_name):
 	
 	return service_metadata
 
-def mapx_to_sd(service_name, summary, description, public_service, tags, credits, feature_service, sd_files, gis, egis_db_host, egis_db_username, egis_db_password, egis_db_database, s3_bucket, environment, folder, egis_db_password_secret_name):
+def mapx_to_sd(
+		service_name, 
+		summary, 
+		description, 
+		public_service, 
+		tags, 
+		credits, 
+		feature_service, 
+		sd_files, 
+		gis, 
+		egis_db_host, 
+		egis_db_username, 
+		egis_db_password, 
+		egis_db_database, 
+		s3_bucket, 
+		environment, 
+		folder, 
+		egis_db_password_secret_name,
+		s3_mapx_path,
+	):
 	service_suffix = ''
 	subdomain = 'maps'
 	if environment == 'ti':
@@ -224,7 +263,7 @@ def mapx_to_sd(service_name, summary, description, public_service, tags, credits
 		'egis_db_schema': 'services',
 		'egis_folder': folder,
 		'deployment_bucket': s3_bucket,
-		's3_pro_project_path': 'viz_mapx',
+		's3_pro_project_path': s3_mapx_path,
 		's3_sd_path': sd_files,
 		'returnZ': 'false',
 		'returnM': 'false',

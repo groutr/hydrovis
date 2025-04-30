@@ -1,4 +1,4 @@
-FROM mambaorg/micromamba AS micromamba
+FROM ghcr.io/mamba-org/micromamba:latest AS micromamba
 
 # Create conda environment for hydrovis
 RUN --mount=type=bind,source=conda-linux-64.lock,target=/tmp/conda.lock \

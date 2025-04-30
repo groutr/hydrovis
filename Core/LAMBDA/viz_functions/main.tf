@@ -12,7 +12,8 @@ terraform {
 
 locals {
   ecr_repository_image_tag = "latest"
-  official_environments = ["ti", "uat", "prod"]
+  prodlike_environments = ["uat", "prod"]
+  official_environments = concat(local.prodlike_environments, ["ti"])
   optimize_rasters = "optimize-rasters"
   hand_fim_processing = "hand-fim-processing"
   schism_fim_processing = "schism-fim-processing"
@@ -56,7 +57,7 @@ module "db-ingest" {
 }
 
 resource "aws_lambda_function_event_invoke_config" "viz_db_ingest_destinations" {
-  count     = contains(local.official_environments, var.environment) ? 1 : 0
+  count     = contains(local.prodlike_environments, var.environment) ? 1 : 0
   function_name          = module.db-ingest[0].lambda.function_name
   maximum_retry_attempts = 0
   destination_config {
@@ -94,7 +95,7 @@ module "db-postprocess-sql" {
 }
 
 resource "aws_lambda_function_event_invoke_config" "viz_db_postprocess_sql_destinations" {
-  count     = contains(local.official_environments, var.environment) ? 1 : 0
+  count     = contains(local.prodlike_environments, var.environment) ? 1 : 0
   function_name          = module.db-postprocess-sql[0].lambda.function_name
   maximum_retry_attempts = 0
   destination_config {
@@ -125,14 +126,14 @@ module "egis-health-checker" {
 }
 
 resource "aws_cloudwatch_event_target" "check_lambda_every_five_minutes_egis_health_checker" {
-  count     = contains(local.official_environments, var.environment) ? 1 : 0
+  count     = contains(local.prodlike_environments, var.environment) ? 1 : 0
   rule      = var.five_minute_trigger.name
   target_id = module.egis-health-checker[0].lambda.function_name
   arn       = module.egis-health-checker[0].lambda.arn
 }
 
 resource "aws_lambda_permission" "allow_cloudwatch_to_call_check_lambda_egis_health_checker" {
-  count     = contains(local.official_environments, var.environment) ? 1 : 0
+  count     = contains(local.prodlike_environments, var.environment) ? 1 : 0
   statement_id  = "AllowExecutionFromCloudWatch"
   action        = "lambda:InvokeFunction"
   function_name = module.egis-health-checker[0].lambda.function_name
@@ -141,7 +142,7 @@ resource "aws_lambda_permission" "allow_cloudwatch_to_call_check_lambda_egis_hea
 }
 
 resource "aws_lambda_function_event_invoke_config" "egis_health_checker" {
-  count = contains(local.official_environments, var.environment) ? 1 : 0
+  count = contains(local.prodlike_environments, var.environment) ? 1 : 0
   function_name          = module.egis-health-checker[0].lambda.function_name
   maximum_retry_attempts = 0
   destination_config {
@@ -152,7 +153,7 @@ resource "aws_lambda_function_event_invoke_config" "egis_health_checker" {
 }
 
 resource "aws_cloudwatch_metric_alarm" "egis_healthcheck_errors" {
-  count = contains(local.official_environments, var.environment) ? 1 : 0
+  count = contains(local.prodlike_environments, var.environment) ? 1 : 0
   alarm_name                = "${var.environment}_egis_healthcheck"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   datapoints_to_alarm       = 1
@@ -221,7 +222,7 @@ module "fim-data-prep" {
 }
 
 resource "aws_lambda_function_event_invoke_config" "viz_fim_data_prep_destinations" {
-  count     = contains(local.official_environments, var.environment) ? 1 : 0
+  count     = contains(local.prodlike_environments, var.environment) ? 1 : 0
   function_name          = module.fim-data-prep[0].lambda.function_name
   maximum_retry_attempts = 0
   destination_config {
@@ -299,7 +300,7 @@ module "initialize-pipeline" {
 }
 
 resource "aws_sns_topic_subscription" "viz_initialize_pipeline_subscription_shared_nwm" {
-  count     = contains(local.official_environments, var.environment) ? 1 : 0
+  count     = contains(local.prodlike_environments, var.environment) ? 1 : 0
   provider = aws.sns
   topic_arn = var.nws_shared_account_nwm_sns
   protocol  = "lambda"
@@ -307,7 +308,7 @@ resource "aws_sns_topic_subscription" "viz_initialize_pipeline_subscription_shar
 }
 
 resource "aws_lambda_permission" "viz_initialize_pipeline_permissions_shared_nwm" {
-  count     = contains(local.official_environments, var.environment) ? 1 : 0
+  count     = contains(local.prodlike_environments, var.environment) ? 1 : 0
   action        = "lambda:InvokeFunction"
   function_name = module.initialize-pipeline[0].lambda.function_name
   principal     = "sns.amazonaws.com"
@@ -331,7 +332,7 @@ resource "aws_lambda_permission" "viz_initialize_pipeline_permissions_wrds_db_du
 }
 
 resource "aws_lambda_function_event_invoke_config" "viz_initialize_pipeline_destinations" {
-  count     = contains(local.official_environments, var.environment) ? 1 : 0
+  count     = contains(local.prodlike_environments, var.environment) ? 1 : 0
   function_name          = module.initialize-pipeline[0].lambda.function_name
   maximum_retry_attempts = 0
   destination_config {
@@ -342,7 +343,7 @@ resource "aws_lambda_function_event_invoke_config" "viz_initialize_pipeline_dest
 }
 
 resource "aws_cloudwatch_event_target" "viz_initialize_pipeline_every_five_minutes" {
-  count     = contains(local.official_environments, var.environment) ? 1 : 0
+  count     = contains(local.prodlike_environments, var.environment) ? 1 : 0
   rule      = var.five_minute_trigger.name
   target_id = module.initialize-pipeline[0].lambda.function_name
   arn       = module.initialize-pipeline[0].lambda.arn
@@ -350,7 +351,7 @@ resource "aws_cloudwatch_event_target" "viz_initialize_pipeline_every_five_minut
 }
 
 resource "aws_lambda_permission" "viz_initialize_pipeline_called_by_rule" {
-  count         = contains(local.official_environments, var.environment) ? 1 : 0
+  count         = contains(local.prodlike_environments, var.environment) ? 1 : 0
   statement_id  = "AllowExecutionFromCloudWatch"
   action        = "lambda:InvokeFunction"
   function_name = module.initialize-pipeline[0].lambda.function_name
@@ -413,7 +414,7 @@ module "publish-service" {
 }
 
 resource "aws_lambda_function_event_invoke_config" "viz_publish_service_destinations" {
-  count     = contains(local.official_environments, var.environment) ? 1 : 0
+  count     = contains(local.prodlike_environments, var.environment) ? 1 : 0
   function_name          = module.publish-service[0].lambda.function_name
   maximum_retry_attempts = 0
   destination_config {
@@ -424,10 +425,10 @@ resource "aws_lambda_function_event_invoke_config" "viz_publish_service_destinat
 }
 
 resource "aws_s3_object" "viz_publish_mapx_files" {
-  provider = aws.no_tags  
-  for_each    = contains(local.official_environments, var.environment) ? fileset("${path.module}/publish_service/deploy/code/services", "**/*.mapx") : []
+  provider = aws.no_tags 
+  for_each    = lookup(var.creation_map, local.publish_service, false) ? fileset("${path.module}/publish_service/deploy/code/services", "**/*.mapx") : []
   bucket      = var.deployment_bucket
-  key         = "viz_mapx/${reverse(split("/",each.key))[0]}"
+  key         = "viz_mapx/${var.environment}/${reverse(split("/",each.key))[0]}"
   source      = "${path.module}/publish_service/deploy/code/services/${each.key}"
   source_hash = filemd5("${path.module}/publish_service/deploy/code/services/${each.key}")
 }

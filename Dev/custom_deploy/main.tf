@@ -85,8 +85,8 @@ module "viz-step-functions" {
   viz_processing_pipeline_log_group = var.cloudwatch_log_groups["viz-processing-pipeline"].name
   email_sns_topics = {}
   schism_fim_datasets_bucket = var.s3_buckets["deployment"].bucket
-  schism_fim_job_definition_arn = lookup(var.deploy_resources, "schism-fim-processing", false) ? module.viz-lambda-functions.schism_fim.job_definition.arn : var.batch_job_definitions["schism-fim-job-definition"].arn
-  schism_fim_job_queue_arn = lookup(var.deploy_resources, "schism-fim-processing", false) ? module.viz-lambda-functions.schism_fim.job_queue.arn : var.batch_job_queues["schism-fim-job-queue"].arn
+  schism_fim_job_definition_arn = lookup(var.deploy_resources, "schism-fim-processing", false) ? module.viz-lambda-functions.schism_fim.job_definition.arn : "arn:aws:batch:${var.region}:${var.account_id}:job-definition/hv-vpp-ti-schism-fim-job-definition:2"
+  schism_fim_job_queue_arn = lookup(var.deploy_resources, "schism-fim-processing", false) ? module.viz-lambda-functions.schism_fim.job_queue.arn : "arn:aws:batch:${var.region}:${var.account_id}:job-queue/hv-vpp-ti-schism-fim-job-queue"
   hand_fim_processing_arn = lookup(var.deploy_resources, "hand-fim-processing", false) ? module.viz-lambda-functions.hand_fim_processing.arn : var.lambda_functions["viz-hand-fim-processing"].arn
   hand_fim_processing_step_function_arn_override = lookup(var.deploy_resources, "hand-fim-processing", false) ? null : var.step_functions["hand-fim-processing"].arn
   schism_fim_processing_step_function_arn_override = lookup(var.deploy_resources, "schism-fim-processing", false) ? null : var.step_functions["process-schism-fim"].arn

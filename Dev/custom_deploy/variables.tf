@@ -27,14 +27,6 @@ variable "secrets" {
     type = map
 }
 
-variable "batch_job_definitions" {
-    type = map
-}
-
-variable "batch_job_queues" {
-    type = map
-}
-
 variable "region" {
     type = string
 }
@@ -75,12 +67,10 @@ variable "nwm_dataflow_version" {
 
 variable "fim_version" {
     type = string
-    default = "placeholder"
 }
 
 variable "hand_version" {
     type = string
-    default = "undefined"
 }
 
 variable "deploy_resources" {
@@ -89,7 +79,6 @@ variable "deploy_resources" {
 
 variable "egis_portal_password" {
     type = string
-    default = "placeholder"
 }
 
 variable "personal_tag" {
