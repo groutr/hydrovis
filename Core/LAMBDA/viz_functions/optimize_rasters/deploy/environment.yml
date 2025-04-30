@@ -6,4 +6,5 @@ dependencies:
   - python=3.12
   - awslambdaric
   - gdal
-  - boto3
+  - fsspec
+  - s3fs

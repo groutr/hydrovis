@@ -1,7 +1,7 @@
 FROM ghcr.io/mamba-org/micromamba:latest AS micromamba
 
 # Create conda environment for hydrovis
-RUN --mount=type=bind,source=conda-linux-64.lock,target=/tmp/conda.lock \
+RUN --mount=type=bind,source=conda-linux-aarch64.lock,target=/tmp/conda.lock \
     micromamba install -y --file /tmp/conda.lock && \
     micromamba clean -afy
 
