@@ -1,13 +1,12 @@
-import os
-import shutil
-import boto3
+import pathlib
+import fnmatch
+import fsspec
 import subprocess
+import tempfile
 
 from osgeo import gdal
 
-s3 = boto3.client('s3')
-s3_resource = boto3.resource('s3')
-
+s3_sse = fsspec.filesystem('s3', s3_additional_kwargs={'ServerSideEncryption': 'aws:kms'})
 
 def lambda_handler(event, context):
     """
@@ -43,41 +42,21 @@ def run_optimize_raster(event):
     output_raster_key = input_raster_key.replace("/tif/", "/mrf/")
     output_raster_prefix = os.path.dirname(output_raster_key)
 
-    print(f"Converting {input_raster_key} into {output_raster_key}")
-    file_name = os.path.basename(input_raster_key).split(".")[0]
-    local_raster = f'/tmp/{os.path.basename(input_raster_key)}'
+    vsi_input = f"/vsis3/{input_raster_bucket}/{input_raster_key}"
+    tmp_output = pathlib.Path(tempfile.mkdtemp())
 
-    # Download the tif to a local file
-    print(f"Downloading {input_raster_key}")
-    s3.download_file(input_raster_bucket, input_raster_key, local_raster)
-
-    # Run ESRI code to convert a tif to an mrf
-    print("Creating optimized raster")
-    mrf_dir = create_optimized_raster(local_raster)
+    print(f"Converting {vsi_input} into {tmp_output}")
+    create_optimized_raster(vsi_input, tmp_output)
     
-    try:
-        os.remove(local_raster)
-    except:
-        print("Failed to remove local raster file.")
-
     # Loop through the mrf files (4) and upload them to S3
-    mrf_files = os.listdir(mrf_dir)
-    for mrf_file in mrf_files:
-        if file_name in mrf_file:
-            local_file_path = os.path.join(mrf_dir, mrf_file)
-            S3_file_path = os.path.join(output_raster_prefix, mrf_file)
-            print(f"Writing {S3_file_path} to {output_raster_bucket}")
-            s3.upload_file(local_file_path, output_raster_bucket, S3_file_path,
-                           ExtraArgs={'ServerSideEncryption': 'aws:kms'})
+    for mrf_file in tmp_output.iterdir():
+        S3_file_path = f"s3://{output_raster_bucket}/{output_raster_prefix}/{mrf_file.name}
+        print(f"Writing {S3_file_path}")
+        s3_sse.put(mrf_file, S3_file_path)
+        mrf_file.unlink()
     
-    try:
-        shutil.rmtree(mrf_dir)
-    except:
-        print("Failed to remove mrf_dir")
-
-    print(
-        f"Successfully processed mrf for {input_raster_key}"
-    )
+    # Remove temp directory
+    tmp_output.rmdir()
 
 def run_create_vrt(event):
     fim_config = event['args']['fim_config']['name']
