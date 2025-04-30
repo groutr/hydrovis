@@ -44,7 +44,7 @@ def run_optimize_raster(event):
 
     output_raster_bucket = input_raster_bucket
     output_raster_key = input_raster_key.replace("/tif/", "/mrf/")
-    output_raster_prefix = os.path.dirname(output_raster_key)
+    output_raster_prefix = pathlib.Path(output_raster_key).parent
 
     vsi_input = f"/vsis3/{input_raster_bucket}/{input_raster_key}"
     tmp_output = pathlib.Path(tempfile.mkdtemp())
