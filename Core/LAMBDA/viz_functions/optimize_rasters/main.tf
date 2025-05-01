@@ -24,11 +24,6 @@ data "archive_file" "deploy_zip" {
   }
 
   source {
-    content  = sensitive(file("${path.module}/../../layers/viz_lambda_shared_funcs/python/viz_classes.py"))
-    filename = "code/viz_classes.py"
-  }
-
-  source {
     content = templatefile("${path.module}/serverless.yml.tmpl", {
       SERVICE_NAME       = replace(var.lambda_name, "_", "-")
       LAMBDA_TAGS        = jsonencode(merge(var.default_tags, { Name = var.lambda_name }))
