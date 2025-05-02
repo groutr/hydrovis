@@ -58,7 +58,8 @@ def run_optimize_raster(event):
     for mrf_file in tmp_output.iterdir():
         S3_file_path = f"s3://{output_raster_bucket}/{output_raster_prefix}/{mrf_file.name}"
         print(f"Writing {S3_file_path}")
-        s3_sse.put(mrf_file, S3_file_path)
+        s3_sse.put_file(mrf_file, S3_file_path)
+        assert s3_sse.exists(S3_file_path)
         mrf_file.unlink()
     
     # Remove temp directory
