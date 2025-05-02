@@ -29,12 +29,13 @@ def lambda_handler(event, context):
 
 def create_optimized_raster(input_raster, output_raster):
     args = ["gdal_translate", "-q", "-strict", "-co", "UNIFORM_SCALE=4", "-co", "COMPRESS=DEFLATE"]
-    io_args = ["-of", "MRF", input_raster, output_raster]
+    io_args = ["-of", "MRF", str(input_raster), str(output_raster)]
 
     try:
         rv = subprocess.run(args + io_args, capture_output=True, check=True)
     except subprocess.CalledProcessError as e:
         print("Conversion Failed:", e.cmd, e.returncode, e.output)
+        raise
 
 
 def run_optimize_raster(event):
