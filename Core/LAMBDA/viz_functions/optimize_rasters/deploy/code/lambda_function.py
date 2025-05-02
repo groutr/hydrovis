@@ -41,17 +41,18 @@ def create_optimized_raster(input_raster, output_raster):
 def run_optimize_raster(event):
     # Parse the event to get the necessary arguments
     input_raster_bucket = event['output_bucket']
-    input_raster_key = event['output_raster']
+    input_raster_key = pathlib.PurePosixPath(event['output_raster'])
 
     output_raster_bucket = input_raster_bucket
-    output_raster_key = input_raster_key.replace("/tif/", "/mrf/")
-    output_raster_prefix = pathlib.Path(output_raster_key).parent
+    subs = {"tif": "mrf"}
+    output_raster_key = pathlib.PurePosixPath().joinpath(*(subs.get(k, k) for k in input_raster_key.parts))
+    output_raster_prefix = output_raster_key.parent
 
     vsi_input = f"/vsis3/{input_raster_bucket}/{input_raster_key}"
     tmp_output = pathlib.Path(tempfile.mkdtemp())
 
     print(f"Converting {vsi_input} into {tmp_output}")
-    create_optimized_raster(vsi_input, tmp_output)
+    create_optimized_raster(vsi_input, tmp_output/f"{input_raster_key.stem}.mrf")
     
     # Loop through the mrf files (4) and upload them to S3
     for mrf_file in tmp_output.iterdir():
