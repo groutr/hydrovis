@@ -11,7 +11,7 @@ functions:
     name: ${LAMBDA_NAME}
     image: ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/${IMAGE_REPO_NAME}:${IMAGE_TAG}
     role: ${LAMBDA_ROLE_ARN}
-    memorySize: 2048
+    memorySize: 1024
     timeout: 900
-    ephemeralStorageSize: 4096
+    ephemeralStorageSize: 1024
     architecture: arm64
